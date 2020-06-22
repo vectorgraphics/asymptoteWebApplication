@@ -1,8 +1,9 @@
 ASY_ICONS=$(wildcard icons/*.asy)
 
 all: 
-	asy -fsvg $(ASY_ICONS) -o assets/
-	asy -fhtml logo/logo3d.asy -o assets/
+	asy -fsvg $(ASY_ICONS) -o src/assets/
+	asy -fhtml logo/logo3d.asy -o src/assets/
+#	npm run build
 
 clean:
-	-cd assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg logo3d.html
+	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg logo3d.html
