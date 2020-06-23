@@ -1,0 +1,24 @@
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+|                        ASYMPTOTE WEB APPLICATION                           |
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+This application is designed to provide a convenient way for Asymptote 
+language users to create vector graphics remotely without any local 
+installation.
+
+
+Asymptote Vector Graphics Language
+==================================
+Licence:        LGPL 3.0+
+Design Team:    Andy Hammerlindl, John C. Bowman, Tom Prince
+First Appeared: 2004
+
+
+Asymptote Web Application
+=========================
+Licence:        LGPL 3.0+
+Design Team:    Pedram Emami (emami1@ualberta.ca, technology.career20@gmail.com)
+First Appeared: 2020
+Host Address:   http://asymptote.ualberta.ca

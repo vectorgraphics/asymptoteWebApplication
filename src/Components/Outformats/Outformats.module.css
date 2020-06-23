@@ -1,0 +1,13 @@
+.label{
+    margin: 0.125rem;
+    margin-left: 0.5rem;
+    line-height: 1.5rem;
+}
+.input{
+    min-width: 2rem;
+    margin-right: 0.5rem;
+    vertical-align: bottom;
+}
+.label::selection, .input::selection{
+    background-color: transparent;
+}

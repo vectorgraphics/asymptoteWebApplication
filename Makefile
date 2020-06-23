@@ -3,7 +3,7 @@ ASY_ICONS=$(wildcard icons/*.asy)
 all: 
 	asy -nowarn unbounded -fsvg $(ASY_ICONS) -o src/assets/
 	asy -nowarn unbounded -fhtml logo/logo3d.asy -o public/
-#	npm run build
+	npm run build
 
 clean:
 	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg

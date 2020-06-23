@@ -1,0 +1,25 @@
+.clearBtn{
+    flex: 1 1 0;
+
+    display: block;
+    position: relative;
+    font-family: inherit;
+    font-size: 0.85rem;
+    min-width: 8rem;
+    margin: 0.125rem;
+    line-height: 1.5rem;
+    color: rgb(200, 200, 200);
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 0.125rem;
+    box-shadow: 0rem 0.065rem 0.065rem 0.065rem black;
+    background-color: rgb(53, 56, 56);
+}
+.clearBtn:hover{
+    background-color: rgb(103, 106, 106);  
+}
+.clearBtn:active{
+    box-shadow: none;
+}

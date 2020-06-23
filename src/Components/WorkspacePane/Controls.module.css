@@ -1,0 +1,29 @@
+.controller{
+    flex: 1 1 0;
+    line-height: 1.5rem;
+    max-width: 2rem;
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+    text-align: center;
+    border: 1px solid rgb(34, 34, 34);
+    border-radius: 2px;
+    cursor: pointer;
+}
+.controller::selection{
+    background-color: transparent;
+}
+.controller:hover{
+    background-color: rgb(104, 104, 104);
+}
+.controllerAdd{
+    background-image: url(../../assets/add.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+.controllerRemove{
+    background-image: url(../../assets/remove.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
