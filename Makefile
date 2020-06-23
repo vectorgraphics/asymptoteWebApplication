@@ -5,8 +5,11 @@ all:
 	asy -nowarn unbounded -fhtml logo/logo3d.asy -o public/
 	npm install
 
-run:
+build:
 	npm run build
+
+run:
+	node server.js &
 
 # Run front end only (for testing)
 frontend:
