@@ -154,7 +154,16 @@ const preRun = function(req, res, next, dirname){
             }
         });                        
     }else{
-        if(!htmlFileFlag){
+        if(requestedOutformat === "html" && htmlFileFlag){
+            var result = {
+                responseType: "OutputFile_Generated",
+                errorType: null,
+                errorCode: null,
+                response: null,
+                status: "PreRun_Output_Saved",
+            }
+            res.send(result);        
+        }else{
             if (fs.existsSync(asyFileToRemove)) {
                 fs.unlinkSync(asyFileToRemove);
             }
@@ -239,15 +248,6 @@ const preRun = function(req, res, next, dirname){
                     })
                 }
             });
-        }else{
-            var result = {
-                responseType: "OutputFile_Generated",
-                errorType: null,
-                errorCode: null,
-                response: null,
-                status: "PreRun_Output_Saved",
-            }
-            res.send(result);
         }
     }
 }
