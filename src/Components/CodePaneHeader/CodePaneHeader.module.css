@@ -28,7 +28,6 @@
     width: 0.5rem;
     height: 0.5rem;
     content: "";
-    /* border: 2.5px solid rgb(255, 128, 128); */
     border-right: 2.5px solid rgb(255, 128, 128);
     border-bottom: 2.5px solid rgb(255, 128, 128);
     transform: rotateZ(-45deg);
