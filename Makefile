@@ -1,11 +1,11 @@
 vpath %.asy icons
 vpath %.asy logo
-vpath %.html public
 vpath %.svg src/assets
+vpath %.html public
 
 ASY_ICONS=$(wildcard icons/*.asy)
 
-all:  $(notdir $(ASY_ICONS:.asy=.svg)) logo/logo3d.asy src/ public/
+all:  $(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html
 	npm install
 	npm run build
 
@@ -19,6 +19,7 @@ frontend:
 clean:
 	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg
 	-cd public && rm -f logo3d.html
+	-rm -rf node_modules build
 
 .SUFFIXES: .asy .svg .html
 

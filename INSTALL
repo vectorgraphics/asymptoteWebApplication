@@ -13,17 +13,9 @@ Pre Application Install
 Asymptote Web Application Installation
 ======================================
 
-1. Create the application directory using ONLY lowercase letters, dashes, 
-   underscores, and numbers.
-
-2. Copy all the files and folders provided in the repository to 
-   the application directory.
-
-3. Change to the application directory.
-
-4. Install all node modules and application dependencies with 
+Install all node modules and application dependencies with 
    
-    node install
+    make all
 
 
 -----------------------------------------------------------------
@@ -34,7 +26,15 @@ Asymptote Web Application Installation
 
 There are two modes for running this application:
 
-1. Running only the front-end part of the application 
+1. Running the full application 
+   ============================
+        sudo make run
+
+    The application can then be accessed on
+
+        http://localhost:80
+
+2. Running only the front-end part of the application 
    ==================================================
     This mode is mainly used for development of the GUI aspects to 
     see if any change made to CSS or Javascript is working as it is 
@@ -44,19 +44,6 @@ There are two modes for running this application:
 
     To run the application under this mode, use
 
-        npm start
+       make frontend
 
 
-2. Running the full application 
-   ============================
-    To run the full application, it must first be built with
-
-        npm run build
-
-    If the build is successful, launch the server with
-    
-        node server.js
-
-    The application can then be accessed on
-
-        http://localhost:3000
