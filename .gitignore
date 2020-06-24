@@ -106,5 +106,5 @@ dist
 .tern-port
 
 .asy_history
-public/*.svg
+public/logo3d.html
 src/assets/*.svg

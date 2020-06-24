@@ -27,4 +27,4 @@ clean:
 	asy -nowarn unbounded -f svg -o src/assets/ $<
 
 %.html: %.asy
-	asy -nowarn unbounded -f svg -o public/ $<
+	asy -nowarn unbounded -f html -o public/ $<
