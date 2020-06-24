@@ -15,7 +15,7 @@ const run = function(req, res, next, dirname){
 
     const workspaceId = req.body.workspaceId;
     const workspaceName = req.body.workspaceName;
-    const codeFilename = workspaceName + workspaceId;
+    const codeFilename = workspaceName + "_" + workspaceId;
     const codeFile = codeFilename + ".asy";
     const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
     const isUpdated = req.body.isUpdated;
@@ -117,15 +117,15 @@ const preRun = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
     const workspaceId = req.body.workspaceId;
     const workspaceName = req.body.workspaceName;
-    const codeFilename = workspaceName + workspaceId;
+    const codeFilename = workspaceName + "_" + workspaceId;
     const codeFile = codeFilename + ".asy";
     const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
     const requestedOutformat= req.body.requestedOutformat;
     const partialMode = req.body.partialMode;
 
-    const asyFileToRemove = dest.usrAbsDirPath + "/" + workspaceName + workspaceId + ".asy";
-    const outputFileToRemove = dest.usrAbsDirPath + "/" + workspaceName + workspaceId + "." + requestedOutformat;
-    const existingHtmlFile = dest.usrAbsDirPath + "/" + workspaceName + workspaceId + ".html";
+    const asyFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".asy";
+    const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
+    const existingHtmlFile = dest.usrAbsDirPath + "/" + codeFilename + ".html";
     
     (fs.existsSync(existingHtmlFile))? htmlFileFlag = true : htmlFileFlag = false;
 
@@ -256,6 +256,7 @@ const preRun = function(req, res, next, dirname){
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const removeUsrDir = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
+    console.log(dest.usrAbsDirPath);
     removeDir(dest.usrAbsDirPath);
 }
 
@@ -290,7 +291,7 @@ exports.downloadReq = function(dirname){
         const workspaceName = req.body.workspaceName;
         const codeOption = req.body.codeOption;
         const outputOption = req.body.outputOption;        
-        const codeFilename = workspaceName + workspaceId;
+        const codeFilename = workspaceName + "_" + workspaceId;
         const codeFile = codeFilename + ".asy";
         const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
         const requestedOutformat= req.body.requestedOutformat;
