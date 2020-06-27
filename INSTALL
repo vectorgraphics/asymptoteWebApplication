@@ -13,7 +13,7 @@ Pre Application Install
 Asymptote Web Application Installation
 ======================================
 
-Install node modules and application dependencies with 
+Install node modules and application dependencies with
    
     make
 
@@ -34,11 +34,11 @@ There are two modes for running this application:
 
         http://localhost:80
 
-2. Running only the front-end part of the application 
+2. Running only the front-end part of the application
    ==================================================
-    This mode is mainly used for development of the GUI aspects to 
+    This mode is mainly used for development of the GUI aspects to
     see if any change made to CSS or Javascript is working as it is 
-    meant to be. While running the application in this mode, no 
+    meant to be. While running the application in this mode, no
     communication can be made to the server. The application will be 
     automatically launched on a localhost service.
 
