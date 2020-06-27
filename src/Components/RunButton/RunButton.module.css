@@ -59,7 +59,7 @@
     height: 1rem;
     top: 15%;
     left: 82.5%;
-    background-image: url(./loading.png);
+    background-image: url(../../assets/loading.png);
     background-repeat: no-repeat;
     background-size: contain;
     animation: loaderAnimation 1s infinite steps(8);
