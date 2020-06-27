@@ -256,7 +256,6 @@ const preRun = function(req, res, next, dirname){
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const removeUsrDir = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
-    console.log(dest.usrAbsDirPath);
     removeDir(dest.usrAbsDirPath);
 }
 

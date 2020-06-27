@@ -13,9 +13,9 @@ Pre Application Install
 Asymptote Web Application Installation
 ======================================
 
-Install all node modules and application dependencies with 
+Install node modules and application dependencies with 
    
-    make all
+    make
 
 
 -----------------------------------------------------------------
