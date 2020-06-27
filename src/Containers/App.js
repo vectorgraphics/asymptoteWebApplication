@@ -51,7 +51,7 @@ const App = ContainerConstructor(class extends Component {
           </div>
 
           <div className={cssStyle.homeLink} onClick={(event) => link.click()} >
-            <a ref={(a)=> link = a}  href="https://asymptote.sourceforge.io/" target="_"></a>
+            <a ref={(a)=> link = a}  href="https://asymptote.sourceforge.io/" target="_"> </a>
           </div>
         </div>
   
