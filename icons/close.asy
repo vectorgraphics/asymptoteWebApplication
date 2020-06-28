@@ -1,6 +1,6 @@
 size(20,20);
 
-pen p=rgb(1,72/255,72/255);
+pen p=rgb(1,0.5,0.5);
 
 usepackage("bm");
 label("$\bm{\times}$",(0,0),p);
