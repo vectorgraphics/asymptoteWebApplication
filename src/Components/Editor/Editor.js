@@ -19,13 +19,11 @@ const instructionText = "TO START CODING, FIRST CREATE A NEW WORKSPACE!";
 const Editor = ContainerConstructor((props) => {
     const currentWorkspace = workspaceInspector(props);
     return (
-        <Fragment >
-                <textarea 
-                className={cssStyle.textarea} name="editor" placeholder={(currentWorkspace.id !== null)? codingText: instructionText} 
-                disabled={currentWorkspace.id === null} value={currentWorkspace.codeText}
-                onChange={(event) => props.updateTextareaContent(currentWorkspace.id, event.target.value)}
-                ></textarea>
-        </Fragment>
+        <textarea 
+        className={cssStyle.textarea} name="editor" placeholder={(currentWorkspace.id !== null)? codingText: instructionText} 
+        disabled={currentWorkspace.id === null} value={currentWorkspace.codeText}
+        onChange={(event) => props.updateTextareaContent(currentWorkspace.id, event.target.value)}
+        ></textarea>             
     );
     
 })   

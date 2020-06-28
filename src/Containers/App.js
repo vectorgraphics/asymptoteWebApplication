@@ -16,6 +16,7 @@ import WorkspacePane from '../Components/WorkspacePane/WorkspacePane';
 import CodePaneHeader from '../Components/CodePaneHeader/CodePaneHeader';
 import OutputPaneHeader from '../Components/OutputPaneHeader/OutputPaneHeader';
 import Editor from '../Components/Editor/Editor';
+import Terminal from '../Components/Terminal/Terminal';
 import Output from '../Components/Output/Output';
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
@@ -61,6 +62,7 @@ const App = ContainerConstructor(class extends Component {
             <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.codePane)? {display: "flex"}: {display: "none"}}>
               <CodePaneHeader/>
               <Editor/>
+              <Terminal/>
             </div>
             <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.outputPane)? {display: "flex"}: {display: "none"}}>
               <OutputPaneHeader/>

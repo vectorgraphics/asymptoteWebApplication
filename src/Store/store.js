@@ -54,15 +54,15 @@ export const actionFact = {
                 } 
             }
         } else if(name === "output"){
-                return {
-                    type: actionTypes.update,
-                    id: id,
-                    outputOption: {
-                       checked: isChecked,
-                       disabled: status
-                    } 
-                }
+            return {
+                type: actionTypes.update,
+                id: id,
+                outputOption: {
+                    checked: isChecked,
+                    disabled: status
+                } 
             }
+        }
     },
     selectFormat : function(id, value){
         return {
@@ -83,6 +83,15 @@ export const actionFact = {
             type: actionTypes.update,
             id: id,
             codeText: textValue
+        }        
+    },
+    updateTerminalText : function(id, textValue){
+        return {
+            type: actionTypes.update,
+            id: id,
+            output: {
+                stdoutText: textValue
+            }
         }        
     },
     corePanesDisplay : function(id, status){
@@ -140,12 +149,13 @@ export const workspaces = (state = [], action) => {
                     outformat: "html",
                     codeText: "",
                     output: {
-                        outformat: "html",
                         responsType: null,
+                        outformat: "html",
                         errorType: null,
                         errorCode: null,
                         errorText: null,
                         response: "",
+                        stdoutText: "",
                         isUpdated: false
                     },
                     corePanesDisplay: {

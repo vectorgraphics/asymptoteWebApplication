@@ -9,7 +9,7 @@ const processKillManager = serverUtil.processKillManager;
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandel = ";"
-const serverTimeout = 60000        //  in milliseconds
+const serverTimeout = 60000;        //  in milliseconds
 
 const run = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
@@ -22,13 +22,15 @@ const run = function(req, res, next, dirname){
     const isUpdated = req.body.isUpdated;
     const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".html";
 
+    let runStdoutText = "";
+    let preRunStdoutText = "";
+
     if (fs.existsSync(outputFileToRemove)){
         fs.unlinkSync(outputFileToRemove);
     }
 
     fs.writeFile(codeFilePath, req.body.codeText, (err) => {
         if (err){
-            console.log(err);
             const result = {
                 responseType: "Error",
                 errorType: "An error occurred inside the server while writing the asy file to the disk!",
@@ -56,17 +58,7 @@ const run = function(req, res, next, dirname){
             })
 
             runChildProcess.stdout.on('data', function (chunk) {
-                clearTimeout(timeoutHandel);
-                let stdoutText = "";
-                stdoutText += chunk.toString();
-                const result = {
-                    responseType: "Stdout",
-                    errorType: null,
-                    errorCode: null,
-                    response: stdoutText,
-                    status: "",
-                };                
-                res.send(result);
+                runStdoutText += chunk.toString();
             })
 
             runChildProcess.stderr.on('data', function (chunk) {
@@ -87,6 +79,7 @@ const run = function(req, res, next, dirname){
                 if (code === 0){
                     const result = {
                         responseType: "OutputFile_Generated",
+                        stdoutText: runStdoutText,
                         errorType: null,
                         errorCode: null,
                         response: dest.usrRelDirPath + "/" + codeFilename + ".html",
@@ -272,7 +265,6 @@ const removeUsrDir = function(req, res, next, dirname){
 exports.reqToRes = function(dirname){
     return function(req, res, next){
         const reqType = req.body.reqType;
-//        console.log(reqType);
         if(reqType === "load"){
             const dest = usrDirMgr(req, dirname);
             if (!fs.existsSync(dest.usrAbsDirPath)) {

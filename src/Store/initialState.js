@@ -17,12 +17,13 @@ const initialState = {
             outformat: "html",
             codeText: "",
             output: {
-                outformat: "html",
                 responsType: null,
+                outformat: "html",
                 errorType: null,
                 errorCode: null,
                 errorText: null,
                 response: "",
+                stdoutText: "",
                 isUpdated: false
             },
             corePanesDisplay: {
