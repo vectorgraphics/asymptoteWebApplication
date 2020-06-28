@@ -5,11 +5,11 @@ vpath %.html public
 
 ASY_ICONS=$(wildcard icons/*.asy)
 
-all:  $(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html
+all:
 	npm install
 	$(MAKE) rebuild
 
-rebuild:
+rebuild: $(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html
 	npm run build
 
 run:
