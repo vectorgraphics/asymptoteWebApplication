@@ -26,10 +26,10 @@ const Outformats = ContainerConstructor((props) => {
             <Fragment key={index} >
                 <label className={cssStyle.label} htmlFor="outformat"> {format} </label>
                 <div>
-                    <input onChange = {(event)=> props.selectFormat(currentWorkspace.id, event.target.value)}
-                    className={cssStyle.input} type="radio" name="outformat" value={format} 
+                    <input className={cssStyle.input} type="radio" name="outformat" value={format}   
                     checked={currentWorkspace.outformat === format}
                     disabled={(noWorkspace || emptyEditor || outputOptionNotChecked)}
+                    onChange = {(event)=> props.selectFormat(currentWorkspace.id, event.target.value)}
                     />
                 </div>
             </Fragment>

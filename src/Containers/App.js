@@ -8,6 +8,7 @@ import {workspaceInspector} from '../Util/util';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import ToggleKey from '../Components/ToggleKey/ToggleKey';
 import RunButton from '../Components/RunButton/RunButton';
+import RunStopButton from '../Components/RunStopButton/RunStopButton';
 import DownloadButton from '../Components/DownloadButton/DownloadButton';
 import Options from '../Components/Options/Options';
 import Outformats from '../Components/Outformats/Outformats';
@@ -29,7 +30,7 @@ const ContainerConstructor = connect ((store) => ({
 const App = ContainerConstructor(class extends Component {
 
   render(){
-    console.log(store.getState());
+    // console.log(store.getState());
     const currentWorkspace = workspaceInspector(this.props);
     let link = null;
 
@@ -41,7 +42,7 @@ const App = ContainerConstructor(class extends Component {
           </div>
 
           <div className={cssStyle.menuBar}>
-            <RunButton cssClass={cssStyle.controls}/>
+            <RunStopButton cssClass={cssStyle.controls}/>
             <div className={cssStyle.downloadPanel}>
               <div className={cssStyle.subcomponentContainer}> <DownloadButton/> </div>
               <div className={cssStyle.subcomponentContainer}> <Options/> </div>

@@ -2,12 +2,12 @@
     flex: 1 1 0;
     margin: 0.125rem;
     margin-left: 0.5rem;
-    line-height: 1.5rem;
 }
 .input{
     flex: 1 1 0;
     min-width: 2rem;
-    vertical-align: bottom;
+    margin: 0;;
+    vertical-align: middle;
 }
 .label::selection, .input::selection{
     background-color: transparent;

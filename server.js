@@ -69,8 +69,8 @@ app.route("/static/media/" + mediaDir[5])
 app.route("/static/media/" + mediaDir[6])
 .get(express.static(__dirname + "/build"));
 
-app.route("/manifest.json")
-.get(express.static(__dirname + "/build"));
+// app.route("/manifest.json")
+// .get(express.static(__dirname + "/build"));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REQUEST BY IFRAME
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,4 +89,4 @@ app.use("/clients", function(req, res, next){
 app.route("/clients")
 .post(bodyParser.json(), downloadReq(__dirname));
 
-app.listen(80);
+app.listen(3000);

@@ -8,6 +8,7 @@ const processKillManager = serverUtil.processKillManager;
 
 let runChildProcess = "";
 let preRunChildProcess = "";
+let timeoutHandel = ";"
 const serverTimeout = 60000        //  in milliseconds
 
 const run = function(req, res, next, dirname){
@@ -41,9 +42,10 @@ const run = function(req, res, next, dirname){
                 cwd: dest.usrAbsDirPath,
             }
             runChildProcess = childProcess.spawn('asy', ['-noV', '-f', 'html', codeFile], runChildProcessOption);
-            const timeoutHandel = processKillManager(res, runChildProcess, serverTimeout);;
+            timeoutHandel = processKillManager(res, runChildProcess, serverTimeout);;
 
             runChildProcess.on('error', function (error) {
+                clearTimeout(timeoutHandel);
                 const result = {
                     responseType: "Error",
                     errorType: "An internal error!",
@@ -54,6 +56,7 @@ const run = function(req, res, next, dirname){
             })
 
             runChildProcess.stdout.on('data', function (chunk) {
+                clearTimeout(timeoutHandel);
                 let stdoutText = "";
                 stdoutText += chunk.toString();
                 const result = {
@@ -67,6 +70,7 @@ const run = function(req, res, next, dirname){
             })
 
             runChildProcess.stderr.on('data', function (chunk) {
+                clearTimeout(timeoutHandel);
                 let stderrText = "";
                 stderrText += chunk.toString();
                 const result = {
@@ -97,7 +101,8 @@ const run = function(req, res, next, dirname){
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     abort
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const abort = function(req, res, next, dirname){
+const abort = function(req, res, next, dirname, timeoutHandel){
+    clearTimeout(timeoutHandel);
     (req.body.abortRequestFor === "Run")? runChildProcess.kill() : preRunChildProcess.kill();
     const result = {
         responseType: "Process_Terminated",
@@ -186,9 +191,10 @@ const preRun = function(req, res, next, dirname){
                         cwd: dest.usrAbsDirPath
                     }
                     preRunChildProcess = childProcess.spawn('asy', ['-noV', '-f', requestedOutformat, codeFile], preRunChildProcessOption);
-                    const timeoutHandel = processKillManager(res, preRunChildProcess, serverTimeout);
+                    timeoutHandel = processKillManager(res, preRunChildProcess, serverTimeout);
 
                     preRunChildProcess.on('error', function (error) {
+                        clearTimeout(timeoutHandel);
                         const result = {
                             responseType: "Error",
                             errorType: "An internal error!",
@@ -199,6 +205,7 @@ const preRun = function(req, res, next, dirname){
                     })
                     
                     preRunChildProcess.stdout.on('data', function (chunk) {
+                        clearTimeout(timeoutHandel);
                         let stdoutText = "";
                         stdoutText += chunk.toString();
                         const result = {
@@ -211,6 +218,7 @@ const preRun = function(req, res, next, dirname){
                     })
 
                     preRunChildProcess.stderr.on('data', function (chunk) {
+                        clearTimeout(timeoutHandel);
                         let stderrText = "";
                         stderrText += chunk.toString();
                         const result = {
@@ -264,6 +272,7 @@ const removeUsrDir = function(req, res, next, dirname){
 exports.reqToRes = function(dirname){
     return function(req, res, next){
         const reqType = req.body.reqType;
+        console.log(reqType);
         if(reqType === "load"){
             const dest = usrDirMgr(req, dirname);
             if (!fs.existsSync(dest.usrAbsDirPath)) {
@@ -272,7 +281,7 @@ exports.reqToRes = function(dirname){
         }else if(reqType === "run"){
             run(req, res, next, dirname);
         }else if(reqType === "abort"){
-            abort(req, res, next, dirname);
+            abort(req, res, next, dirname, timeoutHandel);
         }else if(reqType === "preRun"){
             preRun(req, res, next, dirname)
         }else if(reqType === "unload"){
