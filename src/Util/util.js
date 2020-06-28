@@ -110,11 +110,13 @@ export const workspaceInspector = function(props){
             }, 
             codeText: "",
             output: {
+                responseType: null,
                 outformat: "",
                 errorType: null,
                 errorCode: null,
                 errorText: null,
                 response:  null,
+                stdoutText: "",
                 isUpdated: false
             },
             corePanesDisplay: {

@@ -67,6 +67,7 @@ const run = function(req, res, next, dirname){
                 stderrText += chunk.toString();
                 const result = {
                     responseType: "Error",
+                    stdoutText: "",
                     errorType: "Stderr",
                     errorCode: "1",
                     response: stderrText,
@@ -131,7 +132,7 @@ const preRun = function(req, res, next, dirname){
         // console.log("in partial mode")
         fs.writeFile(codeFilePath, req.body.codeText, (err) => {
             if (err){
-                console.log(err);
+                // console.log(err);
                 const result = {
                     responseType: "Error",
                     errorType: "An error occurred inside the server while writing the asy file to the disk!",
@@ -170,7 +171,7 @@ const preRun = function(req, res, next, dirname){
             }
             fs.writeFile(codeFilePath, req.body.codeText, (err) => {
                 if (err){
-                    console.log(err);
+                    // console.log(err);
                     const result = {
                         responseType: "Error",
                         errorType: "An error occurred inside the server while writing asy file to the disk!",

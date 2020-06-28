@@ -8,6 +8,7 @@ import {workspaceInspector} from '../../Util/util'
 const ContainerConstructor = connect((store) => ({workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace}),
 {
     renameWorkspace: actionFact.renameWorkspace,
+    selectWorkspace: actionFact.selectWorkspace,
 })
 
 const selectedTextColor = "rgb(255, 128, 128)";
