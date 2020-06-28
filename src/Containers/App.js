@@ -7,7 +7,6 @@ import {workspaceInspector} from '../Util/util';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 COMPONENTS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import ToggleKey from '../Components/ToggleKey/ToggleKey';
-import RunButton from '../Components/RunButton/RunButton';
 import RunStopButton from '../Components/RunStopButton/RunStopButton';
 import DownloadButton from '../Components/DownloadButton/DownloadButton';
 import Options from '../Components/Options/Options';
