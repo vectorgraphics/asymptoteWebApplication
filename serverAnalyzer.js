@@ -272,7 +272,7 @@ const removeUsrDir = function(req, res, next, dirname){
 exports.reqToRes = function(dirname){
     return function(req, res, next){
         const reqType = req.body.reqType;
-        console.log(reqType);
+//        console.log(reqType);
         if(reqType === "load"){
             const dest = usrDirMgr(req, dirname);
             if (!fs.existsSync(dest.usrAbsDirPath)) {
