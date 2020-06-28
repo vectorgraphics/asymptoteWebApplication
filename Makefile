@@ -7,6 +7,9 @@ ASY_ICONS=$(wildcard icons/*.asy)
 
 all:  $(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html
 	npm install
+	$(MAKE) rebuild
+
+rebuild:
 	npm run build
 
 run:

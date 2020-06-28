@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import cssStyle from './Editor.module.css';
 import {connect} from 'react-redux';
 import {actionFact} from "../../Store/store";
