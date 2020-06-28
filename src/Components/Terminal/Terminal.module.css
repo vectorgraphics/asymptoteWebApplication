@@ -8,9 +8,15 @@
 .closeBtn{
     display: block;
     font-family: inherit;
+    width: 1rem;
+    height: 1rem;
     border: none;
     outline: none;
-    background-color: rgb(104, 104, 104);
+    background-color: rgb(45, 45, 45);
+    border: 1px solid rgb(104, 104, 104);
+    background-image: url(../../assets/close.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 .textarea{
     flex: 2 1 0;

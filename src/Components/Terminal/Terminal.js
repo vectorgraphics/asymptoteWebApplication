@@ -24,7 +24,7 @@ const Editor = ContainerConstructor((props) => {
                     onClick={(event) => {
                         props.updateTerminalText(currentWorkspace.id, "");
                     }}
-                    >close</button>
+                    />
                 </div>
                 <textarea className={cssStyle.textarea} name="terminal" value={stdoutText}></textarea>
             </Fragment>
