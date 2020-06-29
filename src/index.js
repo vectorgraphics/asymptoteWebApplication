@@ -5,8 +5,8 @@ import store from './Store/store';
 import {Ajax} from './Util/util';
 import App from './Containers/App';
 import './index.css';
-// let pingMilliseconds = 600000;
-let pingMilliseconds = 6000;
+let pingMilliseconds = 600000;
+// let pingMilliseconds = 6000;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      SETTING USER DIR & PINGING
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
