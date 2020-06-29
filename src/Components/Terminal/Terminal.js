@@ -16,13 +16,16 @@ const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces,
 const Editor = ContainerConstructor((props) => {
     const currentWorkspace = workspaceInspector(props);
     const stdoutText = currentWorkspace.output.stdoutText;
+
     if(stdoutText !== ""){
         return (
             <Fragment > 
                 <div className={cssStyle.terminalHeader}>
                     <button className={cssStyle.closeBtn}
                     onClick={(event) => {
-                        props.updateTerminalText(currentWorkspace.id, "");
+                        const outputObj = currentWorkspace.output;
+                        outputObj.stdoutText = "";
+                        props.updateTerminalText(currentWorkspace.id, outputObj);
                     }}
                     />
                 </div>

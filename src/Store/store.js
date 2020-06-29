@@ -85,13 +85,11 @@ export const actionFact = {
             codeText: textValue
         }        
     },
-    updateTerminalText : function(id, textValue){
+    updateTerminalText : function(id, value){
         return {
             type: actionTypes.update,
             id: id,
-            output: {
-                stdoutText: textValue
-            }
+            output: value
         }        
     },
     corePanesDisplay : function(id, status){
