@@ -72,7 +72,7 @@ const usrConnect = function(req, res, next, dirname){
 const ping = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
     let date = new Date();
-    var pingArrivedTime = Math.floor(date.getTime() / 1000).toString();
+    var pingArrivedTime = Math.floor(date.getTime() / 1000).toString() + "\n";
     const pingFilePath = dest.usrAbsDirPath + "/ping";
     fs.writeFile(pingFilePath, pingArrivedTime, (err) => {
         if(err){
