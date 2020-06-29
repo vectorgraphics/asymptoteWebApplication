@@ -10,7 +10,7 @@ const processKillManager = serverUtil.processKillManager;
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandel = "";
-const serverTimeout = 60000;        //  in milliseconds
+const serverTimeout = 600000;        //  in milliseconds
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   reqToRes
