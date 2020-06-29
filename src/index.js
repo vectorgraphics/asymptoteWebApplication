@@ -5,6 +5,7 @@ import store from './Store/store';
 import {Ajax} from './Util/util';
 import App from './Containers/App';
 import './index.css';
+let pingMilliseconds=600000;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  SETTING & CLEANING UP USER DIR
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,7 +22,7 @@ window.addEventListener("load", (event) => {
           };
           const dataJSON = JSON.stringify(data);
           Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {})
-        }, 600000)
+        }, pingMilliseconds)
       }
     })
 })

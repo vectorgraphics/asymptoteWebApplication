@@ -57,7 +57,6 @@ const usrConnect = function(req, res, next, dirname){
       time: dateAndTime.time,
     };
 
-    console.log(rawData);
     const dataJson = JSON.stringify(rawData);
     const logFilePath = dirname + "/logs/log.txt";
     fs.appendFile(logFilePath, dataJson, (err) =>{
