@@ -10,17 +10,20 @@ import './index.css';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 window.addEventListener("load", (event) => {
     const data = {
-      reqType: "load"
+      reqType: "usrConnect"
     };
     const dataJSON = JSON.stringify(data);
-    Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {})
-})
-window.addEventListener("unload", (event) => {
-    const data = {
-      reqType: "unload"
-    };
-    const dataJSON = JSON.stringify(data);
-    Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {})
+    Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {
+      if (response === "UDIC"){
+        setInterval(() => {
+          const data = {
+            reqType: "ping"
+          };
+          const dataJSON = JSON.stringify(data);
+          Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {})
+        }, 600000)
+      }
+    })
 })
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  REACT-DOM RENDER

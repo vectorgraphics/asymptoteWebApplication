@@ -4,13 +4,100 @@ const serverUtil = require('./serverUtil');
 
 const usrDirMgr = serverUtil.usrDirMgr;
 const removeDir = serverUtil.removeDir;
+const dateTime = serverUtil.dateTime;
 const processKillManager = serverUtil.processKillManager;
 
 let runChildProcess = "";
 let preRunChildProcess = "";
-let timeoutHandel = ";"
+let timeoutHandel = "";
 const serverTimeout = 60000;        //  in milliseconds
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   reqToRes
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+exports.reqToRes = function(dirname){
+    return function(req, res, next){
+        const reqType = req.body.reqType;
+        if(reqType === "usrConnect"){
+            usrConnect(req, res, next, dirname)
+        }else if(reqType === "run"){
+            run(req, res, next, dirname);
+        }else if(reqType === "abort"){
+            abort(req, res, next, dirname, timeoutHandel);
+        }else if(reqType === "preRun"){
+            preRun(req, res, next, dirname)
+        }else if(reqType === "ping"){
+            ping(req, res, next, dirname)
+        // }else if(reqType === "unload"){
+        //     removeUsrDir(req, res, next, dirname)
+        }
+    }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               removeUsrDir
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const removeUsrDir = function(req, res, next, dirname){
+    const dest = usrDirMgr(req, dirname);
+    removeDir(dest.usrAbsDirPath);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 usrConnect
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const usrConnect = function(req, res, next, dirname){
+    const dest = usrDirMgr(req, dirname);
+    if (!fs.existsSync(dest.usrAbsDirPath)) {
+        fs.mkdirSync(dest.usrAbsDirPath);
+    }
+
+    const dateAndTime = dateTime();
+    const rawData = {
+      usrIP: req.connection.remoteAddress,
+      usrDir: dest.usrDirName,
+      date: dateAndTime.date,
+      time: dateAndTime.time,
+    };
+
+    console.log(rawData);
+    const dataJson = JSON.stringify(rawData);
+    const logFilePath = dirname + "/logs/log.txt";
+    fs.appendFile(logFilePath, dataJson, (err) =>{
+        if (err) {
+            console.log("error in writing log file");
+        }
+    })
+    res.send("UDIC");
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const ping = function(req, res, next, dirname){
+    const dest = usrDirMgr(req, dirname);
+    let date = new Date();
+    var pingArrivedTime = Math.floor(date.getTime() / 1000).toString();
+    const pingFilePath = dest.usrAbsDirPath + "/ping.txt";
+    fs.writeFile(pingFilePath, pingArrivedTime, (err) => {
+        if(err){
+            console.log("error in writing ping file");
+        }
+    });
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const abort = function(req, res, next, dirname, timeoutHandel){
+    clearTimeout(timeoutHandel);
+    (req.body.abortRequestFor === "Run")? runChildProcess.kill() : preRunChildProcess.kill();
+    const result = {
+        responseType: "Process_Terminated",
+        errorType: null,
+        errorCode: null,
+        response: "Process was terminated on the server for timeout",
+    }
+    res.send(result);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                        run
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const run = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
 
@@ -36,7 +123,6 @@ const run = function(req, res, next, dirname){
                 errorType: "An error occurred inside the server while writing the asy file to the disk!",
                 errorCode: err.code,
                 response: err.toString(),
-                status: "No-Retry",
             }
             res.send(result);
         }else{
@@ -78,34 +164,32 @@ const run = function(req, res, next, dirname){
             runChildProcess.on('exit', function (code) {
                 clearTimeout(timeoutHandel);
                 if (code === 0){
-                    const result = {
-                        responseType: "OutputFile_Generated",
-                        stdoutText: runStdoutText,
-                        errorType: null,
-                        errorCode: null,
-                        response: dest.usrRelDirPath + "/" + codeFilename + ".html",
-                        status: "Output_Saved",
-                        isUpdated: !isUpdated
-                    };
+                    const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
+                    if (fs.existsSync(outputFilePath)) {
+                        var result = {
+                            responseType: "OutputFile_Generated",
+                            errorType: null,
+                            errorCode: null,
+                            response: dest.usrRelDirPath + "/" + codeFilename + ".html",
+                            stdoutText: runStdoutText,
+                            status: "Output_Saved",
+                            isUpdated: !isUpdated
+                        };
+                    } else {
+                        var result = {
+                            responseType: "NoOutput_Generated",
+                            errorType: null,
+                            errorCode: null,
+                            response: "",
+                            stdoutText: runStdoutText,
+                            status: "NoOutput",
+                        };
+                    }                
                     res.send(result);
                 }
             })
         }
     });
-}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     abort
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const abort = function(req, res, next, dirname, timeoutHandel){
-    clearTimeout(timeoutHandel);
-    (req.body.abortRequestFor === "Run")? runChildProcess.kill() : preRunChildProcess.kill();
-    const result = {
-        responseType: "Process_Terminated",
-        errorType: null,
-        errorCode: null,
-        response: "Process was terminated on the server for timeout",
-        status: "No-Retry",
-    }
-    res.send(result);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     preRun
@@ -250,35 +334,6 @@ const preRun = function(req, res, next, dirname){
                     })
                 }
             });
-        }
-    }
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               removeUsrDir
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const removeUsrDir = function(req, res, next, dirname){
-    const dest = usrDirMgr(req, dirname);
-    removeDir(dest.usrAbsDirPath);
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   reqToRes
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-exports.reqToRes = function(dirname){
-    return function(req, res, next){
-        const reqType = req.body.reqType;
-        if(reqType === "load"){
-            const dest = usrDirMgr(req, dirname);
-            if (!fs.existsSync(dest.usrAbsDirPath)) {
-                fs.mkdirSync(dest.usrAbsDirPath);
-            }
-        }else if(reqType === "run"){
-            run(req, res, next, dirname);
-        }else if(reqType === "abort"){
-            abort(req, res, next, dirname, timeoutHandel);
-        }else if(reqType === "preRun"){
-            preRun(req, res, next, dirname)
-        }else if(reqType === "unload"){
-            removeUsrDir(req, res, next, dirname)
         }
     }
 }

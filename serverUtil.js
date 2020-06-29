@@ -6,7 +6,7 @@ const SHA1 = require("crypto-js/sha1");
 const usrDirMgr = function(req, serverDir){
     const usrDirName = SHA1(req.connection.remoteAddress); 
      return {
-        usrDirName: usrDirName,
+        usrDirName: usrDirName + "",
         usrDirPath: '/' + usrDirName,
         usrRelDirPath: '/clients/' + usrDirName,
         usrAbsDirPath: serverDir + '/clients/' + usrDirName,
@@ -19,6 +19,28 @@ const dirCheck = function(req, dirname){
     const dest = usrDirMgr(req, dirname);
     if(!fs.existsSync(dest.usrAbsDirPath)){
         fs.mkdirSync(dest.usrAbsDirPath);
+    }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                date & time
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const dateTime = function(){
+    const dateObject = new Date();
+
+    const year = dateObject.getFullYear();
+    const month = dateObject.getMonth() + 1;
+    const day = dateObject.getDate();
+
+    const hour = dateObject.getHours();
+    const minute = dateObject.getMinutes();
+    const second = dateObject.getSeconds();
+
+    const date = year + "/" + month + "/" + day;
+    const time = hour + ":" + minute + ":" + second;
+
+    return {
+        date: date,
+        time: time
     }
 }
 
@@ -63,6 +85,7 @@ module.exports = {
     usrDirMgr: usrDirMgr,
     dirCheck: dirCheck,
     removeDir: removeDir,
+    dateTime: dateTime,
     processKillManager: processKillManager
 }
 
