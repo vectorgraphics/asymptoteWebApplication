@@ -5,9 +5,10 @@ import store from './Store/store';
 import {Ajax} from './Util/util';
 import App from './Containers/App';
 import './index.css';
-let pingMilliseconds=600000;
+// let pingMilliseconds = 600000;
+let pingMilliseconds = 6000;
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  SETTING & CLEANING UP USER DIR
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      SETTING USER DIR & PINGING
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 window.addEventListener("load", (event) => {
     const data = {

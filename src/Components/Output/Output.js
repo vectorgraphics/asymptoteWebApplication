@@ -15,9 +15,7 @@ const Output = ContainerConstructor((props) => {
             return (
                 <div className={cssStyle.outputElse}> 
                     <div>
-                        <h4> Error Type: </h4>
-                            <p> {currentWorkspace.output.errorType} </p>
-                        <h4> Error Text: </h4>
+                        <h4> Error: </h4>
                             <p> {currentWorkspace.output.response} </p>
                     </div>
                 </div>

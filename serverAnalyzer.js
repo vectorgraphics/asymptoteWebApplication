@@ -57,8 +57,8 @@ const usrConnect = function(req, res, next, dirname){
       time: dateAndTime.time,
     };
 
-    const dataJson = JSON.stringify(rawData);
-    const logFilePath = dirname + "/logs/log.txt";
+    const dataJson = JSON.stringify(rawData) + "\n";
+    const logFilePath = dirname + "/logs/log";
     fs.appendFile(logFilePath, dataJson, (err) =>{
         if (err) {
             console.log("error in writing log file");
@@ -73,12 +73,13 @@ const ping = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
     let date = new Date();
     var pingArrivedTime = Math.floor(date.getTime() / 1000).toString();
-    const pingFilePath = dest.usrAbsDirPath + "/ping.txt";
+    const pingFilePath = dest.usrAbsDirPath + "/ping";
     fs.writeFile(pingFilePath, pingArrivedTime, (err) => {
         if(err){
             console.log("error in writing ping file");
         }
     });
+    res.send("");
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
