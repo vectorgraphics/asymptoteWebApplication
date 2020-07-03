@@ -14,17 +14,20 @@ const initialState = {
                 checked: true,
                 disabled: false,
             },
-            outformat: "html",
             codeText: "",
+            outformat: "html",
             output: {
-                responsType: null,
-                outformat: "html",
+                responseType: null,
                 errorType: null,
-                errorCode: null,
                 errorText: null,
-                response: "",
-                stdoutText: "",
-                isUpdated: false
+                errorCode: null,
+                errorContent: null,
+                stdin: "",
+                stdout: "",
+                stderr: "",
+                entryExists: false,
+                isUpdated: false,
+                path: ""
             },
             corePanesDisplay: {
                 codePane: true,

@@ -6,7 +6,8 @@ import {workspaceInspector} from "../../Util/util";
 
 const Containerconstructor = connect((store) => ({workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace}),
 {
-    corePanesDisplay: actionFact.corePanesDisplay
+    corePanesDisplay: actionFact.corePanesDisplay,
+    refetchIframe: actionFact.refetchIframe,
 })
 
 const CorePaneHeader = Containerconstructor((props) => {
@@ -18,6 +19,9 @@ const CorePaneHeader = Containerconstructor((props) => {
                     const newValue = !currentWorkspace.corePanesDisplay.codePane;
                     if (currentWorkspace.id !== null){
                         props.corePanesDisplay(currentWorkspace.id, {codePane: newValue, outputPane: true});
+                        const newOutput = currentWorkspace.output;
+                        newOutput.isUpdated = !newOutput.isUpdated;
+                        props.refetchIframe(currentWorkspace.id, newOutput);
                     }
                 }
             }

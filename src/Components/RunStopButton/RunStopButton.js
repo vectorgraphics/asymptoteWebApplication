@@ -13,7 +13,6 @@ const inactiveColor = "rgb(119, 136, 153)";
 const activeColor = "rgb(200, 200, 200)";
 
 const RunStopButton = ContainerConstructor(class extends Component {
-
     constructor(props){
         super(props);
         this.state = {

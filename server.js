@@ -13,7 +13,7 @@ var jsBuiltFile2 = fs.readdirSync( __dirname + "/build/static/js")[3];
 var cssBuiltFile = fs.readdirSync( __dirname + "/build/static/css")[0];
 var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% APPLICATION ROUTS
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Application Routs
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 const app = express();
@@ -72,7 +72,7 @@ app.route("/static/media/" + mediaDir[6])
 // app.route("/manifest.json")
 // .get(express.static(__dirname + "/build"));
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REQUEST BY IFRAME
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 app.use("/clients", function(req, res, next){
@@ -89,4 +89,26 @@ app.use("/clients", function(req, res, next){
 app.route("/clients")
 .post(bodyParser.json(), downloadReq(__dirname));
 
-app.listen(80);
+app.listen(3000);
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Error Handelling
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+process.on("uncaughtException", (err) => {
+
+    const diagnose = {
+        errorType: "An uncaught error moved to the top of the stack!",
+        exception: err,
+        errorStack: err.stack,
+    },
+    diagnoseJSON = JSON.stringify(diagnose);
+    const dest = __dirname + "/logs/uncaughtException"
+    if (err){
+        fs.writeFile(dest, diagnoseJSON, (err) =>{
+            if (err){
+                console.log("Error happened while writing uncaughtException file into disk!");
+            }
+        })
+    }
+})
+
+

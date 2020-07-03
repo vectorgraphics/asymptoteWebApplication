@@ -10,48 +10,39 @@ const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces,
 const Output = ContainerConstructor((props) => {
     const currentWorkspace = workspaceInspector(props);
 
-    if(currentWorkspace.id !== null){
-        if(currentWorkspace.output.responseType === "Error"){
+    if (currentWorkspace.id !== null) {
+        if(currentWorkspace.output.responseType === "ERROR"){
+            const errorText = (currentWorkspace.output.stderr !== "") ? currentWorkspace.output.stderr : currentWorkspace.output.errorText;
+
             return (
                 <div className={cssStyle.outputElse}> 
                     <div>
                         <h4> Error: </h4>
-                            <p> {currentWorkspace.output.response} </p>
+                            <p> {errorText} </p>
                     </div>
                 </div>
             )
-        } else if (currentWorkspace.output.status === "PreRun_No_Output") {
+        } else if (currentWorkspace.output.responseType === "NO_OUTPUT_FILE") {
             return (
                 <div className={cssStyle.outputElse}>
                     <div>
-                        <h4> User Action: </h4>
-                        <p> Output file download request </p>
-                        <h4> Status: </h4>
-                        <p> The code did not generate any output. </p>
+                        <h4> Warning: </h4>
+                        <p> The code did not generate any output file. </p>
                     </div>
                 </div>
             )
-        } else if (currentWorkspace.output.responseType === "Process_Terminated") {
-            return (
-                <div className={cssStyle.outputElse}>
-                    <div>
-                        <h4> Error: </h4>
-                        <p> {currentWorkspace.output.response} </p>
-                    </div>
-                </div>
-            )
-        }else{
+        } else {
             let string = (currentWorkspace.output.isUpdated)? " ": "";
             return(
-                    <iframe id="outFrame" className={cssStyle.outputPreview}
-                            src={string + currentWorkspace.output.response}
-                            width="100%" height="100%" title="outputFrame" frameBorder="0"/>
-                    )
-                }
-            } else {
-                return(
-                    <div className={cssStyle.outputPreview}> 
-                <iframe title="outputFrame" frameBorder="0"/>
+                <iframe id="outFrame" className={cssStyle.outputPreview}
+                        src={string + currentWorkspace.output.path}
+                        width="100%" height="100%" title="outputFrame" frameBorder="0"/>
+            )
+        }
+    } else {
+        return(
+            <div className={cssStyle.outputPreview}> 
+                {/* <iframe title="outputFrame" frameBorder="0"/> */}
             </div>
         )
     }

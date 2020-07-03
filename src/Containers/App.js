@@ -8,7 +8,7 @@ import {workspaceInspector} from '../Util/util';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import ToggleKey from '../Components/ToggleKey/ToggleKey';
 import RunStopButton from '../Components/RunStopButton/RunStopButton';
-import DownloadButton from '../Components/DownloadButton/DownloadButton';
+import DownloadStopButton from '../Components/DownloadStopButton/DownloadStopButton';
 import Options from '../Components/Options/Options';
 import Outformats from '../Components/Outformats/Outformats';
 import ClearButton from '../Components/ClearButton/ClearButton';
@@ -44,7 +44,7 @@ const App = ContainerConstructor(class extends Component {
           <div className={cssStyle.menuBar}>
             <RunStopButton cssClass={cssStyle.controls}/>
             <div className={cssStyle.downloadPanel}>
-              <div className={cssStyle.subcomponentContainer}> <DownloadButton/> </div>
+              <div className={cssStyle.subcomponentContainer}> <DownloadStopButton/> </div>
               <div className={cssStyle.subcomponentContainer}> <Options/> </div>
               <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]}/> </div> 
             </div>

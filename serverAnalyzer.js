@@ -5,12 +5,29 @@ const serverUtil = require('./serverUtil');
 const usrDirMgr = serverUtil.usrDirMgr;
 const removeDir = serverUtil.removeDir;
 const dateTime = serverUtil.dateTime;
-const processKillManager = serverUtil.processKillManager;
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    Globals
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandel = "";
 const serverTimeout = 60000;        //  in milliseconds
+
+const ERR = {
+    ASY_WRITE: "ASY_WRITE_ERR",
+    ASY_CODE: "ASY_CODE_ERR",
+    CH_PROC: "CH_PROC_ERR",
+    CH_PROC_UNCAUGHT: "CH_PROC_UNCAUGHT_ERR",
+    PROCESS_TERMINATED: "PROCESSS_TERMINATED"
+}
+
+const OUT = {
+    ASY_FILE: "ASY_FILE",
+    NO_ASY_FILE: "NO_ASY_FILE",
+    OUTPUT_FILE: "OUTPUT_FILE",
+    NO_OUTPUT_FILE: "NO_OUTPUT_FILE",
+}
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   reqToRes
@@ -20,35 +37,26 @@ exports.reqToRes = function(dirname){
         const reqType = req.body.reqType;
         if(reqType === "usrConnect"){
             usrConnect(req, res, next, dirname)
-        }else if(reqType === "run"){
-            run(req, res, next, dirname);
+        } else if (reqType === "run" || reqType === "preDownloadRun"){
+            runDownload(req, res, next, dirname);
         }else if(reqType === "abort"){
             abort(req, res, next, dirname, timeoutHandel);
-        }else if(reqType === "preRun"){
-            preRun(req, res, next, dirname)
         }else if(reqType === "ping"){
             ping(req, res, next, dirname)
-        // }else if(reqType === "unload"){
-        //     removeUsrDir(req, res, next, dirname)
         }
     }
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               removeUsrDir
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const removeUsrDir = function(req, res, next, dirname){
-    const dest = usrDirMgr(req, dirname);
-    removeDir(dest.usrAbsDirPath);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 usrConnect
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const usrConnect = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
-    if (!fs.existsSync(dest.usrAbsDirPath)) {
-        fs.mkdirSync(dest.usrAbsDirPath);
+    const usrDir = dest.usrAbsDirPath;
+    if (fs.existsSync(usrDir)){
+        removeDir(usrDir);
     }
-
+    fs.mkdirSync(usrDir);
+    
     const dateAndTime = dateTime();
     const rawData = {
       usrIP: req.connection.remoteAddress,
@@ -57,9 +65,9 @@ const usrConnect = function(req, res, next, dirname){
       time: dateAndTime.time,
     };
 
-    const dataJson = JSON.stringify(rawData) + "\n";
+    const dataJSON = JSON.stringify(rawData) + "\n";
     const logFilePath = dirname + "/logs/log";
-    fs.appendFile(logFilePath, dataJson, (err) =>{
+    fs.appendFile(logFilePath, dataJSON, (err) =>{
         if (err) {
             console.log("error in writing log file");
         }
@@ -86,256 +94,225 @@ const ping = function(req, res, next, dirname){
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const abort = function(req, res, next, dirname, timeoutHandel){
     clearTimeout(timeoutHandel);
-    (req.body.abortRequestFor === "Run")? runChildProcess.kill() : preRunChildProcess.kill();
-    const result = {
-        responseType: "Process_Terminated",
-        errorType: null,
+    if (req.body.abortRequestFor === "Run"){
+        runChildProcess.kill()
+    } else if (req.body.abortRequestFor === "preRun") {
+        preRunChildProcess.kill();
+    }
+    const ajaxRes = {
+        responseType: "ERROR" ,
+        errorType: ERR.PROCESS_TERMINATED,
+        errorText: "Process was terminated.",
         errorCode: null,
-        response: "Process was terminated on the server for timeout",
+        errorContent: null,
+        stdin: "",
+        stdout: "",
+        stderr: "",
+        entryExists: false,
     }
-    res.send(result);
+    res.send(ajaxRes);
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                        run
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                runDownload
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const run = function(req, res, next, dirname){
-    const dest = usrDirMgr(req, dirname);
+const runDownload = function(req, res, next, dirname){
 
+    const dest = usrDirMgr(req, dirname);
+    const reqType = req.body.reqType;
     const workspaceId = req.body.workspaceId;
     const workspaceName = req.body.workspaceName;
-    const codeFilename = workspaceName + "_" + workspaceId;
-    const codeFile = codeFilename + ".asy";
-    const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
+    const codeOption = req.body.codeOption.checked;
+    const codeText = req.body.codeText;
+    const outputOption = req.body.outputOption.checked;
+    const requestedOutformat = req.body.requestedOutformat;
     const isUpdated = req.body.isUpdated;
-    const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-
-    let runStdoutText = "";
-    let preRunStdoutText = "";
-
-    if (fs.existsSync(outputFileToRemove)){
-        fs.unlinkSync(outputFileToRemove);
-    }
-
-    fs.writeFile(codeFilePath, req.body.codeText, (err) => {
-        if (err){
-            const result = {
-                responseType: "Error",
-                errorType: "An error occurred inside the server while writing the asy file to the disk!",
-                errorCode: err.code,
-                response: err.toString(),
-            }
-            res.send(result);
-        }else{
-            const runChildProcessOption = {
-                cwd: dest.usrAbsDirPath,
-            }
-            runChildProcess = childProcess.spawn('asy', ['-noV', '-f', 'html', codeFile], runChildProcessOption);
-            timeoutHandel = processKillManager(res, runChildProcess, serverTimeout);;
-
-            runChildProcess.on('error', function (error) {
-                clearTimeout(timeoutHandel);
-                const result = {
-                    responseType: "Error",
-                    errorType: "An internal error!",
-                    errorCode: error.code,
-                    response: error.toString(),
-                };
-                res.send(result);
-            })
-
-            runChildProcess.stdout.on('data', function (chunk) {
-                runStdoutText += chunk.toString();
-            })
-
-            runChildProcess.stderr.on('data', function (chunk) {
-                clearTimeout(timeoutHandel);
-                let stderrText = "";
-                stderrText += chunk.toString();
-                const result = {
-                    responseType: "Error",
-                    stdoutText: "",
-                    errorType: "Stderr",
-                    errorCode: "1",
-                    response: stderrText,
-                };
-                res.send(result);
-            }) 
-            
-            runChildProcess.on('exit', function (code) {
-                clearTimeout(timeoutHandel);
-                if (code === 0){
-                    const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-                    if (fs.existsSync(outputFilePath)) {
-                        var result = {
-                            responseType: "OutputFile_Generated",
-                            errorType: null,
-                            errorCode: null,
-                            response: dest.usrRelDirPath + "/" + codeFilename + ".html",
-                            stdoutText: runStdoutText,
-                            status: "Output_Saved",
-                            isUpdated: !isUpdated
-                        };
-                    } else {
-                        var result = {
-                            responseType: "NoOutput_Generated",
-                            errorType: null,
-                            errorCode: null,
-                            response: "",
-                            stdoutText: runStdoutText,
-                            status: "NoOutput",
-                        };
-                    }                
-                    res.send(result);
-                }
-            })
-        }
-    });
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     preRun
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const preRun = function(req, res, next, dirname){
-    let htmlFileFlag = "";
-
-    const dest = usrDirMgr(req, dirname);
-    const workspaceId = req.body.workspaceId;
-    const workspaceName = req.body.workspaceName;
+    
     const codeFilename = workspaceName + "_" + workspaceId;
     const codeFile = codeFilename + ".asy";
     const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
-    const requestedOutformat= req.body.requestedOutformat;
-    const partialMode = req.body.partialMode;
-
+    const onlyCodeChecked = codeOption && !outputOption;
+        
     const asyFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".asy";
+    const htmlFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".html";
+    const existingHtmlFile = htmlFileToRemove;
     const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
-    const existingHtmlFile = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-    
-    (fs.existsSync(existingHtmlFile))? htmlFileFlag = true : htmlFileFlag = false;
 
-    if(partialMode){
-        // console.log("in partial mode")
-        fs.writeFile(codeFilePath, req.body.codeText, (err) => {
-            if (err){
-                // console.log(err);
-                const result = {
-                    responseType: "Error",
-                    errorType: "An error occurred inside the server while writing the asy file to the disk!",
-                    errorCode: err.code,
-                    response: err.toString(),
-                    status: "No-Retry",
-                }
-                res.send(result);
-            }else{
-                const result = {
-                    responseType: "AsyFile_Generated",
-                    errorType: null,
-                    errorCode: null,
-                    response: "",
-                    status: "PreRun_AsyFile_Saved",
-                }
-                res.send(result);
-            }
-        });                        
-    }else{
-        if(requestedOutformat === "html" && htmlFileFlag){
-            var result = {
-                responseType: "OutputFile_Generated",
-                errorType: null,
-                errorCode: null,
-                response: null,
-                status: "PreRun_Output_Saved",
-            }
-            res.send(result);        
-        }else{
-            if (fs.existsSync(asyFileToRemove)) {
-                fs.unlinkSync(asyFileToRemove);
-            }
-            if (fs.existsSync(outputFileToRemove)) {
-                fs.unlinkSync(outputFileToRemove);
-            }
-            fs.writeFile(codeFilePath, req.body.codeText, (err) => {
-                if (err){
-                    // console.log(err);
-                    const result = {
-                        responseType: "Error",
-                        errorType: "An error occurred inside the server while writing asy file to the disk!",
-                        errorCode: err.code,
-                        response: err.toString(),
-                        status: "No-Retry",
-                    }
-                    res.send(result);
-                }else{
-                    const preRunChildProcessOption = {
-                        cwd: dest.usrAbsDirPath
-                    }
-                    preRunChildProcess = childProcess.spawn('asy', ['-noV', '-f', requestedOutformat, codeFile], preRunChildProcessOption);
-                    timeoutHandel = processKillManager(res, preRunChildProcess, serverTimeout);
+    let htmlFileFlag = (fs.existsSync(existingHtmlFile)) ? true : false;
 
-                    preRunChildProcess.on('error', function (error) {
-                        clearTimeout(timeoutHandel);
-                        const result = {
-                            responseType: "Error",
-                            errorType: "An internal error!",
-                            errorCode: error.code,
-                            response: error.toString(),
-                        };
-                        res.send(result);
-                    })
-                    
-                    preRunChildProcess.stdout.on('data', function (chunk) {
-                        clearTimeout(timeoutHandel);
-                        let stdoutText = "";
-                        stdoutText += chunk.toString();
-                        const result = {
-                            responseType: "Stdout",
-                            errorType: null,
-                            errorCode: null,
-                            response: stdoutText,
-                        };
-                        res.send(result);
-                    })
+    let ajaxRes = {
+        responseType: "",
+        errorType: null,
+        errorText: null,
+        errorCode: null,
+        errorContent: null,
+        stdin: "",
+        stdout: "",
+        stderr: "",
+        entryExists: false,
+        isUpdated: isUpdated,
+        path: "",
+    }    
 
-                    preRunChildProcess.stderr.on('data', function (chunk) {
-                        clearTimeout(timeoutHandel);
-                        let stderrText = "";
-                        stderrText += chunk.toString();
-                        const result = {
-                            responseType: "Error",
-                            errorType: "Stderr",
-                            errorCode: "1",
-                            response: stderrText,
-                        };
-                        res.send(result);
-                    })
-
-                    preRunChildProcess.on('exit', function (code) {
-                        clearTimeout(timeoutHandel);
-                        if (code === 0) {
-                            const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
-                            if (fs.existsSync(outputFilePath)) {
-                                var result = {
-                                    responseType: "OutputFile_Generated",
-                                    errorType: null,
-                                    errorCode: null,
-                                    response: null,
-                                    status: "PreRun_Output_Saved",
-                                }
-                            } else {
-                                var result = {
-                                    responseType: "OutputFile_NotGenerated",
-                                    errorType: null,
-                                    errorCode: null,
-                                    response: "",
-                                    status: "PreRun_No_Output",
-                                }
-                            }
-                        }
-                        res.send(result);
-                    })
-                }
-            });
+    // ----------------------------------------------------------------------
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      run request
+    // ----------------------------------------------------------------------
+    if (reqType === "run") {
+        if (fs.existsSync(outputFileToRemove)){
+            fs.unlinkSync(outputFileToRemove);
         }
-    }
+        fs.writeFile(codeFilePath, codeText, (err) => {
+            if (err) {
+                ajaxRes.responseType = "ERROR";
+                ajaxRes.errorType = ERR.ASY_WRITE;
+                ajaxRes.errorText = "An error occurred inside the server while writing the asy file to the disk!";
+                ajaxRes.errorCode = err.code;
+                ajaxRes.errorContent = err.toString();
+                res.send(ajaxRes);
+            } else {
+                const runChildProcessOption = {
+                    cwd: dest.usrAbsDirPath,
+                }
+                runChildProcess = childProcess.spawn('asy', ['-noV', '-f', 'html', codeFile], runChildProcessOption);
+                timeoutHandel = processKillManager(res, ajaxRes, runChildProcess, serverTimeout);;
+
+                runChildProcess.on('error', function (error) {
+                    clearTimeout(timeoutHandel);
+                    ajaxRes.responseType = "ERROR";
+                    ajaxRes.errorType = ERR.CH_PROC;
+                    ajaxRes.errorText = "Server child process internal error!";
+                    ajaxRes.errorCode = error.code;
+                    ajaxRes.errorContent = error.toString();
+                    res.send(ajaxRes);
+                })
+
+                runChildProcess.stdout.on('data', function (chunk) {
+                    ajaxRes.stdout += chunk.toString();
+                })
+
+                runChildProcess.stderr.on('data', function (chunk) {
+                    clearTimeout(timeoutHandel);
+                    ajaxRes.responseType = "Error";
+                    ajaxRes.stderr += chunk.toString();
+                })
+
+                runChildProcess.on('exit', function (code) {
+                    clearTimeout(timeoutHandel);
+                    if (code === 0) {
+                        const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
+                        if (fs.existsSync(outputFilePath)) {
+                            ajaxRes.responseType = OUT.OUTPUT_FILE;
+                            ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
+                            ajaxRes.isUpdated = !isUpdated;
+                            res.send(ajaxRes);
+                        } else {
+                            ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
+                            ajaxRes.isUpdated = false;
+                            res.send(ajaxRes);
+                        }
+                    } else {
+                        ajaxRes.responseType = "ERROR";
+                        ajaxRes.errorType = ERR.ASY_CODE;
+                        ajaxRes.errorText = "Asymptote run error";
+                        ajaxRes.errorCode = code;
+                        res.send(ajaxRes);
+                    }
+                })
+            }
+        });
+
+    // ----------------------------------------------------------------------
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           preDownloadRun request
+    // ----------------------------------------------------------------------
+    } else if (reqType === "preDownloadRun") {
+        if (onlyCodeChecked) {
+            console.log("Here");
+            fs.writeFile(codeFilePath, codeText, (err) => {
+                if (err) {
+                    ajaxRes.responseType = "ERROR";
+                    ajaxRes.errorType = ERR.ASY_WRITE;
+                    ajaxRes.errorText = "An error occurred inside the server while writing the asy file to the disk!";
+                    ajaxRes.errorCode = err.code;
+                    ajaxRes.errorContent = err.toString();
+                    res.send(ajaxRes);
+                } else {
+                    ajaxRes.responseType = OUT.ASY_FILE;
+                    res.send(ajaxRes);
+                }
+            })
+        } else {
+            if (requestedOutformat === "html" && htmlFileFlag) {
+                ajaxRes.responseType = OUT.OUTPUT_FILE;
+                res.send(ajaxRes);
+            } else {
+                if (fs.existsSync(asyFileToRemove)) {
+                    fs.unlinkSync(asyFileToRemove);
+                }
+                if (fs.existsSync(outputFileToRemove)) {
+                    fs.unlinkSync(outputFileToRemove);
+                }
+                
+                fs.writeFile(codeFilePath, codeText, (err) => {
+                    if (err) {
+                        ajaxRes.responseType = "ERROR";
+                        ajaxRes.errorType = ERR.ASY_WRITE;
+                        ajaxRes.errorText = "An error occurred inside the server while writing the asy file to the disk!";
+                        ajaxRes.errorCode = err.code;
+                        ajaxRes.errorContent = err.toString();
+                        res.send(ajaxRes);
+                    } else {
+                        const preRunChildProcessOption = {
+                            cwd: dest.usrAbsDirPath
+                        }
+                        preRunChildProcess = childProcess.spawn('asy', ['-noV', '-f', requestedOutformat, codeFile], preRunChildProcessOption);
+                        timeoutHandel = processKillManager(res, ajaxRes, preRunChildProcess, serverTimeout);
+
+                        preRunChildProcess.on('error', function (error) {
+                            clearTimeout(timeoutHandel);
+                            ajaxRes.responseType = "ERROR";
+                            ajaxRes.errorType = ERR.CH_PROC;
+                            ajaxRes.errorText = "Server child process internal error!";
+                            ajaxRes.errorCode = error.code;
+                            ajaxRes.errorContent = error.toString();
+                            res.send(ajaxRes);
+                        })
+
+                        preRunChildProcess.stdout.on('data', function (chunk) {
+                            ajaxRes.stdout += chunk.toString();
+                        })
+
+                        preRunChildProcess.stderr.on('data', function (chunk) {
+                            clearTimeout(timeoutHandel);
+                            ajaxRes.responseType = "Error";
+                            ajaxRes.stderr += chunk.toString();
+                        })
+
+                        preRunChildProcess.on('exit', function (code) {
+                            console.log("code:", code)
+                            clearTimeout(timeoutHandel);
+                            if (code === 0) {
+                                const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
+                                if (fs.existsSync(outputFilePath)) {
+                                    ajaxRes.responseType = OUT.OUTPUT_FILE;
+                                    res.send(ajaxRes);
+                                } else {
+                                    ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
+                                    ajaxRes.isUpdated = false;
+                                    res.send(ajaxRes);
+                                }
+                            } else if (code !== null) {
+                                ajaxRes.responseType = "ERROR";
+                                ajaxRes.errorType = ERR.ASY_CODE;
+                                ajaxRes.errorText = "Asymptote run error";
+                                ajaxRes.errorCode = code;
+                                res.send(ajaxRes);
+                            }
+                        })
+                    }
+                });
+            }
+        }
+
+    } 
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                downloadReq
@@ -367,4 +344,17 @@ exports.downloadReq = function(dirname){
             }
         }
     }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         processKillManager
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const processKillManager = function (res, ajaxRes, processHandel, serverTimeout) {
+    return setTimeout(() => {
+        processHandel.kill();
+        ajaxRes.responseType = "ERROR";
+        ajaxRes.errorType = ERR.PROCESS_TERMINATED;
+        ajaxRes.errorText = "Process terminated by the server because of server timeout.";
+        res.send(ajaxRes);
+    }, serverTimeout)
 }

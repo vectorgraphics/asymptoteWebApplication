@@ -99,6 +99,13 @@ export const actionFact = {
             corePanesDisplay: status
         }        
     },
+    refetchIframe: function (id, newOutput){
+        return {
+            type: actionTypes.update,
+            id: id,
+            output: newOutput
+        }
+    },
     getRunResponse : function(id, response){
         return {
             type: actionTypes.update,
@@ -147,14 +154,17 @@ export const workspaces = (state = [], action) => {
                     outformat: "html",
                     codeText: "",
                     output: {
-                        responsType: null,
-                        outformat: "html",
+                        responseType: null,
                         errorType: null,
-                        errorCode: null,
                         errorText: null,
-                        response: "",
-                        stdoutText: "",
-                        isUpdated: false
+                        errorCode: null,
+                        errorContent: null,
+                        stdin: "",
+                        stdout: "",
+                        stderr: "",
+                        entryExists: true,
+                        isUpdated: true,
+                        path: "",
                     },
                     corePanesDisplay: {
                         codePane: true,

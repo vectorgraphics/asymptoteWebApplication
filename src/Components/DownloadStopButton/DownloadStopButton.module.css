@@ -1,4 +1,4 @@
-.downloadBtn{
+.Btn{
     flex: 1 1 0;
     display: block;
     position: relative;
@@ -16,13 +16,10 @@
     /* box-shadow: 0rem 0.065rem 0.065rem 0.065rem black; */
     background-color: rgb(53, 56, 56);
 }
-.downloadBtn::selection{
-    background-color: transparent;
-}
-.downloadBtn:hover{
+.Btn:hover{
     background-color: rgb(103, 106, 106);  
 }
-.downloadBtn:active{
+.Btn:active{
     box-shadow: none;
 }
 
@@ -30,7 +27,7 @@
     0% {transform: rotateZ(0deg)}
     100% {transform: rotateZ(360deg)}
 }
-.downloadBtnAnimated{
+.BtnAnimated{
     flex: 1 1 0;
     display: block;
     position: relative;
@@ -48,16 +45,13 @@
     box-shadow: 0rem 0.065rem 0.065rem 0.065rem black;
     background-color: rgb(53, 56, 56);
 }
-.downloadBtnAnimated::selection{
-    background-color: transparent;
-}
-.downloadBtnAnimated:hover{
+.BtnAnimated:hover{
     background-color: rgb(103, 106, 106);  
 }
-.downloadBtnAnimated:active{
+.BtnAnimated:active{
     box-shadow: none;
 }
-.downloadBtnAnimated::after{
+.BtnAnimated::after{
     display: block;
     position: absolute;
     content: " ";

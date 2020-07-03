@@ -22,7 +22,7 @@ const dirCheck = function(req, dirname){
     }
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                date & time
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const dateTime = function(){
     const dateObject = new Date();
@@ -66,26 +66,10 @@ const removeDir = function(path){
     }
 }
 
-const processKillManager = function(res, processHandel, serverTimeout){
-    return setTimeout(() => {
-        processHandel.kill();
-        const result = {
-            responseType: "Process_Terminated",
-            errorType: null,
-            errorCode: null,
-            response: "Process terminated by the server because of server timeout.",
-            status: "No-Retry",
-        }
-        res.send(result);
-    }, serverTimeout)
-}
-
-
 module.exports = {
     usrDirMgr: usrDirMgr,
     dirCheck: dirCheck,
     removeDir: removeDir,
     dateTime: dateTime,
-    processKillManager: processKillManager
 }
 
