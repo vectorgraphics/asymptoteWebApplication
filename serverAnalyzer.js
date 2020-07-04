@@ -11,7 +11,7 @@ const dateTime = serverUtil.dateTime;
 
 let runChildProcess = "";
 let preRunChildProcess = "";
-let timeoutHandel = "";
+let timeoutHandle = "";
 const serverTimeout = 60000;        //  in milliseconds
 
 const ERR = {
@@ -40,7 +40,7 @@ exports.reqToRes = function(dirname){
         } else if (reqType === "run" || reqType === "preDownloadRun"){
             runDownload(req, res, next, dirname);
         }else if(reqType === "abort"){
-            abort(req, res, next, dirname, timeoutHandel);
+            abort(req, res, next, dirname, timeoutHandle);
         }else if(reqType === "ping"){
             ping(req, res, next, dirname)
         }
@@ -92,8 +92,8 @@ const ping = function(req, res, next, dirname){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const abort = function(req, res, next, dirname, timeoutHandel){
-    clearTimeout(timeoutHandel);
+const abort = function(req, res, next, dirname, timeoutHandle){
+    clearTimeout(timeoutHandle);
     if (req.body.abortRequestFor === "Run"){
         runChildProcess.kill()
     } else if (req.body.abortRequestFor === "preRun") {
@@ -177,10 +177,10 @@ const runDownload = function(req, res, next, dirname){
                     cwd: dest.usrAbsDirPath,
                 }
               runChildProcess = childProcess.spawn('bash', asyCommand('html',codeFile), runChildProcessOption);
-                timeoutHandel = processKillManager(res, ajaxRes, runChildProcess, serverTimeout);;
+                timeoutHandle = processKillManager(res, ajaxRes, runChildProcess, serverTimeout);;
 
                 runChildProcess.on('error', function (error) {
-                    clearTimeout(timeoutHandel);
+                    clearTimeout(timeoutHandle);
                     ajaxRes.responseType = "ERROR";
                     ajaxRes.errorType = ERR.CH_PROC;
                     ajaxRes.errorText = "Server child process internal error.";
@@ -194,13 +194,13 @@ const runDownload = function(req, res, next, dirname){
                 })
 
                 runChildProcess.stderr.on('data', function (chunk) {
-                    clearTimeout(timeoutHandel);
+                    clearTimeout(timeoutHandle);
                     ajaxRes.responseType = "Error";
                     ajaxRes.stderr += chunk.toString();
                 })
 
                 runChildProcess.on('exit', function (code) {
-                    clearTimeout(timeoutHandel);
+                    clearTimeout(timeoutHandle);
                     if (code === 0) {
                         const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
                         if (fs.existsSync(outputFilePath)) {
@@ -268,10 +268,10 @@ const runDownload = function(req, res, next, dirname){
                             cwd: dest.usrAbsDirPath
                         }
                       preRunChildProcess = childProcess.spawn('bash', asyCommand(requestedOutformat,codeFile), preRunChildProcessOption);
-                        timeoutHandel = processKillManager(res, ajaxRes, preRunChildProcess, serverTimeout);
+                        timeoutHandle = processKillManager(res, ajaxRes, preRunChildProcess, serverTimeout);
 
                         preRunChildProcess.on('error', function (error) {
-                            clearTimeout(timeoutHandel);
+                            clearTimeout(timeoutHandle);
                             ajaxRes.responseType = "ERROR";
                             ajaxRes.errorType = ERR.CH_PROC;
                             ajaxRes.errorText = "Server child process internal error.";
@@ -285,13 +285,13 @@ const runDownload = function(req, res, next, dirname){
                         })
 
                         preRunChildProcess.stderr.on('data', function (chunk) {
-                            clearTimeout(timeoutHandel);
+                            clearTimeout(timeoutHandle);
                             ajaxRes.responseType = "Error";
                             ajaxRes.stderr += chunk.toString();
                         })
 
                         preRunChildProcess.on('exit', function (code) {
-                            clearTimeout(timeoutHandel);
+                            clearTimeout(timeoutHandle);
                             if (code === 0) {
                                 const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
                                 if (fs.existsSync(outputFilePath)) {
@@ -352,9 +352,9 @@ exports.downloadReq = function(dirname){
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         processKillManager
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const processKillManager = function (res, ajaxRes, processHandel, serverTimeout) {
+const processKillManager = function (res, ajaxRes, processHandle, serverTimeout) {
     return setTimeout(() => {
-        processHandel.kill();
+        processHandle.kill();
         ajaxRes.responseType = "ERROR";
         ajaxRes.errorType = ERR.PROCESS_TERMINATED;
         ajaxRes.errorText = "Process terminated due to server timeout.";
