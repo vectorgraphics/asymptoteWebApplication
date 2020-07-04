@@ -13,7 +13,6 @@ const Output = ContainerConstructor((props) => {
     if (currentWorkspace.id !== null) {
         if(currentWorkspace.output.responseType === "ERROR"){
             const errorText = (currentWorkspace.output.stderr !== "") ? currentWorkspace.output.stderr : currentWorkspace.output.errorText;
-
             return (
                 <div className={cssStyle.outputElse}> 
                     <div>

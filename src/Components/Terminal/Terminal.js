@@ -16,8 +16,9 @@ const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces,
 const Editor = ContainerConstructor((props) => {
     const currentWorkspace = workspaceInspector(props);
     const stdoutText = currentWorkspace.output.stdout;
+    const stderrText = currentWorkspace.output.stderr;
 
-    if(stdoutText !== "" && currentWorkspace.id !== null){
+    if(stdoutText && stderrText !== "" && currentWorkspace.id !== null){
         return (
             <Fragment > 
                 <div className={cssStyle.terminalHeader}>
@@ -25,11 +26,12 @@ const Editor = ContainerConstructor((props) => {
                     onClick={(event) => {
                         const outputObj = currentWorkspace.output;
                         outputObj.stdout = "";
+                        outputObj.stderr = "";
                         props.updateTerminalText(currentWorkspace.id, outputObj);
                     }}
                     />
                 </div>
-                <textarea className={cssStyle.textarea} name="terminal" value={stdoutText}></textarea>
+                <textarea className={cssStyle.textarea} name="terminal" value={`Standard output:\n ${stdoutText}\n Standard error:\n ${stderrText}` }></textarea>
             </Fragment>
         );
     }else{

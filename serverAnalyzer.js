@@ -287,7 +287,6 @@ const runDownload = function(req, res, next, dirname){
                         })
 
                         preRunChildProcess.on('exit', function (code) {
-                            console.log("code:", code)
                             clearTimeout(timeoutHandel);
                             if (code === 0) {
                                 const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;

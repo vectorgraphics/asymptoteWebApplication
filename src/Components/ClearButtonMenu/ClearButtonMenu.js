@@ -13,20 +13,12 @@ const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces,
 const ClearSubMenu = ContainerConstructor((props) => {
 
     const currentWorkspace = workspaceInspector(props);
-    const response = {        
-        outformat: "html",
-        responsType: null,
-        errorType: null,
-        errorCode: null,
-        errorText: null,
-        response: "",
-        isUpdated: true
-    }
+    let clearedOutput = currentWorkspace.output;
+    clearedOutput.path = ""
 
     return (
         <div className={cssStyle.menuContainer}>
             <div className={cssStyle.menuBtnsContainer}>
-            {/* <div> */}
                 <button className={cssStyle.menuBtn}
                         onClick={(event) => {
                                 props.updateTextareaContent(currentWorkspace.id, "");
@@ -36,14 +28,14 @@ const ClearSubMenu = ContainerConstructor((props) => {
                     >Code</button>
                 <button className={cssStyle.menuBtn}
                         onClick={(event) => {
-                                props.getRunResponse(currentWorkspace.id, response);
+                                props.getRunResponse(currentWorkspace.id, clearedOutput);
                                 props.wipeSubMenuOut()
                             }
                         }
                     >Output</button>
                 <button className={cssStyle.menuBtn}
                         onClick={(event) => {
-                                props.getRunResponse(currentWorkspace.id, response);
+                                props.getRunResponse(currentWorkspace.id, clearedOutput);
                                 props.updateTextareaContent(currentWorkspace.id, "");
                                 props.wipeSubMenuOut()
                             }
