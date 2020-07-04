@@ -31,7 +31,7 @@ const Editor = ContainerConstructor((props) => {
                     }}
                     />
                 </div>
-                <textarea className={cssStyle.textarea} name="terminal" value={`Standard output:\n ${stdoutText}\n Standard error:\n ${stderrText}` }></textarea>
+                <textarea className={cssStyle.textarea} name="terminal" value={`${stdoutText}${stderrText}`}></textarea>
             </Fragment>
         );
     }else{
