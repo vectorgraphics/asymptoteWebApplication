@@ -357,7 +357,7 @@ const processKillManager = function (res, ajaxRes, processHandel, serverTimeout)
         processHandel.kill();
         ajaxRes.responseType = "ERROR";
         ajaxRes.errorType = ERR.PROCESS_TERMINATED;
-        ajaxRes.errorText = "Process terminated because of server timeout.";
+        ajaxRes.errorText = "Process terminated due to server timeout.";
         res.send(ajaxRes);
     }, serverTimeout)
 }
