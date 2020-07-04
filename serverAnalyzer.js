@@ -113,8 +113,8 @@ const abort = function(req, res, next, dirname, timeoutHandle){
     res.send(ajaxRes);
 }
 
-const asyCommand = function(format, file) {
-  return ['-c','asy -noV -f'+format+' '+file+' 2>&1'];
+const asyArgs = function(format, file) {
+  return ['-noV','-outpipe','2','-f',format,file];
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                runDownload
@@ -176,7 +176,7 @@ const runDownload = function(req, res, next, dirname){
                 const runChildProcessOption = {
                     cwd: dest.usrAbsDirPath,
                 }
-              runChildProcess = childProcess.spawn('bash', asyCommand('html',codeFile), runChildProcessOption);
+              runChildProcess = childProcess.spawn('asy', asyArgs('html',codeFile), runChildProcessOption);
                 timeoutHandle = processKillManager(res, ajaxRes, runChildProcess, serverTimeout);;
 
                 runChildProcess.on('error', function (error) {
@@ -267,7 +267,7 @@ const runDownload = function(req, res, next, dirname){
                         const preRunChildProcessOption = {
                             cwd: dest.usrAbsDirPath
                         }
-                      preRunChildProcess = childProcess.spawn('bash', asyCommand(requestedOutformat,codeFile), preRunChildProcessOption);
+                      preRunChildProcess = childProcess.spawn('asy', asyArgs(requestedOutformat,codeFile), preRunChildProcessOption);
                         timeoutHandle = processKillManager(res, ajaxRes, preRunChildProcess, serverTimeout);
 
                         preRunChildProcess.on('error', function (error) {
