@@ -91,6 +91,10 @@ app.route("/clients")
 
 app.listen(80);
 
+// Drop root permissions
+let uid=parseInt(process.env.SUDO_UID);
+if(uid) process.setuid(uid);
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 process.on("uncaughtException", (err) => {
