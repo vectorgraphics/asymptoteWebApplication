@@ -18,7 +18,7 @@ const Editor = ContainerConstructor((props) => {
     const stdoutText = currentWorkspace.output.stdout;
     const stderrText = currentWorkspace.output.stderr;
 
-    if(stdoutText && stderrText !== "" && currentWorkspace.id !== null){
+    if(stdoutText !== "" || stderrText !== "" && currentWorkspace.id !== null){
         return (
             <Fragment > 
                 <div className={cssStyle.terminalHeader}>
