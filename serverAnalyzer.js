@@ -168,7 +168,7 @@ const runDownload = function(req, res, next, dirname){
             if (err) {
                 ajaxRes.responseType = "ERROR";
                 ajaxRes.errorType = ERR.ASY_WRITE;
-                ajaxRes.errorText = "An error occurred inside the server while writing the asy file to the disk!";
+                ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                 ajaxRes.errorCode = err.code;
                 ajaxRes.errorContent = err.toString();
                 res.send(ajaxRes);
@@ -183,7 +183,7 @@ const runDownload = function(req, res, next, dirname){
                     clearTimeout(timeoutHandel);
                     ajaxRes.responseType = "ERROR";
                     ajaxRes.errorType = ERR.CH_PROC;
-                    ajaxRes.errorText = "Server child process internal error!";
+                    ajaxRes.errorText = "Server child process internal error.";
                     ajaxRes.errorCode = error.code;
                     ajaxRes.errorContent = error.toString();
                     res.send(ajaxRes);
@@ -234,7 +234,7 @@ const runDownload = function(req, res, next, dirname){
                 if (err) {
                     ajaxRes.responseType = "ERROR";
                     ajaxRes.errorType = ERR.ASY_WRITE;
-                    ajaxRes.errorText = "An error occurred inside the server while writing the asy file to the disk!";
+                    ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                     ajaxRes.errorCode = err.code;
                     ajaxRes.errorContent = err.toString();
                     res.send(ajaxRes);
@@ -259,7 +259,7 @@ const runDownload = function(req, res, next, dirname){
                     if (err) {
                         ajaxRes.responseType = "ERROR";
                         ajaxRes.errorType = ERR.ASY_WRITE;
-                        ajaxRes.errorText = "An error occurred inside the server while writing the asy file to the disk!";
+                        ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                         ajaxRes.errorCode = err.code;
                         ajaxRes.errorContent = err.toString();
                         res.send(ajaxRes);
@@ -274,7 +274,7 @@ const runDownload = function(req, res, next, dirname){
                             clearTimeout(timeoutHandel);
                             ajaxRes.responseType = "ERROR";
                             ajaxRes.errorType = ERR.CH_PROC;
-                            ajaxRes.errorText = "Server child process internal error!";
+                            ajaxRes.errorText = "Server child process internal error.";
                             ajaxRes.errorCode = error.code;
                             ajaxRes.errorContent = error.toString();
                             res.send(ajaxRes);
