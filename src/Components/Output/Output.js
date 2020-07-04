@@ -21,25 +21,16 @@ const Output = ContainerConstructor((props) => {
                     </div>
                 </div>
             )
-        } else if (currentWorkspace.output.responseType === "NO_OUTPUT_FILE") {
-            return (
-                <div className={cssStyle.outputElse}>
-                    <div>
-                        <h4> Warning: </h4>
-                        <p> The code did not generate any output file. </p>
-                    </div>
-                </div>
-            )
         } else {
             let string = (currentWorkspace.output.isUpdated)? " ": "";
-            return(
+            return (
                 <iframe id="outFrame" className={cssStyle.outputPreview}
                         src={string + currentWorkspace.output.path}
                         width="100%" height="100%" title="outputFrame" frameBorder="0"/>
             )
         }
     } else {
-        return(
+        return (
             <div className={cssStyle.outputPreview}> 
                 {/* <iframe title="outputFrame" frameBorder="0"/> */}
             </div>
