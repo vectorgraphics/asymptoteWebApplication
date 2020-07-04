@@ -13,14 +13,12 @@ const Output = ContainerConstructor((props) => {
     if (currentWorkspace.id !== null) {
       let string = (currentWorkspace.output.isUpdated)? " ": "";
       return (
-          <iframe id="outFrame" className={cssStyle.outputPreview}
-        src={string + currentWorkspace.output.path}
-        width="100%" height="100%" title="outputFrame" frameBorder="0"/>
+          <iframe id="outFrame" className={cssStyle.outputPreview} src={string + currentWorkspace.output.path}
+                  width="100%" height="100%" title="outputFrame" frameBorder="0"/>
       )
     } else {
         return (
             <div className={cssStyle.outputPreview}> 
-                {/* <iframe title="outputFrame" frameBorder="0"/> */}
             </div>
         )
     }
