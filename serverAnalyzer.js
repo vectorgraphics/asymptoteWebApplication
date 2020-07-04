@@ -112,11 +112,6 @@ const abort = function(req, res, next, dirname, timeoutHandle){
     }
     res.send(ajaxRes);
 }
-
-const asyArgs = function(format, file) {
-  return ['-noV','-outpipe','2','-f',format,file];
-}
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                runDownload
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const runDownload = function(req, res, next, dirname){
@@ -142,7 +137,6 @@ const runDownload = function(req, res, next, dirname){
     const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
 
     let htmlFileFlag = (fs.existsSync(existingHtmlFile)) ? true : false;
-
     let ajaxRes = {
         responseType: "",
         errorType: null,
@@ -156,6 +150,10 @@ const runDownload = function(req, res, next, dirname){
         isUpdated: isUpdated,
         path: "",
     }    
+
+    const asyArgs = function (format, file) {
+        return ['-noV', '-outpipe', '2', '-f', format, file];
+    }
 
     // ----------------------------------------------------------------------
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      run request
@@ -176,7 +174,7 @@ const runDownload = function(req, res, next, dirname){
                 const runChildProcessOption = {
                     cwd: dest.usrAbsDirPath,
                 }
-              runChildProcess = childProcess.spawn('asy', asyArgs('html',codeFile), runChildProcessOption);
+                runChildProcess = childProcess.spawn('asy', asyArgs('html', codeFile), runChildProcessOption);
                 timeoutHandle = processKillManager(res, ajaxRes, runChildProcess, serverTimeout);;
 
                 runChildProcess.on('error', function (error) {
@@ -267,7 +265,7 @@ const runDownload = function(req, res, next, dirname){
                         const preRunChildProcessOption = {
                             cwd: dest.usrAbsDirPath
                         }
-                      preRunChildProcess = childProcess.spawn('asy', asyArgs(requestedOutformat,codeFile), preRunChildProcessOption);
+                        preRunChildProcess = childProcess.spawn('asy', asyArgs(requestedOutformat, codeFile), preRunChildProcessOption);
                         timeoutHandle = processKillManager(res, ajaxRes, preRunChildProcess, serverTimeout);
 
                         preRunChildProcess.on('error', function (error) {
