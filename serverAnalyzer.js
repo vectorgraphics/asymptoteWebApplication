@@ -159,8 +159,8 @@ const runDownload = function(req, res, next, dirname){
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      run request
     // ----------------------------------------------------------------------
     if (reqType === "run") {
-        if (fs.existsSync(outputFileToRemove)){
-            fs.unlinkSync(outputFileToRemove);
+        if (fs.existsSync(htmlFileToRemove)){
+            fs.unlinkSync(htmlFileToRemove);
         }
         fs.writeFile(codeFilePath, codeText, (err) => {
             if (err) {
@@ -193,7 +193,7 @@ const runDownload = function(req, res, next, dirname){
 
                 runChildProcess.stderr.on('data', function (chunk) {
                     clearTimeout(timeoutHandle);
-                    ajaxRes.responseType = "Error";
+                    ajaxRes.responseType = "ERROR";
                     ajaxRes.stderr += chunk.toString();
                 })
 
@@ -284,7 +284,7 @@ const runDownload = function(req, res, next, dirname){
 
                         preRunChildProcess.stderr.on('data', function (chunk) {
                             clearTimeout(timeoutHandle);
-                            ajaxRes.responseType = "Error";
+                            ajaxRes.responseType = "ERROR";
                             ajaxRes.stderr += chunk.toString();
                         })
 
