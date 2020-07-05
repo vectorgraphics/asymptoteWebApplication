@@ -1,7 +1,7 @@
-ifeq ($(ASYMPTOTE_UID),)
+ifeq ($(ASYMPTOTE_USER),)
   ASYMPTOTE_USER = "asymptote"
-  export ASYMPTOTE_UID = $(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:\([0-9]*\):.*/\1/')
 endif
+export ASYMPTOTE_UID = $(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:\([0-9]*\):.*/\1/')
 
 vpath %.asy icons
 vpath %.asy logo
@@ -23,10 +23,13 @@ run:
 frontend:
 	npm start
 
-clean:
+tidy:
+	-rm -rf logs/uncaughtException
+
+clean:  tidy
 	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg
 	-cd public && rm -f logo3d.html
-	-rm -rf node_modules build package-lock.json
+	-rm -rf node_modules build package-lock.json clients/* logs/*
 
 .SUFFIXES: .asy .svg .html
 
