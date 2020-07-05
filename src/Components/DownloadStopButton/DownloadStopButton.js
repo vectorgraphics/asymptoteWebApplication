@@ -63,8 +63,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                                             buttonType: "Download",
                                         })
                                     } else {
-                                        parsedResponse.path = "";
-                                        this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                                         Ajax("POST", "/clients", {responseType: "blob"}).contentType("json").done(dataJSON, (response) => {
                                             link.href = window.URL.createObjectURL(response);
                                             link.setAttribute("download", currentWorkspace.name.current + ".asy");
@@ -91,8 +89,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                                             buttonType: "Download",
                                         })
                                     } else {
-                                        parsedResponse.path = "";
-                                        this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                                         Ajax("POST", "/clients", {responseType: "blob"}).contentType("json").done(dataJSON, (response) => {
                                             link.href = window.URL.createObjectURL(response);
                                             link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
@@ -119,8 +115,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                                             buttonType: "Download",
                                         })
                                     } else {
-                                        parsedResponse.path = "";
-                                        this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                                         data.codeOption = true;
                                         data.outputOption = false;
                                         dataJSON = JSON.stringify(data);
@@ -145,7 +139,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                                 this.setState({
                                     buttonType: "Stop",
                                 })
-
                             }
                         }
                     }
