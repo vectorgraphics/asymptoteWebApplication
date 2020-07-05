@@ -14,7 +14,7 @@ const ClearSubMenu = ContainerConstructor((props) => {
 
     const currentWorkspace = workspaceInspector(props);
     let clearedOutput = currentWorkspace.output;
-    clearedOutput.path = ""
+    clearedOutput.responseType = "CLEARED";
 
     return (
         <div className={cssStyle.menuContainer}>

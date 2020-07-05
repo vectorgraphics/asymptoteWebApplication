@@ -21,17 +21,21 @@ const Output = ContainerConstructor((props) => {
                     </div>
                 </div>
             )
+        } else if (currentWorkspace.output.responseType === "CLEARED") {
+            return (
+                <div className={cssStyle.outputPreview}/>
+            )
+
         } else {
-      let string = (currentWorkspace.output.isUpdated)? " ": "";
-      return (
-          <iframe id="outFrame" className={cssStyle.outputPreview} src={string + currentWorkspace.output.path}
-                  width="100%" height="100%" title="outputFrame" frameBorder="0"/>
-      )
+            let string = (currentWorkspace.output.isUpdated)? " ": "";
+            return (
+                <iframe id="outFrame" className={cssStyle.outputPreview} src={string + currentWorkspace.output.path}
+                        width="100%" height="100%" title="outputFrame" frameBorder="0"/>
+            )
         }
     } else {
         return (
-            <div className={cssStyle.outputPreview}> 
-            </div>
+            <div className={cssStyle.outputPreview}/> 
         )
     }
 })   
