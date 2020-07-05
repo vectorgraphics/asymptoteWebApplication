@@ -93,12 +93,18 @@ app.listen(80);
 
 // Drop root permissions
 let uid=parseInt(process.env.ASYMPTOTE_UID);
-if(uid) process.setuid(uid);
-else {
-  console.log("Cannot run as uid 0; please first adduser asymptote>");
+let gid=parseInt(process.env.ASYMPTOTE_GID);
+
+if(uid == 0 || gid == 0) {
+  let user=process.env.ASYMPTOTE_USER;
+  if(user == "") user="asymptote"
+  console.log("Cannot run as uid 0 or gid 0; please first adduser",user);
   process.exit(-1);
 }
-console.log("Asymptote Web Application started with uid",uid);
+
+process.setgid(gid);
+process.setuid(uid);
+console.log("Asymptote Web Application started with uid",uid,"and gid",gid);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

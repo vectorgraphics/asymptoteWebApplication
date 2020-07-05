@@ -1,7 +1,17 @@
 ifeq ($(ASYMPTOTE_USER),)
-  ASYMPTOTE_USER = "asymptote"
+  export ASYMPTOTE_USER="asymptote"
 endif
-export ASYMPTOTE_UID = $(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:\([0-9]*\):.*/\1/')
+
+export ASYMPTOTE_UID=$(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:\([0-9]*\):.*/\1/')
+export ASYMPTOTE_GID=$(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:[^:]*:\([0-9]*\):.*/\1/')
+
+ifeq ($(ASYMPTOTE_UID),)
+  export ASYMPTOTE_UID=0
+endif
+
+ifeq ($(ASYMPTOTE_GID),)
+  export ASYMPTOTE_GID=0
+endif
 
 vpath %.asy icons
 vpath %.asy logo
