@@ -107,5 +107,8 @@ dist
 .tern-port
 
 .asy_history
+
 public/logo3d.html
 src/assets/*.svg
+package-lock.json
+
