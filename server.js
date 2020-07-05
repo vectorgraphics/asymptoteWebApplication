@@ -92,8 +92,13 @@ app.route("/clients")
 app.listen(80);
 
 // Drop root permissions
-let uid=parseInt(process.env.SUDO_UID);
+let uid=parseInt(process.env.ASYMPTOTE_UID);
 if(uid) process.setuid(uid);
+else {
+  console.log("Cannot run as uid 0; please first adduser asymptote>");
+  process.exit(-1);
+}
+console.log("Asymptote Web Application started with uid",uid);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -7,16 +7,16 @@
 Pre Application Install
 =======================
 
-1. Install Node.js (www.nodejs.org)
+Install Node.js (www.nodejs.org)
 
 
 Asymptote Web Application Installation
 ======================================
 
-Install node modules and application dependencies with
+We recommend running as a non-privileged user "asymptote" without
+login access. Install the node modules and application dependencies with
    
     make
-
 
 -----------------------------------------------------------------
 -----------------------------------------------------------------
@@ -45,5 +45,4 @@ There are two modes for running this application:
     To run the application under this mode, use
 
        make frontend
-
 

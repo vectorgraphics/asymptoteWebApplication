@@ -1,3 +1,8 @@
+ifeq ($(ASYMPTOTE_UID),)
+  ASYMPTOTE_USER = "asymptote"
+  export ASYMPTOTE_UID = $(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:\([0-9]*\):.*/\1/')
+endif
+
 vpath %.asy icons
 vpath %.asy logo
 vpath %.svg src/assets
