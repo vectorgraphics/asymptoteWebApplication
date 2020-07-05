@@ -102,9 +102,10 @@ if(uid == 0 || gid == 0) {
   process.exit(-1);
 }
 
+let home=process.env.ASYMPTOTE_HOME;
 process.setgid(gid);
 process.setuid(uid);
-console.log("Asymptote Web Application started with uid",uid,"and gid",gid);
+console.log("Asymptote Web Application started with uid",uid,"and gid",gid,"using home directory",home);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

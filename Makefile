@@ -4,6 +4,7 @@ endif
 
 export ASYMPTOTE_UID=$(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:\([0-9]*\):.*/\1/')
 export ASYMPTOTE_GID=$(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:[^:]*:\([0-9]*\):.*/\1/')
+export ASYMPTOTE_HOME=$(shell getent passwd $(ASYMPTOTE_USER) | sed -e 's/[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:\([^:]*\):.*/\1/')
 
 ifeq ($(ASYMPTOTE_UID),)
   export ASYMPTOTE_UID=0
@@ -12,6 +13,8 @@ endif
 ifeq ($(ASYMPTOTE_GID),)
   export ASYMPTOTE_GID=0
 endif
+
+export HOME=$(ASYMPTOTE_HOME)
 
 vpath %.asy icons
 vpath %.asy logo
