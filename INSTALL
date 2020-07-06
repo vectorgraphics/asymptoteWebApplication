@@ -13,7 +13,9 @@ Install Node.js (www.nodejs.org)
 Asymptote Web Application Installation
 ======================================
 
-1. We recommend setting up a non-privileged user "asymptote".
+1. We recommend running this application as a non-privileged user
+"asymptote" on a virtual machine. The application gives clients the same
+read (but not write) access to the filesystem that the user asymptote has.
 
 2. Disable logins:
 
