@@ -4,7 +4,7 @@
 -----------------------------------------------------------------
 -----------------------------------------------------------------
 
-Pre Application Install
+Pre-Application Install
 =======================
 
 Install Node.js (www.nodejs.org)
@@ -13,10 +13,30 @@ Install Node.js (www.nodejs.org)
 Asymptote Web Application Installation
 ======================================
 
-We recommend running as a non-privileged user "asymptote" without
-login access. Install the node modules and application dependencies with
-   
-    make
+1. We recommend setting up a non-privileged user "asymptote".
+
+2. Disable logins:
+
+passwd -d asymptote
+
+3. Install the latest version of Asymptote on the system.
+
+4. Create a file ~asymptote/.asy/config.asy containing the lines:
+
+import settings;
+settings.dir="/usr/local/share/doc/asymptote/examples";
+
+5. Starting as a user belonging to the asymptote group, install the node
+modules and application dependencies:
+
+cd ~asymptote
+git clone https://github.com/vectorgraphics/asymptote-server
+cd asymptote-server
+su
+su asymptote
+make
+exit
+exit
 
 -----------------------------------------------------------------
 -----------------------------------------------------------------
@@ -26,23 +46,24 @@ login access. Install the node modules and application dependencies with
 
 There are two modes for running this application:
 
-1. Running the full application 
+1. Running the full application
    ============================
-        sudo make run
 
-    The application can then be accessed on
+cd ~asymptote/asymptote-server
+sudo make run
 
-        http://localhost:80
+    Root priviledges are dropped once the application is listening
+    on port 80. The application can then be accessed on
+
+http://localhost:80
 
 2. Running only the front-end part of the application
    ==================================================
-    This mode is mainly used for development of the GUI aspects to
-    see if any change made to CSS or Javascript is working as it is 
-    meant to be. While running the application in this mode, no
-    communication can be made to the server. The application will be 
-    automatically launched on a localhost service.
+   This mode is mainly used for development of the GUI to test
+   the CSS and Javascript code. No communication can be made to
+   the server in this mode. The launch the application in this
+   mode on a localhost service:
 
-    To run the application under this mode, use
-
-       make frontend
+cd ~asymptote/asymptote-server
+make frontend
 

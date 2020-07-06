@@ -12,7 +12,7 @@ const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces,
 })
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     EDITOR COMPONENT
-const codingText = "Code here ...";
+const codingText = "Code here...";
 const instructionText = "TO START CODING, FIRST CREATE A NEW WORKSPACE!";
 
 
