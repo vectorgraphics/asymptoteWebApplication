@@ -15,7 +15,6 @@ var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Application Routs
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 const app = express();
 
 app.route('/')
@@ -74,7 +73,6 @@ app.route("/static/media/" + mediaDir[6])
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 app.use("/clients", function(req, res, next){
     if(req.method === "GET"){
         const fileToServe = __dirname + "/clients" + req.url;
@@ -91,24 +89,25 @@ app.route("/clients")
 
 app.listen(80);
 
-// Drop root permissions
-let uid=parseInt(process.env.ASYMPTOTE_UID);
-let gid=parseInt(process.env.ASYMPTOTE_GID);
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+let uid = parseInt(process.env.ASYMPTOTE_UID);
+let gid = parseInt(process.env.ASYMPTOTE_GID);
 
-if(uid == 0 || gid == 0) {
-  let user=process.env.ASYMPTOTE_USER;
-  console.log("Cannot run as uid 0 or gid 0; please first adduser",user);
-  process.exit(-1);
+if (uid === 0 || gid === 0){
+    let user = process.env.ASYMPTOTE_USER;
+    console.log("Cannot run as uid 0 or gid 0; please first adduser",user);
+    process.exit(-1);
 }
 
-let home=process.env.ASYMPTOTE_HOME;
-process.env.HOME=home;
+let home = process.env.ASYMPTOTE_HOME;
+process.env.HOME = home;
 
 process.setgid(gid);
 process.setuid(uid);
 console.log("Asymptote Web Application started with uid",uid,"and gid",gid,"using configuration directory",home);
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Error Handling
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 process.on("uncaughtException", (err) => {
 
@@ -128,5 +127,3 @@ process.on("uncaughtException", (err) => {
         })
     }
 })
-
-
