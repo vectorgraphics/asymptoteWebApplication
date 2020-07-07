@@ -5,6 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const dirCheck = serverUtil.dirCheck;
+const dateTime = serverUtil.dateTime;
 const reqToRes = serverAnalyzer.reqToRes;
 const downloadReq = serverAnalyzer.downloadReq;
 
@@ -113,16 +114,17 @@ process.on("uncaughtException", (err) => {
 
     const diagnose = {
         errorType: "An uncaught error moved to the top of the stack!",
+        registerTime: dateTime().time,
         exception: err,
         errorStack: err.stack,
     },
-          diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n')+'\n';
+          diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
 
     const dest = __dirname + "/logs/uncaughtException"
     if (err){
         fs.writeFile(dest, diagnoseJSON, (err) =>{
             if (err){
-                console.log("An error occurred while writing "+dest+".");
+                console.log("An error occurred while writing " + dest + ".");
             }
         })
     }
