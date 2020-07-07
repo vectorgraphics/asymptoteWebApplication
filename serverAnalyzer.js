@@ -56,6 +56,7 @@ const usrConnect = function(req, res, next, dirname){
         removeDir(usrDir);
     }
     fs.mkdirSync(usrDir);
+    writePing(usrDir);
     
     const dateAndTime = dateTime();
     const rawData = {
@@ -75,18 +76,24 @@ const usrConnect = function(req, res, next, dirname){
     res.send("UDIC");
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  writePing
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const ping = function(req, res, next, dirname){
-    const dest = usrDirMgr(req, dirname);
+const writePing = function(usrDir){
     let date = new Date();
     var pingArrivedTime = Math.floor(date.getTime() / 1000).toString() + "\n";
-    const pingFilePath = dest.usrAbsDirPath + "/ping";
+    const pingFilePath = usrDir + "/ping";
     fs.writeFile(pingFilePath, pingArrivedTime, (err) => {
         if(err){
             console.log("error in writing ping file");
         }
     });
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const ping = function(req, res, next, dirname){
+    const dest = usrDirMgr(req, dirname);
+    writePing(dest.usrAbsDirPath);
     res.send("");
 }
 
