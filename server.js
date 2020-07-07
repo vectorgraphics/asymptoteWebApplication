@@ -102,6 +102,8 @@ if(uid == 0 || gid == 0) {
 }
 
 let home=process.env.ASYMPTOTE_HOME;
+process.env.HOME=home;
+
 process.setgid(gid);
 process.setuid(uid);
 console.log("Asymptote Web Application started with uid",uid,"and gid",gid,"using configuration directory",home);
