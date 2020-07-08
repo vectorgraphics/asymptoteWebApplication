@@ -8,7 +8,6 @@ const dateTime = serverUtil.dateTime;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    Globals
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandle = "";
@@ -354,7 +353,6 @@ exports.downloadReq = function(dirname){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         processKillManager
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 const processKillManager = function (res, ajaxRes, processHandle, serverTimeout) {
     return setTimeout(() => {
         processHandle.kill();
