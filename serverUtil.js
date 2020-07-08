@@ -13,12 +13,30 @@ const usrDirMgr = function(req, serverDir){
     }
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  writePing
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const writePing = function(dir) {
+    const pingFilePath = dir + "/ping";
+    fs.writeFileSync(pingFilePath, "", (err) => {
+        if(err) {
+            console.log("error in writing ping file");
+        }
+    });
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    makeDir
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const makeDir = function(dir) {
+  fs.mkdirSync(dir);
+  writePing(dir);
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dirCheck
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const dirCheck = function(req, dirname){
+const dirCheck = function(req, dirname) {
     const dest = usrDirMgr(req, dirname);
-    if(!fs.existsSync(dest.usrAbsDirPath)){
-        fs.mkdirSync(dest.usrAbsDirPath);
+    if(!fs.existsSync(dest.usrAbsDirPath)) {
+        makeDir(dest.usrAbsDirPath);
     }
 }
 
@@ -70,6 +88,8 @@ module.exports = {
     usrDirMgr: usrDirMgr,
     dirCheck: dirCheck,
     removeDir: removeDir,
+    makeDir: makeDir,
+    writePing: writePing,
     dateTime: dateTime,
 }
 

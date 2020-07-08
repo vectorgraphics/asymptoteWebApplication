@@ -5,6 +5,8 @@ const serverUtil = require('./serverUtil');
 const usrDirMgr = serverUtil.usrDirMgr;
 const removeDir = serverUtil.removeDir;
 const dateTime = serverUtil.dateTime;
+const makeDir = serverUtil.makeDir;
+const writePing = serverUtil.writePing;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    Globals
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,8 +56,7 @@ const usrConnect = function(req, res, next, dirname){
     if (fs.existsSync(usrDir)){
         removeDir(usrDir);
     }
-    fs.mkdirSync(usrDir);
-    writePing(usrDir);
+    makeDir(usrDir);
     
     const dateAndTime = dateTime();
     const rawData = {
@@ -73,17 +74,6 @@ const usrConnect = function(req, res, next, dirname){
         }
     })
     res.send("UDIC");
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  writePing
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const writePing = function(usrDir){
-    const pingFilePath = usrDir + "/ping";
-    fs.writeFile(pingFilePath, "", (err) => {
-        if(err){
-            console.log("error in writing ping file");
-        }
-    });
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping
