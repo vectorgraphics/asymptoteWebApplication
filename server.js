@@ -69,6 +69,9 @@ app.route("/static/media/" + mediaDir[5])
 app.route("/static/media/" + mediaDir[6])
 .get(express.static(__dirname + "/build"));
 
+app.route("/static/media/" + mediaDir[7])
+.get(express.static(__dirname + "/build"));
+
 // app.route("/manifest.json")
 // .get(express.static(__dirname + "/build"));
 
