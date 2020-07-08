@@ -1,10 +1,10 @@
 .menuBtn{
-    flex: 1 1 0;
+    flex: 0 1 AUTO;
     display: block;
     position: relative;
     font-family: inherit;
     font-size: 0.85rem;
-    min-width: 8rem;
+    width: 5rem;
     margin: 0 0.125rem;
     line-height: 1.5rem;
     color: rgb(200, 200, 200);
@@ -18,14 +18,11 @@
 .menuBtn:hover{
     background-color: rgb(103, 106, 106);  
 }
-.menuBtn:active{
-    box-shadow: none;
-}
 .menuContainer{
     display: block;
     position: absolute;
     top: 100%;
-    left: -1.5px;
+    left: 0;
 }
 .menuBtnsContainer{
     display: block;

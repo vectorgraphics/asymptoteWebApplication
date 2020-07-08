@@ -8,6 +8,7 @@ import {workspaceInspector} from '../Util/util';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import ToggleKey from '../Components/ToggleKey/ToggleKey';
 import RunStopButton from '../Components/RunStopButton/RunStopButton';
+import UploadButton from '../Components/UploadButton/UploadButton';
 import DownloadStopButton from '../Components/DownloadStopButton/DownloadStopButton';
 import Options from '../Components/Options/Options';
 import Outformats from '../Components/Outformats/Outformats';
@@ -37,12 +38,12 @@ const App = ContainerConstructor(class extends Component {
     return (
       <div id="AppCont" className={cssStyle.app}>
         <div className={cssStyle.header}>
-          <div id="toggleKey" className={cssStyle.showWorkspace}>
-            <ToggleKey/>
-          </div>
-
+          <ToggleKey/>
           <div className={cssStyle.menuBar}>
+            <div className={cssStyle.uploadRunPanel}>
+            <UploadButton cssClass={cssStyle.controls}/>
             <RunStopButton cssClass={cssStyle.controls}/>
+            </div>
             <div className={cssStyle.downloadPanel}>
               <div className={cssStyle.subcomponentContainer}> <DownloadStopButton/> </div>
               <div className={cssStyle.subcomponentContainer}> <Options/> </div>

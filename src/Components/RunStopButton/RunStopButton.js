@@ -29,59 +29,55 @@ const RunStopButton = ContainerConstructor(class extends Component {
 
         if(this.state.buttonType === "Run"){
             return (
-                <div className={this.props.cssClass}>
-                    <button className={cssStyle.Btn} ref={(button) => {runBtn = button}}
-                        style={(noWorkspace || emptyEditor) ? { color: inactiveColor } : { color: activeColor }}
-                        disabled={(noWorkspace || emptyEditor)}
-                        onClick={(event) => {
-                            runBtn.disabled = true;
-                            const data = {
-                                reqType: "run",
-                                workspaceId: currentWorkspace.id,
-                                workspaceName: currentWorkspace.name.current,
-                                codeOption: currentWorkspace.codeOption.checked,
-                                outputOption: currentWorkspace.outputOption.checked,
-                                codeText: currentWorkspace.codeText,
-                                isUpdated: currentWorkspace.output.isUpdated,
-                            };
-                            const dataJSON = JSON.stringify(data);
-                            Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                                const parsedResponse = JSON.parse(response);
-                                this.props.getRunResponse(currentWorkspace.id, parsedResponse);
-                                this.setState({
-                                    buttonType: "Run",
-                                })
-                            });
+                <button className={cssStyle.Btn} ref={(button) => {runBtn = button}}
+                    style={(noWorkspace || emptyEditor) ? { color: inactiveColor } : { color: activeColor }}
+                    disabled={(noWorkspace || emptyEditor)}
+                    onClick={(event) => {
+                        runBtn.disabled = true;
+                        const data = {
+                            reqType: "run",
+                            workspaceId: currentWorkspace.id,
+                            workspaceName: currentWorkspace.name.current,
+                            codeOption: currentWorkspace.codeOption.checked,
+                            outputOption: currentWorkspace.outputOption.checked,
+                            codeText: currentWorkspace.codeText,
+                            isUpdated: currentWorkspace.output.isUpdated,
+                        };
+                        const dataJSON = JSON.stringify(data);
+                        Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
+                            const parsedResponse = JSON.parse(response);
+                            this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                             this.setState({
-                                buttonType: "Stop",
+                                buttonType: "Run",
                             })
-                            runBtn.onClick = null;
-                        }}
-                    >Run</button>
-                </div>
+                        });
+                        this.setState({
+                            buttonType: "Stop",
+                        })
+                        runBtn.onClick = null;
+                    }}
+                >Run</button>
             )            
         }else{
             return (
-                <div className={this.props.cssClass}>
-                    <button className={cssStyle.BtnAnimated} ref={(button) => {stopBtn = button}}
-                        onClick={(event) => {
-                            stopBtn.disabled = true;
-                            const data = {
-                                reqType: "abort",
-                                abortRequestFor: "Run",
-                                workspaceId: currentWorkspace.id,
-                                workspaceName: currentWorkspace.name.current,
-                            };
-                            const dataJSON = JSON.stringify(data);
-                            Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                                this.setState({
-                                    buttonType: "Run",
-                                })
-                            });
-                            stopBtn.onClick = null;
-                        }}
-                    >Stop</button>
-                </div>
+                <button className={cssStyle.BtnAnimated} ref={(button) => {stopBtn = button}}
+                    onClick={(event) => {
+                        stopBtn.disabled = true;
+                        const data = {
+                            reqType: "abort",
+                            abortRequestFor: "Run",
+                            workspaceId: currentWorkspace.id,
+                            workspaceName: currentWorkspace.name.current,
+                        };
+                        const dataJSON = JSON.stringify(data);
+                        Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
+                            this.setState({
+                                buttonType: "Run",
+                            })
+                        });
+                        stopBtn.onClick = null;
+                    }}
+                >Stop</button>
             )
         }
     }

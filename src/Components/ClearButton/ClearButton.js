@@ -31,7 +31,7 @@ const ClearButton = ContainerConstructor(class extends Component{
                         onMouseOver={(event) => {this.setState(displayTrue)}}
                         onMouseLeave={(event) => {this.setState(displayFalse)}}                
                     >
-                    <button className={cssStyle.clearBtn}>Clear</button>
+                    <button className={cssStyle.Btn}>Clear</button>
                     <ClearButtonMenu wipeSubMenuOut={this.wipeSubMenuOut}/>
                 </div>
             )
@@ -41,7 +41,7 @@ const ClearButton = ContainerConstructor(class extends Component{
                     onMouseOver={(event) => { this.setState(displayTrue) }}
                     onMouseLeave={(event) => { this.setState(displayFalse) }}    
                     >
-                    <button className={cssStyle.clearBtn}>Clear</button>
+                    <button className={cssStyle.Btn}>Clear</button>
                 </div>
             )
 

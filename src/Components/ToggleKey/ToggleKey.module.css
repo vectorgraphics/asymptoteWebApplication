@@ -1,12 +1,15 @@
-.toggleKey{
-    display: flex;
-    flex: 1 1 0;
-    justify-content: center;
-    align-items: center;
-    min-width: 1.5rem;
-    max-width: 2.5rem;
-    margin-left: 1rem;
-    border: none;
-    outline: none;
+.toggleKeyShow, .toggleKeyHide{
+    display: block;
+    width: 2.5rem;
+    margin-left: 0.5rem;
+    min-height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url(../../assets/show.svg), url(../../assets/hide.svg);
+    background-position: center;
     cursor: pointer;
+}
+
+.toggleKeyHide{
+    background-image: url(../../assets/hide.svg);
 }

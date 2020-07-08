@@ -2,8 +2,6 @@ import React, {memo} from 'react';
 import cssStyle from './ToggleKey.module.css';
 import {connect} from 'react-redux';
 import {actionFact} from "../../Store/store";
-import { ReactComponent as HideIcon } from '../../assets/hide.svg';
-import { ReactComponent as ShowIcon } from '../../assets/show.svg';
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 const ContainerConstructor = connect ((store) => ({
@@ -21,20 +19,18 @@ const ContainerConstructor = connect ((store) => ({
 const ToggleKey = ContainerConstructor((props) => {
     if (props.workspacePaneStatus.view){
         return (
-            <div className={cssStyle.toggleKey}
-                 onClick={()=>{
-                    props.changeWorkspacePaneStatus(false);
-                 }}>
-                <ShowIcon/>
+            <div className={cssStyle.toggleKeyShow}
+            onClick={()=>{
+                props.changeWorkspacePaneStatus(false);
+            }}>
             </div>
         )
     }else{
         return (
-            <div className={cssStyle.toggleKey}
+            <div className={cssStyle.toggleKeyHide}
                 onClick={() => {
                     props.changeWorkspacePaneStatus(true);
                 }}>
-                <HideIcon/>
             </div>
         )
         
