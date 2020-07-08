@@ -14,6 +14,8 @@ var jsBuiltFile2 = fs.readdirSync( __dirname + "/build/static/js")[3];
 var cssBuiltFile = fs.readdirSync( __dirname + "/build/static/css")[0];
 var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
+let port=80;
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Application Routs
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const app = express();
@@ -91,7 +93,7 @@ app.use("/clients", function(req, res, next){
 app.route("/clients")
 .post(bodyParser.json(), downloadReq(__dirname));
 
-app.listen(80);
+app.listen(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,10 +108,12 @@ if (uid === 0 || gid === 0){
 
 let home = process.env.ASYMPTOTE_HOME;
 process.env.HOME = home;
+process.env.ASYMPTOTE_HOME = home+"/.asy";
 
 process.setgid(gid);
 process.setuid(uid);
-console.log("Asymptote Web Application started with uid",uid,"and gid",gid,"using configuration directory",home);
+console.log("\nAsymptote Web Application started on port",port,"with uid",uid,"and gid",gid);
+console.log("Using home directory",home);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
