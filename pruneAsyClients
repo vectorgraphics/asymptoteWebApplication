@@ -1,0 +1,13 @@
+#!/bin/sh
+if [ ! $# = 1 ]; then echo Usage: "$0 seconds"; exit 1; fi
+
+cd ~asymptote/asymptote-server/clients
+now=`date +%s`
+shopt -s nullglob
+for client in * ; do
+    file=$client/ping
+    last=`stat -c %Y $file`
+    let diff=now-last
+    if [ "$diff" -gt $1 ]; then rm -r $client; fi
+done
+

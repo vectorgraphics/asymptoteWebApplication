@@ -40,6 +40,15 @@ make
 exit
 exit
 
+6. We recommend running the shell script
+
+pruneAsyClients 1800
+
+as a cronjob at regular intervals to clean up disconnected sessions;
+the argument specifies the number of seconds after the last ping at which
+the client is considered disconnected and its workspace is deleted.
+By default, pings are sent from active clients to the server every 600 seconds.
+
 -----------------------------------------------------------------
 -----------------------------------------------------------------
 |                      RUNNING APPLICATION                      |
