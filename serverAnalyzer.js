@@ -12,7 +12,7 @@ const dateTime = serverUtil.dateTime;
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandle = "";
-const serverTimeout = 60000;        //  in milliseconds
+const serverTimeout = 60000;                    //  in milliseconds
 
 const ERR = {
     ASY_WRITE: "ASY_WRITE_ERR",
@@ -79,10 +79,8 @@ const usrConnect = function(req, res, next, dirname){
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  writePing
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const writePing = function(usrDir){
-    let date = new Date();
-    var pingArrivedTime = Math.floor(date.getTime() / 1000).toString() + "\n";
     const pingFilePath = usrDir + "/ping";
-    fs.writeFile(pingFilePath, pingArrivedTime, (err) => {
+    fs.writeFile(pingFilePath, "", (err) => {
         if(err){
             console.log("error in writing ping file");
         }
