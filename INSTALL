@@ -40,9 +40,9 @@ make
 exit
 exit
 
-6. We recommend running the shell script
+6. We recommend running the bash script
 
-pruneAsyClients 1800
+pruneClients 1800
 
 as a cronjob at regular intervals to clean up disconnected sessions;
 the argument specifies the number of seconds after the last ping at which

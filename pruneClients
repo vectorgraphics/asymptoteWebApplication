@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ ! $# = 1 ]; then echo Usage: "$0 seconds"; exit 1; fi
 
 cd ~asymptote/asymptote-server/clients
