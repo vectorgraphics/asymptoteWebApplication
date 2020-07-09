@@ -80,7 +80,11 @@ const usrConnect = function(req, res, next, dirname){
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const ping = function(req, res, next, dirname){
     const dest = usrDirMgr(req, dirname);
-    writePing(dest.usrAbsDirPath);
+    if(fs.existsSync(dest.usrAbsDirPath)) {
+      writePing(dest.usrAbsDirPath);
+    } else {
+      makeDir(dest.usrAbsDirPath);
+    }
     res.send("");
 }
 
