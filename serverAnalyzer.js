@@ -231,7 +231,6 @@ const runDownload = function(req, res, next, dirname){
     // ----------------------------------------------------------------------
     } else if (reqType === "preDownloadRun") {
         if (onlyCodeChecked) {
-            console.log("Here");
             fs.writeFile(codeFilePath, codeText, (err) => {
                 if (err) {
                     ajaxRes.responseType = "ERROR";
