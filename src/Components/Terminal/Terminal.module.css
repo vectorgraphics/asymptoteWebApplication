@@ -21,7 +21,7 @@
 }
 .textarea{
     flex: 2 1 0;
-    font-family: inherit;
+    font-family: monospace;
     padding-top: 1.5rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
