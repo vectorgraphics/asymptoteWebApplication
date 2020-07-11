@@ -93,9 +93,9 @@ const ping = function(req, res, next, dirname){
 const abort = function(req, res, next, dirname, timeoutHandle){
     clearTimeout(timeoutHandle);
     if (req.body.abortRequestFor === "Run"){
-        runChildProcess.kill()
+        runChildProcess.kill("SIGKILL")
     } else if (req.body.abortRequestFor === "preRun") {
-        preRunChildProcess.kill();
+        preRunChildProcess.kill("SIGKILL");
     }
     const ajaxRes = {
         responseType: "ERROR" ,
@@ -173,7 +173,7 @@ const runDownload = function(req, res, next, dirname){
                     cwd: dest.usrAbsDirPath,
                 }
                 runChildProcess = childProcess.spawn('asy', asyArgs('html', codeFile), runChildProcessOption);
-                timeoutHandle = processKillManager(res, ajaxRes, runChildProcess, serverTimeout);;
+                timeoutHandle = processKillManager(runChildProcess, serverTimeout);;
 
                 runChildProcess.on('error', function (error) {
                     clearTimeout(timeoutHandle);
@@ -195,7 +195,7 @@ const runDownload = function(req, res, next, dirname){
                     ajaxRes.stderr += chunk.toString();
                 })
 
-                runChildProcess.on('exit', function (code) {
+                runChildProcess.on('exit', function (code, signal) {
                     clearTimeout(timeoutHandle);
                     if (code === 0) {
                         const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
@@ -209,11 +209,17 @@ const runDownload = function(req, res, next, dirname){
                             ajaxRes.isUpdated = false;
                             res.send(ajaxRes);
                         }
-                    } else {
+                    } else if (code !== null) {
                         ajaxRes.responseType = "ERROR";
                         ajaxRes.errorType = ERR.ASY_CODE;
                         ajaxRes.errorText = "Asymptote run error";
                         ajaxRes.errorCode = code;
+                        res.send(ajaxRes);
+                    }
+                    if (signal === "SIGTERM"){
+                        ajaxRes.responseType = "ERROR";
+                        ajaxRes.errorType = ERR.PROCESS_TERMINATED;
+                        ajaxRes.errorText = "Process terminated due to the server timeout.";
                         res.send(ajaxRes);
                     }
                 })
@@ -264,7 +270,7 @@ const runDownload = function(req, res, next, dirname){
                             cwd: dest.usrAbsDirPath
                         }
                         preRunChildProcess = childProcess.spawn('asy', asyArgs(requestedOutformat, codeFile), preRunChildProcessOption);
-                        timeoutHandle = processKillManager(res, ajaxRes, preRunChildProcess, serverTimeout);
+                        timeoutHandle = processKillManager(preRunChildProcess, serverTimeout);
 
                         preRunChildProcess.on('error', function (error) {
                             clearTimeout(timeoutHandle);
@@ -286,7 +292,7 @@ const runDownload = function(req, res, next, dirname){
                             ajaxRes.stderr += chunk.toString();
                         })
 
-                        preRunChildProcess.on('exit', function (code) {
+                        preRunChildProcess.on('exit', function (code, signal) {
                             clearTimeout(timeoutHandle);
                             if (code === 0) {
                                 const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
@@ -305,12 +311,17 @@ const runDownload = function(req, res, next, dirname){
                                 ajaxRes.errorCode = code;
                                 res.send(ajaxRes);
                             }
+                            if (signal === "SIGTERM"){
+                                ajaxRes.responseType = "ERROR";
+                                ajaxRes.errorType = ERR.PROCESS_TERMINATED;
+                                ajaxRes.errorText = "Process terminated due the server timeout.";
+                                res.send(ajaxRes);
+                            }
                         })
                     }
                 });
             }
         }
-
     } 
 }
 
@@ -347,11 +358,8 @@ exports.downloadReq = function(dirname){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         processKillManager
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const processKillManager = function (res, ajaxRes, processHandle, serverTimeout) {
+const processKillManager = function (processHandle, serverTimeout) {
     return setTimeout(() => {
         processHandle.kill();
-        ajaxRes.responseType = "ERROR";
-        ajaxRes.errorType = ERR.PROCESS_TERMINATED;
-        ajaxRes.errorText = "Process terminated due to server timeout.";
     }, serverTimeout)
 }
