@@ -209,7 +209,7 @@ const runDownload = function(req, res, next, dirname){
                             ajaxRes.isUpdated = false;
                             res.send(ajaxRes);
                         }
-                    } else if (code !== null) {
+                    } else {
                         ajaxRes.responseType = "ERROR";
                         ajaxRes.errorType = ERR.ASY_CODE;
                         ajaxRes.errorText = "Asymptote run error";
