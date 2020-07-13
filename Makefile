@@ -33,7 +33,7 @@ node_modules: package.json
 	npm install
 
 run:
-	node server.js &
+	node server.js
 
 # Run front end only (for testing)
 frontend:
