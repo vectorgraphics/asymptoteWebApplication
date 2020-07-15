@@ -13,7 +13,7 @@ const writePing = serverUtil.writePing;
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandle = "";
-const serverTimeout = 10000;                    //  in milliseconds
+const serverTimeout = 60000;                    //  in milliseconds
 
 const ERR = {
     ASY_WRITE: "ASY_WRITE_ERR",
