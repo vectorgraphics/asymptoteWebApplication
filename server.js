@@ -127,9 +127,9 @@ process.on("uncaughtException", (err) => {
     },
           diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
 
-    const dest = __dirname + "/logs/uncaughtException"
+    const dest = __dirname + "/logs/uncaughtExceptions"
     if (err){
-        fs.writeFile(dest, diagnoseJSON, (err) =>{
+        fs.appendFile(dest, diagnoseJSON, (err) =>{
             if (err){
                 console.log("An error occurred while writing " + dest + ".");
             }
