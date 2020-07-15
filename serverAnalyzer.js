@@ -152,7 +152,7 @@ const runDownload = function(req, res, next, dirname){
     }    
 
     const asyArgs = function (format, file) {
-        return ['-noV', '-outpipe', '2', '-f', format, file];
+        return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
     }
 
     // ----------------------------------------------------------------------

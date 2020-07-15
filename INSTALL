@@ -13,9 +13,8 @@ Install Node.js (www.nodejs.org)
 Asymptote Web Application Installation
 ======================================
 
-1. We recommend running this application as a non-privileged user
-"asymptote" on a virtual machine. The application gives clients the same
-read (but not write) access to the filesystem that the user asymptote has.
+1. We recommend running this application as a non-privileged user "asymptote"
+on a virtual machine.
 
 2. Disable logins:
 
@@ -23,12 +22,7 @@ passwd -d asymptote
 
 3. Install the latest version of Asymptote on the system.
 
-4. Create a file ~asymptote/.asy/config.asy containing the lines:
-
-import settings;
-settings.dir="/usr/local/share/doc/asymptote/examples";
-
-5. Starting as a user belonging to the asymptote group, install the node
+4. Starting as a user belonging to the asymptote group, install the node
 modules and application dependencies:
 
 cd ~asymptote
@@ -40,7 +34,7 @@ make
 exit
 exit
 
-6. We recommend running the bash script
+5. We recommend running the bash script
 
 pruneClients 1800
 
