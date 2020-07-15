@@ -40,7 +40,7 @@ frontend:
 	npm start
 
 tidy:
-	-rm -rf logs/uncaughtException
+	-rm -rf logs/uncaughtExceptions
 
 clean:  tidy
 	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg
