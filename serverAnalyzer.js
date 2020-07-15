@@ -13,7 +13,7 @@ const writePing = serverUtil.writePing;
 let runChildProcess = "";
 let preRunChildProcess = "";
 let timeoutHandle = "";
-const serverTimeout = 60000;                    //  in milliseconds
+const serverTimeout = 10000;                    //  in milliseconds
 
 const ERR = {
     ASY_WRITE: "ASY_WRITE_ERR",
@@ -199,30 +199,31 @@ const runDownload = function(req, res, next, dirname){
 
                 runChildProcess.on('exit', function (code, signal) {
                     clearTimeout(timeoutHandle);
-                    if (code === 0) {
-                        const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-                        if (fs.existsSync(outputFilePath)) {
-                            ajaxRes.responseType = OUT.OUTPUT_FILE;
-                            ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
-                            ajaxRes.isUpdated = !isUpdated;
-                            res.send(ajaxRes);
-                        } else {
-                            ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
-                            ajaxRes.isUpdated = false;
-                            res.send(ajaxRes);
-                        }
-                    } else {
-                        ajaxRes.responseType = "ERROR";
-                        ajaxRes.errorType = ERR.ASY_CODE;
-                        ajaxRes.errorText = "Asymptote run error";
-                        ajaxRes.errorCode = code;
-                        res.send(ajaxRes);
-                    }
-                    if (signal === "SIGTERM"){
+                    if (signal === "SIGTERM") {
                         ajaxRes.responseType = "ERROR";
                         ajaxRes.errorType = ERR.PROCESS_TERMINATED;
                         ajaxRes.errorText = "Process terminated due to the server timeout.";
                         res.send(ajaxRes);
+                    }else if (signal !== "SIGKILL"){
+                        if (code === 0) {
+                            const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
+                            if (fs.existsSync(outputFilePath)) {
+                                ajaxRes.responseType = OUT.OUTPUT_FILE;
+                                ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
+                                ajaxRes.isUpdated = !isUpdated;
+                                res.send(ajaxRes);
+                            } else {
+                                ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
+                                ajaxRes.isUpdated = false;
+                                res.send(ajaxRes);
+                            }
+                        } else {
+                            ajaxRes.responseType = "ERROR";
+                            ajaxRes.errorType = ERR.ASY_CODE;
+                            ajaxRes.errorText = "Asymptote run error";
+                            ajaxRes.errorCode = code;
+                            res.send(ajaxRes);
+                        }
                     }
                 })
             }
@@ -295,28 +296,29 @@ const runDownload = function(req, res, next, dirname){
 
                         preRunChildProcess.on('exit', function (code, signal) {
                             clearTimeout(timeoutHandle);
-                            if (code === 0) {
-                                const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
-                                if (fs.existsSync(outputFilePath)) {
-                                    ajaxRes.responseType = OUT.OUTPUT_FILE;
-                                    res.send(ajaxRes);
-                                } else {
-                                    ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
-                                    ajaxRes.isUpdated = false;
-                                    res.send(ajaxRes);
-                                }
-                            } else {
-                                ajaxRes.responseType = "ERROR";
-                                ajaxRes.errorType = ERR.ASY_CODE;
-                                ajaxRes.errorText = "Asymptote run error";
-                                ajaxRes.errorCode = code;
-                                res.send(ajaxRes);
-                            }
-                            if (signal === "SIGTERM"){
+                            if (signal === "SIGTERM") {
                                 ajaxRes.responseType = "ERROR";
                                 ajaxRes.errorType = ERR.PROCESS_TERMINATED;
                                 ajaxRes.errorText = "Process terminated due the server timeout.";
                                 res.send(ajaxRes);
+                            } else if (signal !== "SIGKILL") {
+                                if (code === 0) {
+                                    const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
+                                    if (fs.existsSync(outputFilePath)) {
+                                        ajaxRes.responseType = OUT.OUTPUT_FILE;
+                                        res.send(ajaxRes);
+                                    } else {
+                                        ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
+                                        ajaxRes.isUpdated = false;
+                                        res.send(ajaxRes);
+                                    }
+                                } else {
+                                    ajaxRes.responseType = "ERROR";
+                                    ajaxRes.errorType = ERR.ASY_CODE;
+                                    ajaxRes.errorText = "Asymptote run error";
+                                    ajaxRes.errorCode = code;
+                                    res.send(ajaxRes);
+                                }
                             }
                         })
                     }
