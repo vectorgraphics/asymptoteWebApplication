@@ -1,7 +1,7 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  AJAX API
-// Very light-weight and addaptable AJAX API written By Pedram Emami 
+// Very light-weight and addaptable AJAX API written By Pedram Emami
 // © Pedram Emami - 2020
-// emami1@ualberta.ca  
+// emami1@ualberta.ca
 
 
 export const Ajax = function (method, url, options = {}, async = true){
@@ -9,8 +9,8 @@ export const Ajax = function (method, url, options = {}, async = true){
         new Error('Passed method is not supported!');
     }
 
-    return (function(){            
-        function _ajax(method, url, async){
+    return (function(){
+        function _ajax(method, url, options, async){
             this.method = method;
             this.url = url;
             this.async = async;
@@ -64,7 +64,7 @@ export const Ajax = function (method, url, options = {}, async = true){
             }
             if(typeof this.callbacks.progress === "function"){
                 xhr.addEventListener('progress', this.callbacks.progress, false)
-            } 
+            }
             xhr.open(this.method, this.url, this.async);
             for (let item in this.headers){
                 xhr.setRequestHeader(item, this.headers[item]);
@@ -75,7 +75,7 @@ export const Ajax = function (method, url, options = {}, async = true){
                         cb.call(null, xhr.response);
                     } else {
                         new Error('Some Error has occurred!');
-                    }   
+                    }
                 }
             }
             xhr.send(data);
@@ -107,7 +107,7 @@ export const workspaceInspector = function(props){
             outformat: {
                 value: "html",
                 disabled: false
-            }, 
+            },
             codeText: "",
             output: {
                 responseType: null,

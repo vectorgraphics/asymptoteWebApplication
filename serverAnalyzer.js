@@ -57,7 +57,7 @@ const usrConnect = function(req, res, next, dirname){
         removeDir(usrDir);
     }
     makeDir(usrDir);
-    
+
     const dateAndTime = dateTime();
     const rawData = {
       usrIP: req.connection.remoteAddress,
@@ -106,7 +106,7 @@ const abort = function(req, res, next, dirname, timeoutHandle){
         stdin: "",
         stdout: "",
         stderr: "",
-        entryExists: false,
+        entryExists: false
     }
     res.send(ajaxRes);
 }
@@ -120,17 +120,17 @@ const runDownload = function(req, res, next, dirname){
     const workspaceName = req.body.workspaceName;
     const codeOption = req.body.codeOption.checked;
     let codeText = req.body.codeText;
-    if(codeText[codeText.length-1] != "\n")
+    if(codeText[codeText.length-1] !== "\n")
         codeText += "\n";
     const outputOption = req.body.outputOption.checked;
     const requestedOutformat = req.body.requestedOutformat;
     const isUpdated = req.body.isUpdated;
-    
+
     const codeFilename = workspaceName + "_" + workspaceId;
     const codeFile = codeFilename + ".asy";
     const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
     const onlyCodeChecked = codeOption && !outputOption;
-        
+
     const asyFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".asy";
     const htmlFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".html";
     const existingHtmlFile = htmlFileToRemove;
@@ -148,8 +148,8 @@ const runDownload = function(req, res, next, dirname){
         stderr: "",
         entryExists: false,
         isUpdated: isUpdated,
-        path: "",
-    }    
+        path: ""
+    }
 
     const asyArgs = function (format, file) {
         return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
@@ -175,7 +175,7 @@ const runDownload = function(req, res, next, dirname){
                     cwd: dest.usrAbsDirPath,
                 }
                 runChildProcess = childProcess.spawn('asy', asyArgs('html', codeFile), runChildProcessOption);
-                timeoutHandle = processKillManager(runChildProcess, serverTimeout);;
+                timeoutHandle = processKillManager(runChildProcess, serverTimeout);
 
                 runChildProcess.on('error', function (error) {
                     clearTimeout(timeoutHandle);
@@ -258,7 +258,7 @@ const runDownload = function(req, res, next, dirname){
                 if (fs.existsSync(outputFileToRemove)) {
                     fs.unlinkSync(outputFileToRemove);
                 }
-                
+
                 fs.writeFile(codeFilePath, codeText, (err) => {
                     if (err) {
                         ajaxRes.responseType = "ERROR";
@@ -325,7 +325,7 @@ const runDownload = function(req, res, next, dirname){
                 });
             }
         }
-    } 
+    }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                downloadReq
@@ -336,7 +336,7 @@ exports.downloadReq = function(dirname){
         const workspaceId = req.body.workspaceId;
         const workspaceName = req.body.workspaceName;
         const codeOption = req.body.codeOption;
-        const outputOption = req.body.outputOption;        
+        const outputOption = req.body.outputOption;
         const codeFilename = workspaceName + "_" + workspaceId;
         const codeFile = codeFilename + ".asy";
         const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;

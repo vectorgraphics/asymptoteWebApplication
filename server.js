@@ -10,8 +10,12 @@ const reqToRes = serverAnalyzer.reqToRes;
 const downloadReq = serverAnalyzer.downloadReq;
 
 var jsBuiltFile1 = fs.readdirSync( __dirname + "/build/static/js")[0];
-var jsBuiltFile2 = fs.readdirSync( __dirname + "/build/static/js")[3];
-var cssBuiltFile = fs.readdirSync( __dirname + "/build/static/css")[0];
+var jsBuiltFile2 = fs.readdirSync( __dirname + "/build/static/js")[1];
+var jsBuiltFile3 = fs.readdirSync( __dirname + "/build/static/js")[3];
+var jsBuiltFile4 = fs.readdirSync( __dirname + "/build/static/js")[4];
+var jsBuiltFile5 = fs.readdirSync( __dirname + "/build/static/js")[5];
+var cssBuiltFile1 = fs.readdirSync( __dirname + "/build/static/css")[0];
+var cssBuiltFile2 = fs.readdirSync( __dirname + "/build/static/css")[1];
 var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
 let port=80;
@@ -35,7 +39,10 @@ app.route("/logo3d.html")
 
 // Serving CSS Static File
 // ----------------------------------------
-app.route("/static/css/" + cssBuiltFile)
+app.route("/static/css/" + cssBuiltFile1)
+.get(express.static(__dirname + "/build"));
+
+app.route("/static/css/" + cssBuiltFile2)
 .get(express.static(__dirname + "/build"));
 
 
@@ -45,6 +52,15 @@ app.route("/static/js/" + jsBuiltFile1)
 .get(express.static(__dirname + "/build"));
 
 app.route("/static/js/" + jsBuiltFile2)
+.get(express.static(__dirname + "/build"));
+
+app.route("/static/js/" + jsBuiltFile3)
+.get(express.static(__dirname + "/build"));
+
+app.route("/static/js/" + jsBuiltFile4)
+.get(express.static(__dirname + "/build"));
+
+app.route("/static/js/" + jsBuiltFile5)
 .get(express.static(__dirname + "/build"));
 
 

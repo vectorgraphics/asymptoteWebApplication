@@ -19,7 +19,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
             buttonType : "Run"
         }
     }
-    
+
     render(){
         const currentWorkspace = workspaceInspector(this.props);
         const noWorkspace = currentWorkspace.id === null;
@@ -57,7 +57,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
                         runBtn.onClick = null;
                     }}
                 >Run</button>
-            )            
+            )
         }else{
             return (
                 <button className={cssStyle.BtnAnimated} ref={(button) => {stopBtn = button}}

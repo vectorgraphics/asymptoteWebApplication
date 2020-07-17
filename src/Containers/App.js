@@ -23,7 +23,7 @@ import Output from '../Components/Output/Output';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const ContainerConstructor = connect ((store) => ({
-    workspaces: store.workspaces, 
+    workspaces: store.workspaces,
     selectedWorkspace: store.selectedWorkspace,
     workspacePaneStatus: store.workspacePaneStatus
   }), {});
@@ -47,7 +47,7 @@ const App = ContainerConstructor(class extends Component {
             <div className={cssStyle.downloadPanel}>
               <div className={cssStyle.subcomponentContainer}> <DownloadStopButton/> </div>
               <div className={cssStyle.subcomponentContainer}> <Options/> </div>
-              <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]}/> </div> 
+              <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]}/> </div>
             </div>
             <ClearButton cssClass={cssStyle.controls}/>
           </div>
@@ -56,7 +56,7 @@ const App = ContainerConstructor(class extends Component {
             <a ref={(a)=> link = a}  href="https://asymptote.sourceforge.io/" target="_"> </a>
           </div>
         </div>
-  
+
         <div className={cssStyle.mainBody}>
           <WorkspacePane/>
           <div className={cssStyle.centralPanes}>
@@ -73,7 +73,7 @@ const App = ContainerConstructor(class extends Component {
         </div>
       </div>
     );
-  } 
+  }
 })
 
 export default App;
