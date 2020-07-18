@@ -14,14 +14,14 @@ window.addEventListener("load", (event) => {
       reqType: "usrConnect"
     };
     const dataJSON = JSON.stringify(data);
-    Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {
+    Ajax("POST", "/", {}, true).contentType("json").done(dataJSON, (response) => {
       if (response === "UDIC"){
         setInterval(() => {
           const data = {
             reqType: "ping"
           };
           const dataJSON = JSON.stringify(data);
-          Ajax("POST", "/", {}, false).contentType("json").done(dataJSON, (response) => {})
+          Ajax("POST", "/", {}, true).contentType("json").done(dataJSON, (response) => {})
         }, pingMilliseconds)
       }
     })
