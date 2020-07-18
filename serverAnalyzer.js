@@ -188,13 +188,13 @@ const runDownload = function(req, res, next, dirname){
                 })
 
                 runChildProcess.stdout.on('data', function (chunk) {
-                    ajaxRes.stdout = chunk.toString();
+                    ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:');
                 })
 
                 runChildProcess.stderr.on('data', function (chunk) {
                     clearTimeout(timeoutHandle);
                     ajaxRes.responseType = "ERROR";
-                    ajaxRes.stderr += chunk.toString();
+                    ajaxRes.stderr = chunk.toString();
                 })
 
                 runChildProcess.on('exit', function (code, signal) {
@@ -285,13 +285,13 @@ const runDownload = function(req, res, next, dirname){
                         })
 
                         preRunChildProcess.stdout.on('data', function (chunk) {
-                            ajaxRes.stdout = chunk.toString();
+                            ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:');
                         })
 
                         preRunChildProcess.stderr.on('data', function (chunk) {
                             clearTimeout(timeoutHandle);
                             ajaxRes.responseType = "ERROR";
-                            ajaxRes.stderr += chunk.toString();
+                            ajaxRes.stderr = chunk.toString();
                         })
 
                         preRunChildProcess.on('exit', function (code, signal) {

@@ -55,6 +55,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             if (onlyCodeChecked) {
                                 const dataJSON = JSON.stringify(data);
                                 Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                                    response.stdout=response.stdout.replace(/\\:/g,':');
                                     if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE" ) {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
@@ -79,6 +80,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             } else if (onlyOutputChecked) {
                                 const dataJSON = JSON.stringify(data);
                                 Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                                    response.stdout=response.stdout.replace(/\\:/g,':');
                                     if (response.responseType === "ERROR" || response.responseType === "NO_OUTPUT_FILE" ) {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
@@ -103,6 +105,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             } else if (bothOptionsChecked) {
                                 let dataJSON = JSON.stringify(data);
                                 Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                                    response.stdout=response.stdout.replace(/\\:/g,':');
                                     if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE" || response.responseType === "NO_OUTPUT_FILE"  ) {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
