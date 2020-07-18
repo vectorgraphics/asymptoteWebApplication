@@ -1,6 +1,6 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  AJAX API
 // Very light-weight and addaptable AJAX API written By Pedram Emami
-// © Pedram Emami - 2020
+// Copyright (C) 2020 Pedram Emami
 // emami1@ualberta.ca
 
 
