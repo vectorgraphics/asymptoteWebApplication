@@ -56,6 +56,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                                 const dataJSON = JSON.stringify(data);
                                 Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
                                     const parsedResponse = JSON.parse(response);
+                                    parsedResponse.stdout = parsedResponse.stdout.replace(/\\:/g,':');
                                     // console.log(parsedResponse);
                                     if (parsedResponse.responseType === "ERROR" || parsedResponse.responseType === "NO_ASY_FILE" ) {
                                         this.props.getRunResponse(currentWorkspace.id, parsedResponse);

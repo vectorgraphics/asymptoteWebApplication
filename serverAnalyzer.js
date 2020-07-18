@@ -172,7 +172,7 @@ const runDownload = function(req, res, next, dirname){
                 res.send(ajaxRes);
             } else {
                 const runChildProcessOption = {
-                    cwd: dest.usrAbsDirPath,
+                    cwd: dest.usrAbsDirPath
                 }
                 runChildProcess = childProcess.spawn('asy', asyArgs('html', codeFile), runChildProcessOption);
                 timeoutHandle = processKillManager(runChildProcess, serverTimeout);
@@ -188,7 +188,7 @@ const runDownload = function(req, res, next, dirname){
                 })
 
                 runChildProcess.stdout.on('data', function (chunk) {
-                    ajaxRes.stdout += chunk.toString();
+                    ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:'); // Fix binary translation issue
                 })
 
                 runChildProcess.stderr.on('data', function (chunk) {
@@ -285,7 +285,7 @@ const runDownload = function(req, res, next, dirname){
                         })
 
                         preRunChildProcess.stdout.on('data', function (chunk) {
-                            ajaxRes.stdout += chunk.toString();
+                            ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:'); // Fix binary translation issue
                         })
 
                         preRunChildProcess.stderr.on('data', function (chunk) {

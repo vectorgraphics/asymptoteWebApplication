@@ -46,6 +46,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
                         const dataJSON = JSON.stringify(data);
                         Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
                             const parsedResponse = JSON.parse(response);
+                            parsedResponse.stdout = parsedResponse.stdout.replace(/\\:/g,':');
                             this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                             this.setState({
                                 buttonType: "Run",
