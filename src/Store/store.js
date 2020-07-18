@@ -41,7 +41,7 @@ export const actionFact = {
                 lastAssigned: lastAssigned,
                 current: current,
             }
-        }        
+        }
     },
     selectOption : function(id, name, isChecked, status){
         if(name === "code") {
@@ -51,7 +51,7 @@ export const actionFact = {
                 codeOption: {
                    checked: isChecked,
                    disabled: status
-                } 
+                }
             }
         } else if(name === "output"){
             return {
@@ -60,7 +60,7 @@ export const actionFact = {
                 outputOption: {
                     checked: isChecked,
                     disabled: status
-                } 
+                }
             }
         }
     },
@@ -69,41 +69,34 @@ export const actionFact = {
             type: actionTypes.update,
             id: id,
             outformat: value
-        }                
+        }
     },
     saveCode : function(id, codeText){
         return {
             type: actionTypes.update,
             id: id,
             codeText: codeText
-        }                
+        }
     },
     updateTextareaContent : function(id, textValue){
         return {
             type: actionTypes.update,
             id: id,
             codeText: textValue
-        }        
+        }
     },
     updateTerminalText : function(id, value){
         return {
             type: actionTypes.update,
             id: id,
             output: value
-        }        
+        }
     },
     corePanesDisplay : function(id, status){
         return {
             type: actionTypes.update,
             id: id,
             corePanesDisplay: status
-        }        
-    },
-    refetchIframe: function (id, newOutput){
-        return {
-            type: actionTypes.update,
-            id: id,
-            output: newOutput
         }
     },
     getRunResponse : function(id, response){
@@ -111,14 +104,14 @@ export const actionFact = {
             type: actionTypes.update,
             id: id,
             output: response
-        }        
+        }
     },
     changeWorkspacePaneStatus: function(statusValue){
         return {
             type: actionTypes.view,
             view: statusValue
         }
-    } 
+    }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  REDUCERS
