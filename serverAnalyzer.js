@@ -73,7 +73,7 @@ const usrConnect = function(req, res, next, dirname){
             console.log("error in writing log file");
         }
     })
-    res.send("UDIC");
+    res.json("UDIC");
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping
@@ -85,7 +85,7 @@ const ping = function(req, res, next, dirname){
     } else {
       makeDir(dest.usrAbsDirPath);
     }
-    res.send("");
+    res.json("");
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
@@ -108,7 +108,7 @@ const abort = function(req, res, next, dirname, timeoutHandle){
         stderr: "",
         entryExists: false
     }
-    res.send(ajaxRes);
+    res.json(ajaxRes);
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                runDownload
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +169,7 @@ const runDownload = function(req, res, next, dirname){
                 ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                 ajaxRes.errorCode = err.code;
                 ajaxRes.errorContent = err.toString();
-                res.send(ajaxRes);
+                res.json(ajaxRes);
             } else {
                 const runChildProcessOption = {
                     cwd: dest.usrAbsDirPath
@@ -184,11 +184,11 @@ const runDownload = function(req, res, next, dirname){
                     ajaxRes.errorText = "Server child process internal error.";
                     ajaxRes.errorCode = error.code;
                     ajaxRes.errorContent = error.toString();
-                    res.send(ajaxRes);
+                    res.json(ajaxRes);
                 })
 
                 runChildProcess.stdout.on('data', function (chunk) {
-                    ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:'); // Fix binary translation issue
+                    ajaxRes.stdout = chunk.toString();
                 })
 
                 runChildProcess.stderr.on('data', function (chunk) {
@@ -203,7 +203,7 @@ const runDownload = function(req, res, next, dirname){
                         ajaxRes.responseType = "ERROR";
                         ajaxRes.errorType = ERR.PROCESS_TERMINATED;
                         ajaxRes.errorText = "Process terminated due to the server timeout.";
-                        res.send(ajaxRes);
+                        res.json(ajaxRes);
                     }else if (signal !== "SIGKILL"){
                         if (code === 0) {
                             const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
@@ -211,18 +211,18 @@ const runDownload = function(req, res, next, dirname){
                                 ajaxRes.responseType = OUT.OUTPUT_FILE;
                                 ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
                                 ajaxRes.isUpdated = !isUpdated;
-                                res.send(ajaxRes);
+                                res.json(ajaxRes);
                             } else {
                                 ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
                                 ajaxRes.isUpdated = false;
-                                res.send(ajaxRes);
+                                res.json(ajaxRes);
                             }
                         } else {
                             ajaxRes.responseType = "ERROR";
                             ajaxRes.errorType = ERR.ASY_CODE;
                             ajaxRes.errorText = "Asymptote run error";
                             ajaxRes.errorCode = code;
-                            res.send(ajaxRes);
+                            res.json(ajaxRes);
                         }
                     }
                 })
@@ -241,16 +241,16 @@ const runDownload = function(req, res, next, dirname){
                     ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                     ajaxRes.errorCode = err.code;
                     ajaxRes.errorContent = err.toString();
-                    res.send(ajaxRes);
+                    res.json(ajaxRes);
                 } else {
                     ajaxRes.responseType = OUT.ASY_FILE;
-                    res.send(ajaxRes);
+                    res.json(ajaxRes);
                 }
             })
         } else {
             if (requestedOutformat === "html" && htmlFileFlag) {
                 ajaxRes.responseType = OUT.OUTPUT_FILE;
-                res.send(ajaxRes);
+                res.json(ajaxRes);
             } else {
                 if (fs.existsSync(asyFileToRemove)) {
                     fs.unlinkSync(asyFileToRemove);
@@ -266,7 +266,7 @@ const runDownload = function(req, res, next, dirname){
                         ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                         ajaxRes.errorCode = err.code;
                         ajaxRes.errorContent = err.toString();
-                        res.send(ajaxRes);
+                        res.json(ajaxRes);
                     } else {
                         const preRunChildProcessOption = {
                             cwd: dest.usrAbsDirPath
@@ -281,11 +281,11 @@ const runDownload = function(req, res, next, dirname){
                             ajaxRes.errorText = "Server child process internal error.";
                             ajaxRes.errorCode = error.code;
                             ajaxRes.errorContent = error.toString();
-                            res.send(ajaxRes);
+                            res.json(ajaxRes);
                         })
 
                         preRunChildProcess.stdout.on('data', function (chunk) {
-                            ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:'); // Fix binary translation issue
+                            ajaxRes.stdout = chunk.toString();
                         })
 
                         preRunChildProcess.stderr.on('data', function (chunk) {
@@ -300,24 +300,24 @@ const runDownload = function(req, res, next, dirname){
                                 ajaxRes.responseType = "ERROR";
                                 ajaxRes.errorType = ERR.PROCESS_TERMINATED;
                                 ajaxRes.errorText = "Process terminated due the server timeout.";
-                                res.send(ajaxRes);
+                                res.json(ajaxRes);
                             } else if (signal !== "SIGKILL") {
                                 if (code === 0) {
                                     const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
                                     if (fs.existsSync(outputFilePath)) {
                                         ajaxRes.responseType = OUT.OUTPUT_FILE;
-                                        res.send(ajaxRes);
+                                        res.json(ajaxRes);
                                     } else {
                                         ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
                                         ajaxRes.isUpdated = false;
-                                        res.send(ajaxRes);
+                                        res.json(ajaxRes);
                                     }
                                 } else {
                                     ajaxRes.responseType = "ERROR";
                                     ajaxRes.errorType = ERR.ASY_CODE;
                                     ajaxRes.errorText = "Asymptote run error";
                                     ajaxRes.errorCode = code;
-                                    res.send(ajaxRes);
+                                    res.json(ajaxRes);
                                 }
                             }
                         })

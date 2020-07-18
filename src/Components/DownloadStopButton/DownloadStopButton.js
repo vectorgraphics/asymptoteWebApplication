@@ -54,12 +54,9 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY CODE
                             if (onlyCodeChecked) {
                                 const dataJSON = JSON.stringify(data);
-                                Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                                    const parsedResponse = JSON.parse(response);
-                                    parsedResponse.stdout = parsedResponse.stdout.replace(/\\:/g,':');
-                                    // console.log(parsedResponse);
-                                    if (parsedResponse.responseType === "ERROR" || parsedResponse.responseType === "NO_ASY_FILE" ) {
-                                        this.props.getRunResponse(currentWorkspace.id, parsedResponse);
+                                Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                                    if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE" ) {
+                                        this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
                                             buttonType: "Download",
                                         })
@@ -81,11 +78,9 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY OUTPUT
                             } else if (onlyOutputChecked) {
                                 const dataJSON = JSON.stringify(data);
-                                Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                                    const parsedResponse = JSON.parse(response);
-                                    // console.log(parsedResponse);
-                                    if (parsedResponse.responseType === "ERROR" || parsedResponse.responseType === "NO_OUTPUT_FILE" ) {
-                                        this.props.getRunResponse(currentWorkspace.id, parsedResponse);
+                                Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                                    if (response.responseType === "ERROR" || response.responseType === "NO_OUTPUT_FILE" ) {
+                                        this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
                                             buttonType: "Download",
                                         })
@@ -107,11 +102,9 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  BOTH CODE & OUTPUT
                             } else if (bothOptionsChecked) {
                                 let dataJSON = JSON.stringify(data);
-                                Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                                    const parsedResponse = JSON.parse(response);
-                                    // console.log(parsedResponse);
-                                    if (parsedResponse.responseType === "ERROR" || parsedResponse.responseType === "NO_ASY_FILE" || parsedResponse.responseType === "NO_OUTPUT_FILE"  ) {
-                                        this.props.getRunResponse(currentWorkspace.id, parsedResponse);
+                                Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                                    if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE" || response.responseType === "NO_OUTPUT_FILE"  ) {
+                                        this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
                                             buttonType: "Download",
                                         })

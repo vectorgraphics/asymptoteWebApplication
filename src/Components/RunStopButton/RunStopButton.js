@@ -44,10 +44,8 @@ const RunStopButton = ContainerConstructor(class extends Component {
                             isUpdated: currentWorkspace.output.isUpdated,
                         };
                         const dataJSON = JSON.stringify(data);
-                        Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                            const parsedResponse = JSON.parse(response);
-                            parsedResponse.stdout = parsedResponse.stdout.replace(/\\:/g,':');
-                            this.props.getRunResponse(currentWorkspace.id, parsedResponse);
+                        Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
+                            this.props.getRunResponse(currentWorkspace.id, response);
                             this.setState({
                                 buttonType: "Run",
                             })
@@ -71,7 +69,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
                             workspaceName: currentWorkspace.name.current,
                         };
                         const dataJSON = JSON.stringify(data);
-                        Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
+                        Ajax("POST", "/", { responseType: "json" }).contentType("json").done(dataJSON, (response) => {
                             this.setState({
                                 buttonType: "Run",
                             })
