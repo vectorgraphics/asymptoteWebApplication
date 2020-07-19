@@ -2,7 +2,7 @@ import React, {Component, memo} from 'react';
 import cssStyle from './RunStopButton.module.css';
 import {connect} from 'react-redux';
 import {actionFact} from '../../Store/store';
-import {Ajax, workspaceInspector} from '../../Util/util';
+import {Ajax, workspaceInspector, decode} from '../../Util/util';
 
 const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace}),
 {
@@ -44,8 +44,8 @@ const RunStopButton = ContainerConstructor(class extends Component {
                             isUpdated: currentWorkspace.output.isUpdated,
                         };
                         const dataJSON = JSON.stringify(data);
-                        Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
-                            response.stdout=response.stdout.replace(/\\:/g,':');
+                        Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
+                        let response=decode(Response);
                             this.props.getRunResponse(currentWorkspace.id, response);
                             this.setState({
                                 buttonType: "Run",

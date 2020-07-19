@@ -84,6 +84,17 @@ const removeDir = function(path){
     }
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     encode
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const encode = function (r) {
+  const esc = function (s) {
+    return (s+'').toString().replace(/\|/g,'|:')+'||';
+  }
+
+  return Object.values(r).map(esc).reduce((sum, x) => sum+x);
+}
+
 module.exports = {
     usrDirMgr: usrDirMgr,
     dirCheck: dirCheck,
@@ -91,5 +102,6 @@ module.exports = {
     makeDir: makeDir,
     writePing: writePing,
     dateTime: dateTime,
+    encode:encode
 }
 

@@ -7,6 +7,7 @@ const removeDir = serverUtil.removeDir;
 const dateTime = serverUtil.dateTime;
 const makeDir = serverUtil.makeDir;
 const writePing = serverUtil.writePing;
+const encode = serverUtil.encode;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    Globals
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +138,7 @@ const runDownload = function(req, res, next, dirname){
     const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
 
     let htmlFileFlag = (fs.existsSync(existingHtmlFile)) ? true : false;
-    let ajaxRes = {
+    let ajaxRes = { // Keep these entries synchronized with decode in Util/util.js
         responseType: "",
         errorType: null,
         errorText: null,
@@ -188,7 +189,7 @@ const runDownload = function(req, res, next, dirname){
                 })
 
                 runChildProcess.stdout.on('data', function (chunk) {
-                    ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:');
+                    ajaxRes.stdout = chunk.toString();
                 })
 
                 runChildProcess.stderr.on('data', function (chunk) {
@@ -211,18 +212,18 @@ const runDownload = function(req, res, next, dirname){
                                 ajaxRes.responseType = OUT.OUTPUT_FILE;
                                 ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
                                 ajaxRes.isUpdated = !isUpdated;
-                                res.json(ajaxRes);
+                                res.send(encode(ajaxRes));
                             } else {
                                 ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
                                 ajaxRes.isUpdated = false;
-                                res.json(ajaxRes);
+                                res.send(encode(ajaxRes));
                             }
                         } else {
                             ajaxRes.responseType = "ERROR";
                             ajaxRes.errorType = ERR.ASY_CODE;
                             ajaxRes.errorText = "Asymptote run error";
                             ajaxRes.errorCode = code;
-                            res.json(ajaxRes);
+                            res.send(encode(ajaxRes));
                         }
                     }
                 })
@@ -241,16 +242,16 @@ const runDownload = function(req, res, next, dirname){
                     ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                     ajaxRes.errorCode = err.code;
                     ajaxRes.errorContent = err.toString();
-                    res.json(ajaxRes);
+                    res.json(encode(ajaxRes));
                 } else {
                     ajaxRes.responseType = OUT.ASY_FILE;
-                    res.json(ajaxRes);
+                    res.json(encode(ajaxRes));
                 }
             })
         } else {
             if (requestedOutformat === "html" && htmlFileFlag) {
                 ajaxRes.responseType = OUT.OUTPUT_FILE;
-                res.json(ajaxRes);
+                res.json(encode(ajaxRes));
             } else {
                 if (fs.existsSync(asyFileToRemove)) {
                     fs.unlinkSync(asyFileToRemove);
@@ -266,7 +267,7 @@ const runDownload = function(req, res, next, dirname){
                         ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
                         ajaxRes.errorCode = err.code;
                         ajaxRes.errorContent = err.toString();
-                        res.json(ajaxRes);
+                        res.json(encode(ajaxRes));
                     } else {
                         const preRunChildProcessOption = {
                             cwd: dest.usrAbsDirPath
@@ -281,11 +282,11 @@ const runDownload = function(req, res, next, dirname){
                             ajaxRes.errorText = "Server child process internal error.";
                             ajaxRes.errorCode = error.code;
                             ajaxRes.errorContent = error.toString();
-                            res.json(ajaxRes);
+                            res.json(encode(ajaxRes));
                         })
 
                         preRunChildProcess.stdout.on('data', function (chunk) {
-                            ajaxRes.stdout = chunk.toString().replace(/:/g,'\\:');
+                            ajaxRes.stdout = chunk.toString();
                         })
 
                         preRunChildProcess.stderr.on('data', function (chunk) {
@@ -300,24 +301,24 @@ const runDownload = function(req, res, next, dirname){
                                 ajaxRes.responseType = "ERROR";
                                 ajaxRes.errorType = ERR.PROCESS_TERMINATED;
                                 ajaxRes.errorText = "Process terminated due the server timeout.";
-                                res.json(ajaxRes);
+                                res.send(encode(ajaxRes));
                             } else if (signal !== "SIGKILL") {
                                 if (code === 0) {
                                     const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
                                     if (fs.existsSync(outputFilePath)) {
                                         ajaxRes.responseType = OUT.OUTPUT_FILE;
-                                        res.json(ajaxRes);
+                                        res.send(encode(ajaxRes));
                                     } else {
                                         ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
                                         ajaxRes.isUpdated = false;
-                                        res.json(ajaxRes);
+                                        res.send(encode(ajaxRes));
                                     }
                                 } else {
                                     ajaxRes.responseType = "ERROR";
                                     ajaxRes.errorType = ERR.ASY_CODE;
                                     ajaxRes.errorText = "Asymptote run error";
                                     ajaxRes.errorCode = code;
-                                    res.json(ajaxRes);
+                                    res.send(encode(ajaxRes));
                                 }
                             }
                         })

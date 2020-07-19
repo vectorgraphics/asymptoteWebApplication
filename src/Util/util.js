@@ -129,3 +129,27 @@ export const workspaceInspector = function(props){
         return props.workspaces[index];
     }
 }
+
+export const decode = function (r) {
+  const unEsc = function (s) {
+    let r=(s+'').toString().replace(/\|:/g,'|');
+    return r === 'null' ? null : r;
+  }
+
+  let k=0;
+  let s=r.split("||");
+
+  return {
+    responseType: unEsc(s[k++]),
+    errorType:  unEsc(s[k++]),
+    errorText:  unEsc(s[k++]),
+    errorCode:  unEsc(s[k++]),
+    errorContent:  unEsc(s[k++]),
+    stdin:  unEsc(s[k++]),
+    stdout:  unEsc(s[k++]),
+    stderr:  unEsc(s[k++]),
+    entryExists:  unEsc(s[k++]) === 'true',
+    isUpdated:  unEsc(s[k++]) === 'true',
+    path: unEsc(s[k])
+  }
+}

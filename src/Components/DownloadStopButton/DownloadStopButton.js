@@ -2,7 +2,7 @@ import React, {memo, Component} from 'react';
 import cssStyle from './DownloadStopButton.module.css';
 import {connect} from 'react-redux';
 import {actionFact} from '../../Store/store';
-import {Ajax, workspaceInspector} from '../../Util/util';
+import {Ajax, workspaceInspector, decode} from '../../Util/util';
 
 const ContainerConstructor = connect ((store) => ({workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace}),
 {
@@ -54,8 +54,8 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY CODE
                             if (onlyCodeChecked) {
                                 const dataJSON = JSON.stringify(data);
-                                Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
-                                    response.stdout=response.stdout.replace(/\\:/g,':');
+                                Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
+                                    let response=decode(Response);
                                     if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE" ) {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
@@ -79,8 +79,8 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY OUTPUT
                             } else if (onlyOutputChecked) {
                                 const dataJSON = JSON.stringify(data);
-                                Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
-                                    response.stdout=response.stdout.replace(/\\:/g,':');
+                                Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
+                                    let response=decode(Response);
                                     if (response.responseType === "ERROR" || response.responseType === "NO_OUTPUT_FILE" ) {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
@@ -104,8 +104,8 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                             // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  BOTH CODE & OUTPUT
                             } else if (bothOptionsChecked) {
                                 let dataJSON = JSON.stringify(data);
-                                Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
-                                    response.stdout=response.stdout.replace(/\\:/g,':');
+                                Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
+                                    let response=decode(Response);
                                     if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE") {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
