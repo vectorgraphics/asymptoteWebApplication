@@ -106,16 +106,30 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                                 let dataJSON = JSON.stringify(data);
                                 Ajax("POST", "/", {responseType: "json"}).contentType("json").done(dataJSON, (response) => {
                                     response.stdout=response.stdout.replace(/\\:/g,':');
-                                    if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE" || response.responseType === "NO_OUTPUT_FILE"  ) {
+                                    if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE") {
                                         this.props.getRunResponse(currentWorkspace.id, response);
                                         this.setState({
                                             buttonType: "Download",
                                         })
-                                    } else {
+                                    } else if (response.responseType === "NO_OUTPUT_FILE") {
                                         data.codeOption = true;
                                         data.outputOption = false;
                                         dataJSON = JSON.stringify(data);
                                         Ajax("POST", "/clients", {responseType: "blob"}).contentType("json").done(dataJSON, (response) => {
+                                            link.href = window.URL.createObjectURL(response);
+                                            link.setAttribute("download", currentWorkspace.name.current + ".asy");
+                                            link.click();
+                                            this.setState({
+                                                buttonType: "Download",
+                                            })
+                                        });
+                                    } else {
+                                        data.codeOption = true;
+                                        data.outputOption = false;
+                                        dataJSON = JSON.stringify(data);
+                                        Ajax("POST", "/clients", {
+                                            responseType: "blob"
+                                        }).contentType("json").done(dataJSON, (response) => {
                                             link.href = window.URL.createObjectURL(response);
                                             link.setAttribute("download", currentWorkspace.name.current + ".asy");
                                             link.click();
