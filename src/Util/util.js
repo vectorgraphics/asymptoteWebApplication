@@ -132,12 +132,12 @@ export const workspaceInspector = function(props){
 
 export const decode = function (r) {
   const unEsc = function (s) {
-    let r=(s+'').toString().replace(/\|:/g,'|');
+    let r=(s+'').toString().replace(/:\|/g,':');
     return r === 'null' ? null : r;
   }
 
   let k=0;
-  let s=r.split("||");
+  let s=r.split("::");
 
   return {
     responseType: unEsc(s[k++]),

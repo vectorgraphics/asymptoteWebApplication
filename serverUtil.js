@@ -89,7 +89,7 @@ const removeDir = function(path){
 
 const encode = function (r) {
   const esc = function (s) {
-    return (s+'').toString().replace(/\|/g,'|:')+'||';
+    return (s+'').toString().replace(/:/g,':|')+'::';
   }
 
   return Object.values(r).map(esc).reduce((sum, x) => sum+x);
