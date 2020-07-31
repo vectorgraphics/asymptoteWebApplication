@@ -24,7 +24,7 @@
     flex: 0 1 auto;
     width: 65%;
     justify-content: space-around;
-    align-items: center;    
+    align-items: center;
 }
 .controls, .downloadPanel, .uploadRunPanel{
     display: flex;

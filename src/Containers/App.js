@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 // import store from "../Store/store";
 import cssStyle from './App.module.css';
-import {workspaceInspector} from '../Util/util';
+import { workspaceInspector } from '../Util/util';
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 COMPONENTS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,15 +22,15 @@ import Output from '../Components/Output/Output';
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const ContainerConstructor = connect ((store) => ({
-    workspaces: store.workspaces,
-    selectedWorkspace: store.selectedWorkspace,
-    workspacePaneStatus: store.workspacePaneStatus
-  }), {});
+const ContainerConstructor = connect((store) => ({
+  workspaces: store.workspaces,
+  selectedWorkspace: store.selectedWorkspace,
+  workspacePaneStatus: store.workspacePaneStatus
+}), {});
 
 const App = ContainerConstructor(class extends Component {
 
-  render(){
+  render() {
     // console.log(store.getState());
     const currentWorkspace = workspaceInspector(this.props);
     let link = null;
@@ -38,36 +38,36 @@ const App = ContainerConstructor(class extends Component {
     return (
       <div id="AppCont" className={cssStyle.app}>
         <div className={cssStyle.header}>
-          <ToggleKey/>
+          <ToggleKey />
           <div className={cssStyle.menuBar}>
             <div className={cssStyle.uploadRunPanel}>
-            <UploadButton cssClass={cssStyle.controls}/>
-            <RunStopButton cssClass={cssStyle.controls}/>
+              <UploadButton cssClass={cssStyle.controls} />
+              <RunStopButton cssClass={cssStyle.controls} />
             </div>
             <div className={cssStyle.downloadPanel}>
-              <div className={cssStyle.subcomponentContainer}> <DownloadStopButton/> </div>
-              <div className={cssStyle.subcomponentContainer}> <Options/> </div>
-              <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]}/> </div>
+              <div className={cssStyle.subcomponentContainer}> <DownloadStopButton /> </div>
+              <div className={cssStyle.subcomponentContainer}> <Options /> </div>
+              <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]} /> </div>
             </div>
-            <ClearButton cssClass={cssStyle.controls}/>
+            <ClearButton cssClass={cssStyle.controls} />
           </div>
 
           <div className={cssStyle.homeLink} onClick={(event) => link.click()} >
-            <a ref={(a)=> link = a}  href="https://asymptote.sourceforge.io/" target="_"> </a>
+            <a ref={(a) => link = a} href="https://asymptote.sourceforge.io/" target="_"> </a>
           </div>
         </div>
 
         <div className={cssStyle.mainBody}>
-          <WorkspacePane/>
+          <WorkspacePane />
           <div className={cssStyle.centralPanes}>
-            <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.codePane)? {display: "flex"}: {display: "none"}}>
-              <CodePaneHeader/>
-              <Editor/>
-              <Terminal/>
+            <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.codePane) ? { display: "flex" } : { display: "none" }}>
+              <CodePaneHeader />
+              <Editor />
+              <Terminal />
             </div>
-            <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.outputPane)? {display: "flex"}: {display: "none"}}>
-              <OutputPaneHeader/>
-              <Output/>
+            <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.outputPane) ? { display: "flex" } : { display: "none" }}>
+              <OutputPaneHeader />
+              <Output />
             </div>
           </div>
         </div>
