@@ -22,11 +22,12 @@ endif
 vpath %.asy icons
 vpath %.asy logo
 vpath %.svg src/assets
-vpath %.html public
+vpath %.html.gz public
 
 ASY_ICONS=$(wildcard icons/*.asy)
+ASY_LOGO=logo3d.html.gz
 
-all:	$(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html.gz node_modules
+all:	$(notdir $(ASY_ICONS:.asy=.svg)) $(ASY_LOGO) node_modules
 	npm run build
 	-cd build && rm static/*/*.map static/js/*.LICENSE.txt asset-manifest.json
 
@@ -45,10 +46,10 @@ tidy:
 
 clean:  tidy
 	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg
-	-cd public && rm -f logo3d.html
+	-cd public && rm -f $(ASY_LOGO)
 	-rm -rf node_modules build package-lock.json clients/* logs/*
 
-.SUFFIXES: .asy .svg .html
+.SUFFIXES: .asy .svg .html .gz .html.gz
 
 %.svg: %.asy
 	asy -nowarn unbounded -f svg -o src/assets/ $<
@@ -57,4 +58,4 @@ clean:  tidy
 	asy -nowarn unbounded -f html -o public/ $<
 
 %.html.gz: %.html
-	gzip $<
+	cd public && gzip $<
