@@ -26,8 +26,9 @@ vpath %.html public
 
 ASY_ICONS=$(wildcard icons/*.asy)
 
-all:	$(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html node_modules
+all:	$(notdir $(ASY_ICONS:.asy=.svg)) logo3d.html.gz node_modules
 	npm run build
+	-cd build && rm static/*/*.map static/js/*.LICENSE.txt asset-manifest.json
 
 node_modules: package.json
 	npm install
@@ -54,3 +55,6 @@ clean:  tidy
 
 %.html: %.asy
 	asy -nowarn unbounded -f html -o public/ $<
+
+%.html.gz: %.html
+	gzip $<
