@@ -2,6 +2,7 @@ const fs = require("fs");
 const serverUtil = require("./serverUtil");
 const serverAnalyzer = require("./serverAnalyzer");
 const express = require("express");
+const expressStaticGzip = require("express-static-gzip")
 const bodyParser = require("body-parser");
 
 const dirCheck = serverUtil.dirCheck;
@@ -11,14 +12,11 @@ const downloadReq = serverAnalyzer.downloadReq;
 
 var jsBuiltFile1 = fs.readdirSync( __dirname + "/build/static/js")[0];
 var jsBuiltFile2 = fs.readdirSync( __dirname + "/build/static/js")[1];
-var jsBuiltFile3 = fs.readdirSync( __dirname + "/build/static/js")[3];
-var jsBuiltFile4 = fs.readdirSync( __dirname + "/build/static/js")[4];
-var jsBuiltFile5 = fs.readdirSync( __dirname + "/build/static/js")[5];
-var cssBuiltFile1 = fs.readdirSync( __dirname + "/build/static/css")[0];
-var cssBuiltFile2 = fs.readdirSync( __dirname + "/build/static/css")[1];
+var jsBuiltFile3 = fs.readdirSync( __dirname + "/build/static/js")[2];
+var cssBuiltFile = fs.readdirSync( __dirname + "/build/static/css")[0];
 var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
-let port=80;
+let port = 80;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Application Routs
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,14 +33,11 @@ app.route('/')
 // Serving Static Logo File
 // ----------------------------------------
 app.route("/logo3d.html")
-.get(express.static(__dirname + "/build"));
+.get(expressStaticGzip(__dirname + "/build"));
 
 // Serving CSS Static File
 // ----------------------------------------
-app.route("/static/css/" + cssBuiltFile1)
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/css/" + cssBuiltFile2)
+app.route("/static/css/" + cssBuiltFile)
 .get(express.static(__dirname + "/build"));
 
 
@@ -56,13 +51,6 @@ app.route("/static/js/" + jsBuiltFile2)
 
 app.route("/static/js/" + jsBuiltFile3)
 .get(express.static(__dirname + "/build"));
-
-app.route("/static/js/" + jsBuiltFile4)
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/js/" + jsBuiltFile5)
-.get(express.static(__dirname + "/build"));
-
 
 // Serving Media Static Files
 // ----------------------------------------
@@ -89,9 +77,6 @@ app.route("/static/media/" + mediaDir[6])
 
 app.route("/static/media/" + mediaDir[7])
 .get(express.static(__dirname + "/build"));
-
-// app.route("/manifest.json")
-// .get(express.static(__dirname + "/build"));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
