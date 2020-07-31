@@ -116,7 +116,12 @@ const abort = function (req, res, next, dirname, timeoutHandle) {
 
 // ==========================       Internal module
 // ================================================
-function childProcessManager(dest, childProcessType, childProcessGlobal, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename, asyArgs) {
+function childProcessManager(dest, childProcessType, childProcessGlobal, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename) {
+
+  const asyArgs = function (format, file) {
+    return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
+  }
+
   const onErrorHandler = function (res, ajaxRes) {
     return function (error) {
       clearTimeout(timeoutHandle);
@@ -233,10 +238,6 @@ const runDownload = function (req, res, next, dirname) {
     path: ""
   }
 
-  const asyArgs = function (format, file) {
-    return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
-  }
-
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      run request
 
   if (reqType === "run") {
@@ -252,7 +253,7 @@ const runDownload = function (req, res, next, dirname) {
         ajaxRes.errorContent = err.toString();
         res.json(encode(ajaxRes));
       } else {
-        childProcessManager(dest, "run", runChildProcess, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename, asyArgs)
+        childProcessManager(dest, "run", runChildProcess, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
       }
     });
 
@@ -294,7 +295,7 @@ const runDownload = function (req, res, next, dirname) {
             ajaxRes.errorContent = err.toString();
             res.json(encode(ajaxRes));
           } else {
-            childProcessManager(dest, "preRun", preRunChildProcess, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename, asyArgs)
+            childProcessManager(dest, "preRun", preRunChildProcess, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
           }
         });
       }
