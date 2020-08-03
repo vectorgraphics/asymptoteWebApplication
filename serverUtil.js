@@ -4,7 +4,7 @@ const SHA1 = require("crypto-js/sha1");
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const usrDirMgr = function(req, serverDir){
-    const usrDirName = SHA1(req.connection.remoteAddress); 
+    const usrDirName = SHA1(req.connection.remoteAddress);
      return {
         usrDirName: usrDirName + "",
         usrDirPath: '/' + usrDirName,
@@ -89,7 +89,7 @@ const removeDir = function(path){
 
 const encode = function (r) {
   const esc = function (s) {
-    return (s+'').toString().replace(/:/g,':|')+'::';
+    return (s+"").toString().replace(/:/g,":|")+"::";
   }
 
   return Object.values(r).map(esc).reduce((sum, x) => sum+x);

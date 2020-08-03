@@ -91,7 +91,7 @@ const ping = function (req, res, next, dirname) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const abort = function (req, res, next, dirname, timeoutHandle) {
+const abort = function (req, res, next, dirname) {
   clearTimeout(timeoutHandle);
   if (req.body.abortRequestFor === "Run") {
     runChildProcess.kill("SIGKILL");
@@ -116,85 +116,90 @@ const abort = function (req, res, next, dirname, timeoutHandle) {
 
 // ==========================       Internal module
 // ================================================
-function childProcessManager(dest, childProcessType, childProcessGlobal, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename) {
+const asyArgs = function (format, file) {
+  return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
+}
 
-  const asyArgs = function (format, file) {
-    return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
+const onErrorHandler = function (res, ajaxRes) {
+  return function (error) {
+    clearTimeout(timeoutHandle);
+    ajaxRes.responseType = "ERROR";
+    ajaxRes.errorType = ERR.CH_PROC;
+    ajaxRes.errorText = "Server child process internal error.";
+    ajaxRes.errorCode = error.code;
+    ajaxRes.errorContent = error.toString();
+    res.send(encode(ajaxRes));
   }
+}
 
-  const onErrorHandler = function (res, ajaxRes) {
-    return function (error) {
-      clearTimeout(timeoutHandle);
+const onStdoutHandler = function (res, ajaxRes) {
+  return function (chunk) {
+    ajaxRes.stdout = chunk.toString();
+  }
+}
+const onStderrHandler = function (res, ajaxRes) {
+  return function (chunk) {
+    clearTimeout(timeoutHandle);
+    ajaxRes.responseType = "ERROR";
+    ajaxRes.stderr = chunk.toString();
+  }
+}
+const onExitHandler = function (childProcessType, res, dest, codeFilename, isUpdated, ajaxRes) {
+  return function (code, signal) {
+    clearTimeout(timeoutHandle);
+    if (signal === "SIGTERM") {
       ajaxRes.responseType = "ERROR";
-      ajaxRes.errorType = ERR.CH_PROC;
-      ajaxRes.errorText = "Server child process internal error.";
-      ajaxRes.errorCode = error.code;
-      ajaxRes.errorContent = error.toString();
-      res.json(encode(ajaxRes));
-    }
-  }
-
-  const onStdoutHandler = function (res, ajaxRes) {
-    return function (chunk) {
-      ajaxRes.stdout = chunk.toString();
-    }
-  }
-  const onStderrHandler = function (res, ajaxRes) {
-    return function (chunk) {
-      clearTimeout(timeoutHandle);
-      ajaxRes.responseType = "ERROR";
-      ajaxRes.stderr = chunk.toString();
-    }
-  }
-  const onExitHandler = function (childProcessType, res, ajaxRes) {
-    return function (code, signal) {
-      clearTimeout(timeoutHandle);
-      if (signal === "SIGTERM") {
-        ajaxRes.responseType = "ERROR";
-        ajaxRes.errorType = ERR.PROCESS_TERMINATED;
-        ajaxRes.errorText = "Process terminated due to the server timeout.";
-        res.json(ajaxRes);
-      } else if (signal !== "SIGKILL") {
-        if (code === 0) {
-          const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-          if (fs.existsSync(outputFilePath)) {
-            ajaxRes.responseType = OUT.OUTPUT_FILE;
-            if (childProcessType === "run") {
-              ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
-              ajaxRes.isUpdated = !isUpdated;
-            }
-            res.send(encode(ajaxRes));
-          } else {
-            ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
-            ajaxRes.isUpdated = false;
-            res.send(encode(ajaxRes));
+      ajaxRes.errorType = ERR.PROCESS_TERMINATED;
+      ajaxRes.errorText = "Process terminated due to the server timeout.";
+      res.send(encode(ajaxRes));
+    } else if (signal !== "SIGKILL") {
+      if (code === 0) {
+        const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
+        if (fs.existsSync(outputFilePath)) {
+          ajaxRes.responseType = OUT.OUTPUT_FILE;
+          if (childProcessType === "run") {
+            ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
+            ajaxRes.isUpdated = !isUpdated;
           }
         } else {
-          ajaxRes.responseType = "ERROR";
-          ajaxRes.errorType = ERR.ASY_CODE;
-          ajaxRes.errorText = "Asymptote run error";
-          ajaxRes.errorCode = code;
+          ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
+          ajaxRes.isUpdated = false;
           res.send(encode(ajaxRes));
         }
+      } else {
+        ajaxRes.responseType = "ERROR";
+        ajaxRes.errorType = ERR.ASY_CODE;
+        ajaxRes.errorText = "Asymptote run error";
+        ajaxRes.errorCode = code;
+        res.send(encode(ajaxRes));
       }
     }
   }
-  const processKillManager = function (processHandle, serverTimeout) {
-    return setTimeout(() => {
-      processHandle.kill();
-    }, serverTimeout)
-  }
+}
+const processKillManager = function (processHandle, serverTimeout) {
+  return setTimeout(() => {
+    processHandle.kill();
+  }, serverTimeout)
+}
+
+function childProcessManager(dest, childProcessType, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename) {
   const childProcessOption = {
     cwd: dest.usrAbsDirPath
   }
-  const outformat = (childProcessType === "run")? "html" : requestedOutformat;
-  childProcessGlobal = childProcess.spawn('asy', asyArgs(outformat, codeFile), childProcessOption);
-  timeoutHandle = processKillManager(childProcessGlobal, serverTimeout);
+  const localOutformat = (childProcessType === "run")? "html" : requestedOutformat;
+  const childProcessAtRun = childProcess.spawn('asy', asyArgs(localOutformat, codeFile), childProcessOption);
+  timeoutHandle = processKillManager(childProcessAtRun, serverTimeout);
 
-  childProcessGlobal.on('error', onErrorHandler(res, ajaxRes));
-  childProcessGlobal.stdout.on('data', onStdoutHandler(res, ajaxRes));
-  childProcessGlobal.stderr.on('data', onStderrHandler(res, ajaxRes))
-  childProcessGlobal.on('exit', onExitHandler("run", res, ajaxRes));
+  childProcessAtRun.on('error', onErrorHandler(res, ajaxRes));
+  childProcessAtRun.stdout.on('data', onStdoutHandler(res, ajaxRes));
+  childProcessAtRun.stderr.on('data', onStderrHandler(res, ajaxRes))
+  childProcessAtRun.on('exit', onExitHandler(childProcessType, res, dest, codeFilename, isUpdated, ajaxRes));
+
+  if (childProcessType === "run"){
+    runChildProcess = childProcessAtRun;
+  } else {
+    preRunChildProcess = childProcessAtRun;
+  }
 }
 
 // ==========================       The middleware
@@ -225,7 +230,7 @@ const runDownload = function (req, res, next, dirname) {
 
   let htmlFileFlag = (fs.existsSync(existingHtmlFile)) ? true : false;
   let ajaxRes = { // Keep these entries synchronized with decode in Util/util.js
-    responseType: "",
+    responseType: null,
     errorType: null,
     errorText: null,
     errorCode: null,
@@ -251,9 +256,9 @@ const runDownload = function (req, res, next, dirname) {
         ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
         ajaxRes.errorCode = err.code;
         ajaxRes.errorContent = err.toString();
-        res.json(encode(ajaxRes));
+        res.send(encode(ajaxRes));
       } else {
-        childProcessManager(dest, "run", runChildProcess, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
+        childProcessManager(dest, "run", res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
       }
     });
 
@@ -268,16 +273,16 @@ const runDownload = function (req, res, next, dirname) {
           ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
           ajaxRes.errorCode = err.code;
           ajaxRes.errorContent = err.toString();
-          res.json(encode(ajaxRes));
+          res.send(encode(ajaxRes));
         } else {
           ajaxRes.responseType = OUT.ASY_FILE;
-          res.json(encode(ajaxRes));
+          res.send(encode(ajaxRes));
         }
       })
     } else {
       if (requestedOutformat === "html" && htmlFileFlag) {
         ajaxRes.responseType = OUT.OUTPUT_FILE;
-        res.json(encode(ajaxRes));
+        res.send(encode(ajaxRes));
       } else {
         if (fs.existsSync(asyFileToRemove)) {
           fs.unlinkSync(asyFileToRemove);
@@ -293,9 +298,9 @@ const runDownload = function (req, res, next, dirname) {
             ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
             ajaxRes.errorCode = err.code;
             ajaxRes.errorContent = err.toString();
-            res.json(encode(ajaxRes));
+            res.send(encode(ajaxRes));
           } else {
-            childProcessManager(dest, "preRun", preRunChildProcess, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
+            childProcessManager(dest, "preRun", res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
           }
         });
       }
