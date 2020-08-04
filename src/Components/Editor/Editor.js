@@ -22,7 +22,7 @@ const Editor = ContainerConstructor((props) => {
     <textarea
       className={cssStyle.textarea} name="editor" placeholder={(currentWorkspace.id !== null) ? codingText : instructionText}
       disabled={currentWorkspace.id === null} value={currentWorkspace.codeText}
-    onChange={(event) => props.updateTextareaContent(currentWorkspace.id, event.target.value.replace(/ /g,' '))}
+    onChange={(event) => props.updateTextareaContent(currentWorkspace.id, event.target.value.replace(/\xa0/g,' '))}
     ></textarea>
   );
 
