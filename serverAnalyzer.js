@@ -91,7 +91,7 @@ const ping = function (req, res, next, dirname) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const abort = function (req, res, next, dirname) {
+const abort = function (req, res, next, dirname, timeoutHandle) {
   clearTimeout(timeoutHandle);
   if (req.body.abortRequestFor === "Run") {
     runChildProcess.kill("SIGKILL");
@@ -161,6 +161,7 @@ const onExitHandler = function (childProcessType, res, dest, codeFilename, isUpd
             ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
             ajaxRes.isUpdated = !isUpdated;
           }
+          res.send(encode(ajaxRes));
         } else {
           ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
           ajaxRes.isUpdated = false;
