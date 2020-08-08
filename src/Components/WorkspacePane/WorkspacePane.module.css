@@ -14,23 +14,43 @@
     padding: 0.5rem;
     margin-left: 0.25rem;
     z-index: 1;
-}
-.workspaceHeader > div{
+  }
+  .workspaceHeader > div{
     flex: 1 1 0;
-}
-.workspaceHeader > div:first-child{
+  }
+  .workspaceHeader > div:first-child{
+    flex: 4 1 0;
     line-height: 1.75rem;
     text-align: left;
     font-size: 1rem;
-    flex: 4 1 0;
-}
-.workspaceHeader > div:first-child::selection{
+  }
+  .workspaceHeader > div:first-child::selection{
     background-color: transparent;
 }
 .workspace iframe{
     flex: 1 1 0;
-    width: 100%;
 }
 .workspace iframe::selection{
     background-color: transparent;
+}
+@keyframes fadeInVersion {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.versionBox{
+  display: flex 1 1 0;
+  margin: 1rem auto;
+  margin-bottom: 2rem;
+  justify-content: center;
+  font-size: inherit;
+  font-weight: bold;
+  color:rgb(200, 200, 200);
+  animation-name: fadeInVersion;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 1s;
 }

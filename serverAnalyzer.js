@@ -58,7 +58,10 @@ const usrConnect = function (req, res, next, dirname) {
     removeDir(usrDir);
   }
   makeDir(usrDir);
-
+  const asyVersion = childProcess.execSync('asy -c VERSION', {
+    timeout: 500,
+    encoding:"ascii"
+  })
   const dateAndTime = dateTime();
   const rawData = {
     usrIP: req.connection.remoteAddress,
@@ -74,7 +77,12 @@ const usrConnect = function (req, res, next, dirname) {
       console.log("error in writing log file");
     }
   })
-  res.json("UDIC");
+  const data = {
+    usrConnectStatus: "UDIC",
+    asyVersion: asyVersion
+  }
+
+  res.json(data);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping

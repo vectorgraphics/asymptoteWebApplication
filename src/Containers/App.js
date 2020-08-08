@@ -58,7 +58,7 @@ const App = ContainerConstructor(class extends Component {
         </div>
 
         <div className={cssStyle.mainBody}>
-          <WorkspacePane />
+          <WorkspacePane asyVersion={this.props.asyVersion}/>
           <div className={cssStyle.centralPanes}>
             <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.codePane) ? { display: "flex" } : { display: "none" }}>
               <CodePaneHeader />
