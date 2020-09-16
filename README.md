@@ -62,7 +62,7 @@ cd ~asymptote/asymptote-server
 sudo make run
 ```
 
-Root priviledges are dropped once the application is listening
+Root privileges are dropped once the application is listening
 on port 80. The application can then be accessed on
 
 ```
