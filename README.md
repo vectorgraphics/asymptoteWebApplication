@@ -16,7 +16,6 @@ First install [npm] and [Node.js](www.nodejs.org).
 2. Disable logins:
 
 ```
-bash
 passwd -d asymptote
 ```
 
@@ -27,7 +26,6 @@ on the system.
 modules and application dependencies:
 
 ```
-bash
 cd ~asymptote
 git clone https://github.com/vectorgraphics/asymptote-server
 cd asymptote-server
@@ -41,7 +39,6 @@ exit
 5. We recommend running the bash script
 
 ```
-bash
 pruneClients 1800
 ```
 as a cronjob at regular intervals to clean up disconnected sessions;
@@ -57,7 +54,6 @@ There are two modes for running this application:
     following commands
 
 ```
-bash
 cd ~asymptote/asymptote-server
 sudo make run
 ```
@@ -66,7 +62,6 @@ Root privileges are dropped once the application is listening
 on port 80. The application can then be accessed on
 
 ```
-bash
 http://localhost:80
 ```
 
@@ -77,7 +72,6 @@ http://localhost:80
    mode on a localhost service:
 
 ```
-bash
 cd ~asymptote/asymptote-server
 make frontend
 ```
