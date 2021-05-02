@@ -16,7 +16,7 @@ var jsBuiltFile3 = fs.readdirSync( __dirname + "/build/static/js")[2];
 var cssBuiltFile = fs.readdirSync( __dirname + "/build/static/css")[0];
 var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
-let port = 80;
+let defaultPort = 80;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Application Routs
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,6 +94,12 @@ app.use("/clients", function(req, res, next){
 app.route("/clients")
 .post(bodyParser.json(), downloadReq(__dirname));
 
+let port = process.env.ASYMPTOTE_PORT;
+if (port == undefined)
+  port = defaultPort;
+else
+  port = parseInt(port);
+
 app.listen(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
@@ -101,7 +107,7 @@ app.listen(port);
 let uid = parseInt(process.env.ASYMPTOTE_UID);
 let gid = parseInt(process.env.ASYMPTOTE_GID);
 
-if (uid === 0 || gid === 0){
+if (uid === 0 || gid === 0) {
     let user = process.env.ASYMPTOTE_USER;
     console.log("Cannot run as uid 0 or gid 0; please first adduser",user);
     process.exit(-1);
