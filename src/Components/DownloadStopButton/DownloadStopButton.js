@@ -2,7 +2,7 @@ import React, { memo, Component } from 'react';
 import cssStyle from './DownloadStopButton.module.css';
 import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
-import { Ajax, workspaceInspector, decode } from '../../Util/util';
+import { fetchOptionObj,  codeFormatter, workspaceInspector, decode } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
   {
@@ -46,7 +46,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 workspaceName: currentWorkspace.name.current,
                 codeOption: currentWorkspace.codeOption.checked,
                 outputOption: currentWorkspace.outputOption.checked,
-                codeText: currentWorkspace.codeText,
+                codeText: codeFormatter(currentWorkspace.codeText),
                 requestedOutformat: currentWorkspace.outformat,
                 isUpdated: currentWorkspace.output.isUpdated,
               };
@@ -54,49 +54,47 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
               // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY CODE
               if (onlyCodeChecked) {
                 const dataJSON = JSON.stringify(data);
-                Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
-                  let response = decode(Response);
-                  if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE") {
-                    this.props.getRunResponse(currentWorkspace.id, response);
+                fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
+                  if (responseContent.responseType === "ERROR" || responseContent.responseType === "NO_ASY_FILE") {
+                    this.props.getRunResponse(currentWorkspace.id, responseContent);
                     this.setState({
                       buttonType: "Download",
                     })
                   } else {
-                    Ajax("POST", "/clients", { responseType: "blob" }).contentType("json").done(dataJSON, (response) => {
-                      link.href = window.URL.createObjectURL(response);
+                    fetch("/clients", {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
                       this.setState({
                         buttonType: "Download",
                       })
-                    });
+                    })
                     this.setState({
                       buttonType: "Stop",
                     })
                   }
-                });
+                })
 
                 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY OUTPUT
               } else if (onlyOutputChecked) {
                 const dataJSON = JSON.stringify(data);
-                Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
-                  let response = decode(Response);
-                  if (response.responseType === "ERROR" || response.responseType === "NO_OUTPUT_FILE") {
-                    this.props.getRunResponse(currentWorkspace.id, response);
+                fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
+                  if (responseContent.responseType === "ERROR" || responseContent.responseType === "NO_OUTPUT_FILE") {
+                    this.props.getRunResponse(currentWorkspace.id, responseContent);
                     this.setState({
                       buttonType: "Download",
                     })
                   } else {
-                    Ajax("POST", "/clients", { responseType: "blob" }).contentType("json").done(dataJSON, (response) => {
-                      link.href = window.URL.createObjectURL(response);
+                    fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
                       link.click();
                       this.setState({
                         buttonType: "Download",
                       })
-                    });
+                    })
                   }
-                });
+                })
                 this.setState({
                   buttonType: "Stop",
                 })
@@ -104,19 +102,18 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  BOTH CODE & OUTPUT
               } else if (bothOptionsChecked) {
                 let dataJSON = JSON.stringify(data);
-                Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
-                  let response = decode(Response);
-                  if (response.responseType === "ERROR" || response.responseType === "NO_ASY_FILE") {
-                    this.props.getRunResponse(currentWorkspace.id, response);
+                fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
+                  if (responseContent.responseType === "ERROR" || responseContent.responseType === "NO_ASY_FILE") {
+                    this.props.getRunResponse(currentWorkspace.id, responseContent);
                     this.setState({
                       buttonType: "Download",
                     })
-                  } else if (response.responseType === "NO_OUTPUT_FILE") {
+                  } else if (responseContent.responseType === "NO_OUTPUT_FILE") {
                     data.codeOption = true;
                     data.outputOption = false;
                     dataJSON = JSON.stringify(data);
-                    Ajax("POST", "/clients", { responseType: "blob" }).contentType("json").done(dataJSON, (response) => {
-                      link.href = window.URL.createObjectURL(response);
+                    fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
                       this.setState({
@@ -127,18 +124,16 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                     data.codeOption = true;
                     data.outputOption = false;
                     dataJSON = JSON.stringify(data);
-                    Ajax("POST", "/clients", {
-                      responseType: "blob"
-                    }).contentType("json").done(dataJSON, (response) => {
-                      link.href = window.URL.createObjectURL(response);
+                    fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
                     });
                     data.codeOption = false;
                     data.outputOption = true;
                     dataJSON = JSON.stringify(data);
-                    Ajax("POST", "/clients", { responseType: "blob" }).contentType("json").done(dataJSON, (response) => {
-                      link.href = window.URL.createObjectURL(response);
+                    fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
                       link.click();
                       this.setState({
@@ -151,8 +146,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                   buttonType: "Stop",
                 })
               }
-            }
-            }
+            }}
           >Download</button>
         </div>
       )
@@ -169,8 +163,9 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 workspaceName: currentWorkspace.name.current,
               };
               const dataJSON = JSON.stringify(data);
-              Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
-                const parsedResponse = JSON.parse(response);
+              fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
+              // Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
+                const parsedResponse = JSON.parse(responseContent);
                 this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                 this.setState({
                   buttonType: "Download",

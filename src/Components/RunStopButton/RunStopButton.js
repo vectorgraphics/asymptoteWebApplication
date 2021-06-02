@@ -2,7 +2,7 @@ import React, { Component, memo } from 'react';
 import cssStyle from './RunStopButton.module.css';
 import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
-import { Ajax, workspaceInspector, decode } from '../../Util/util';
+import { fetchOptionObj, codeFormatter,  workspaceInspector, decode } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
   {
@@ -40,17 +40,17 @@ const RunStopButton = ContainerConstructor(class extends Component {
               workspaceName: currentWorkspace.name.current,
               codeOption: currentWorkspace.codeOption.checked,
               outputOption: currentWorkspace.outputOption.checked,
-              codeText: currentWorkspace.codeText,
+              codeText: codeFormatter(currentWorkspace.codeText),
               isUpdated: currentWorkspace.output.isUpdated,
             };
             const dataJSON = JSON.stringify(data);
-            Ajax("POST", "/").contentType("json").done(dataJSON, (Response) => {
-              let response = decode(Response);
-              this.props.getRunResponse(currentWorkspace.id, response);
+            fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
+              // console.log(responseContent);
+              this.props.getRunResponse(currentWorkspace.id, responseContent);
               this.setState({
                 buttonType: "Run",
               })
-            });
+            }).catch((reason) => {console.log("Reason:", reason)});
             this.setState({
               buttonType: "Stop",
             })
@@ -70,7 +70,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
               workspaceName: currentWorkspace.name.current,
             };
             const dataJSON = JSON.stringify(data);
-            Ajax("POST", "/", { responseType: "json" }).contentType("json").done(dataJSON, (response) => {
+            fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
               this.setState({
                 buttonType: "Run",
               })

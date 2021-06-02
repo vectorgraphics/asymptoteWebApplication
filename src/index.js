@@ -2,31 +2,36 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import store from './Store/store';
-import { Ajax } from './Util/util';
 import App from './Containers/App';
+import { fetchOptionObj } from './Util/util'
 import './index.css';
-let pingMilliseconds = 600000;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      FETCHING ASYMPTOTE VERSION
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      SETTING USER DIR & PINGING
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-var asymptoteVersion = "";
+let pingMilliseconds = 600000;
+let asymptoteVersion = "";
+const data = {
+  reqType: "usrConnect"
+};
+const pingData = {
+  reqType: "ping"
+};
+
 window.addEventListener("load", (event) => {
-  const data = {
-    reqType: "usrConnect"
-  };
-  const dataJSON = JSON.stringify(data);
-  Ajax("POST", "/", { responseType: "json" }).contentType("json").done(dataJSON, (response) => {
-    asymptoteVersion = response.asyVersion;
+  fetch('/', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+    asymptoteVersion = responseContent.asyVersion;
     ReactDOM.render(<Provider store={store}> <App asyVersion={asymptoteVersion} /> </Provider>, document.getElementById('root'));
-    if (response.usrConnectStatus === "UDIC") {
+    if (responseContent.usrConnectStatus === "UDIC") {
       setInterval(() => {
-        const data = {
-          reqType: "ping"
-        };
-        const dataJSON = JSON.stringify(data);
-        Ajax("POST", "/", { responseType: "json" }).contentType("json").done(dataJSON, (response) => { })
-      }, pingMilliseconds)
-    }
+        fetch('/',{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body: JSON.stringify(pingData)
+        }).then((resObj) => {console.log("here")})}, pingMilliseconds)
+      }
+    });
   })
-})
+
