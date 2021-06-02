@@ -28,7 +28,7 @@ ASY_LOGO=logo3d.html.gz
 
 all:	$(notdir $(ASY_ICONS:.asy=.svg)) $(ASY_LOGO) node_modules
 	npm run build
-	-cd build && rm static/*/*.map static/js/*.LICENSE.txt asset-manifest.json
+	-cd build && static/js/*.LICENSE.txt
 
 node_modules: package.json
 	npm install
