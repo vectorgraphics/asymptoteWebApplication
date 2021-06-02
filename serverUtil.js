@@ -1,23 +1,25 @@
-const fs = require('fs');
+import fs from "fs";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const SHA1 = require("crypto-js/sha1");
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const usrDirMgr = function(req, serverDir){
-    const usrDirName = SHA1(req.connection.remoteAddress);
+export const usrDirMgr = function(req, serverDir){
+    const usrDirName = SHA1(req.ip);
      return {
-        usrDirName: usrDirName + "",
-        usrDirPath: '/' + usrDirName,
-        usrRelDirPath: '/clients/' + usrDirName,
-        usrAbsDirPath: serverDir + '/clients/' + usrDirName,
+        usrDirName: usrDirName,
+        usrDirPath: "/" + usrDirName,
+        usrRelDirPath: "/clients/" + usrDirName,
+        usrAbsDirPath: serverDir + "/clients/" + usrDirName,
     }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  writePing
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const writePing = function(dir) {
+export const writePing = function(dir) {
     const pingFilePath = dir + "/ping";
-    fs.writeFileSync(pingFilePath, "", (err) => {
+    fs.writeFile(pingFilePath, "", (err) => {
         if(err) {
             console.log("error in writing ping file");
         }
@@ -26,14 +28,14 @@ const writePing = function(dir) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    makeDir
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const makeDir = function(dir) {
+export const makeDir = function(dir) {
   fs.mkdirSync(dir);
   writePing(dir);
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dirCheck
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const dirCheck = function(req, dirname) {
+export const dirCheck = function(req, dirname) {
     const dest = usrDirMgr(req, dirname);
     if(!fs.existsSync(dest.usrAbsDirPath)) {
         makeDir(dest.usrAbsDirPath);
@@ -42,7 +44,7 @@ const dirCheck = function(req, dirname) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const dateTime = function(){
+export const dateTime = function(){
     const dateObject = new Date();
 
     const year = dateObject.getFullYear();
@@ -64,7 +66,7 @@ const dateTime = function(){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  removeDir
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const removeDir = function(path){
+export const removeDir = function(path){
     if (fs.existsSync(path)){
         const files = fs.readdirSync(path)
         if (files.length > 0){
@@ -86,8 +88,7 @@ const removeDir = function(path){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     encode
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-const encode = function (r) {
+export const encode = function (r) {
   const esc = function (s) {
     return (s+"").toString().replace(/:/g,":|")+"::";
   }
@@ -95,13 +96,24 @@ const encode = function (r) {
   return Object.values(r).map(esc).reduce((sum, x) => sum+x);
 }
 
-module.exports = {
-    usrDirMgr: usrDirMgr,
-    dirCheck: dirCheck,
-    removeDir: removeDir,
-    makeDir: makeDir,
-    writePing: writePing,
-    dateTime: dateTime,
-    encode:encode
-}
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       drop root permission
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export const dropRootPermission = (port) => {
+  let uid = parseInt(process.env.ASYMPTOTE_UID);
+  let gid = parseInt(process.env.ASYMPTOTE_GID);
 
+  if (uid === 0 || gid === 0) {
+      const user = process.env.ASYMPTOTE_USER;
+      console.log(`Cannot run as uid 0 or gid 0; please first adduser`,user);
+      process.exit(-1);
+  }
+
+  const home = process.env.ASYMPTOTE_HOME;
+  process.env.HOME = home;
+  process.env.ASYMPTOTE_HOME = home+"/.asy";
+
+  process.setgid(gid);
+  process.setuid(uid);
+  console.log(`\nAsymptote Web Application started on port ${port} with uid ${uid} and gid ${gid}`);
+  console.log("Using home directory",home);
+}

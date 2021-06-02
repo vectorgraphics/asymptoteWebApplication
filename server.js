@@ -1,88 +1,57 @@
-const fs = require("fs");
-const serverUtil = require("./serverUtil");
-const serverAnalyzer = require("./serverAnalyzer");
-const express = require("express");
-const expressStaticGzip = require("express-static-gzip")
-const bodyParser = require("body-parser");
+import fs from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import express from "express";
+import expressStaticGzip from "express-static-gzip";
+import { dirCheck, dateTime, dropRootPermission } from "./serverUtil.js";
+import { reqAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
 
-const dirCheck = serverUtil.dirCheck;
-const dateTime = serverUtil.dateTime;
-const reqToRes = serverAnalyzer.reqToRes;
-const downloadReq = serverAnalyzer.downloadReq;
+export const __filename = fileURLToPath(import.meta.url);
+export const __dirname = dirname(__filename);
 
-var jsBuiltFile1 = fs.readdirSync( __dirname + "/build/static/js")[0];
-var jsBuiltFile2 = fs.readdirSync( __dirname + "/build/static/js")[1];
-var jsBuiltFile3 = fs.readdirSync( __dirname + "/build/static/js")[2];
-var cssBuiltFile = fs.readdirSync( __dirname + "/build/static/css")[0];
-var mediaDir = fs.readdirSync(__dirname + "/build/static/media");
 
-let defaultPort = 80;
+const defaultPort = 80;
+const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Application Routs
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Express Application
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const app = express();
 
-app.route('/')
+// Serving Static html File & Running Major Requests
+// -------------------------------------------------
+app.route("/")
 .get(function(req, res, next){
     dirCheck(req, __dirname);
-    next();
+    if(req.originalUrl === "/")
+      next();
 })
 .get(express.static(__dirname + "/build"))
-.post(bodyParser.json(), reqToRes(__dirname));
+.post(express.json(), reqAnalyzer(__dirname))
+.post(express.json(), usrConnect(__dirname))
+.post(express.json(), writeAsyFile(__dirname))
+.post(express.json(), requestResolver())
 
-// Serving Static Logo File
+// Serving Static Logo html File
 // ----------------------------------------
 app.route("/logo3d.html")
 .get(expressStaticGzip(__dirname + "/build"));
 
-// Serving CSS Static File
+// Serving Other Static Files
 // ----------------------------------------
-app.route("/static/css/" + cssBuiltFile)
-.get(express.static(__dirname + "/build"));
-
-
-// Serving JS Static Files
-// ----------------------------------------
-app.route("/static/js/" + jsBuiltFile1)
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/js/" + jsBuiltFile2)
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/js/" + jsBuiltFile3)
-.get(express.static(__dirname + "/build"));
-
-// Serving Media Static Files
-// ----------------------------------------
-app.route("/static/media/" + mediaDir[0])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[1])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[2])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[3])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[4])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[5])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[6])
-.get(express.static(__dirname + "/build"));
-
-app.route("/static/media/" + mediaDir[7])
-.get(express.static(__dirname + "/build"));
+app.use("/static/", function(req, res, next){
+  if (/\/(?:css|js|media)\//.test(req.originalUrl)){
+    let urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg)$)/g.exec(req.originalUrl);
+    if (urlMatched !== null && urlMatched[1] !== undefined) {
+      res.sendFile(__dirname + "/build" + urlMatched[0]);
+    }
+  }
+})
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-app.use("/clients", function(req, res, next){
+app.use("/clients", (req, res, next) => {
     if(req.method === "GET"){
-        const fileToServe = __dirname + "/clients" + req.url;
+        const fileToServe = __dirname + req.originalUrl;
         if (fs.existsSync(fileToServe)){
             fs.createReadStream(fileToServe).pipe(res);
         }
@@ -91,36 +60,12 @@ app.use("/clients", function(req, res, next){
     }
 });
 
-app.route("/clients")
-.post(bodyParser.json(), downloadReq(__dirname));
-
-let port = process.env.ASYMPTOTE_PORT;
-if (port == undefined)
-  port = defaultPort;
-else
-  port = parseInt(port);
-
-app.listen(port);
+app.route("/clients").post(express.json(), downloadReq(__dirname));
+app.listen(3000);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-let uid = parseInt(process.env.ASYMPTOTE_UID);
-let gid = parseInt(process.env.ASYMPTOTE_GID);
-
-if (uid === 0 || gid === 0) {
-    let user = process.env.ASYMPTOTE_USER;
-    console.log("Cannot run as uid 0 or gid 0; please first adduser",user);
-    process.exit(-1);
-}
-
-let home = process.env.ASYMPTOTE_HOME;
-process.env.HOME = home;
-process.env.ASYMPTOTE_HOME = home+"/.asy";
-
-process.setgid(gid);
-process.setuid(uid);
-console.log("\nAsymptote Web Application started on port",port,"with uid",uid,"and gid",gid);
-console.log("Using home directory",home);
+dropRootPermission(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,8 +77,7 @@ process.on("uncaughtException", (err) => {
         exception: err,
         errorStack: err.stack,
     },
-          diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
-
+    diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
     const dest = __dirname + "/logs/uncaughtExceptions"
     if (err){
         fs.appendFile(dest, diagnoseJSON, (err) =>{

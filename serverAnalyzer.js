@@ -1,325 +1,122 @@
-const fs = require('fs');
-const childProcess = require('child_process');
-const serverUtil = require('./serverUtil');
+import { readFile, writeFile, appendFile } from "fs/promises";
+import { existsSync } from "fs";
+import {spawn, execSync} from "child_process";
+import { usrDirMgr, makeDir, removeDir, dateTime } from "./serverUtil.js";
 
-const usrDirMgr = serverUtil.usrDirMgr;
-const removeDir = serverUtil.removeDir;
-const dateTime = serverUtil.dateTime;
-const makeDir = serverUtil.makeDir;
-const writePing = serverUtil.writePing;
-const encode = serverUtil.encode;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    Globals
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-let runChildProcess = "";
-let preRunChildProcess = "";
-let timeoutHandle = "";
-const serverTimeout = 60000;                    //  in milliseconds
+const serverTimeout = 60000;
 
-const ERR = {
-  ASY_WRITE: "ASY_WRITE_ERR",
-  ASY_CODE: "ASY_CODE_ERR",
-  CH_PROC: "CH_PROC_ERR",
-  CH_PROC_UNCAUGHT: "CH_PROC_UNCAUGHT_ERR",
-  PROCESS_TERMINATED: "PROCESSS_TERMINATED"
+const FLAGS = {
+  ASY_WRITE_FILE_ERR:           "An error occurred inside the server while writing the asy file.",
+  ASY_CODE_COMPILE_ERR:         "Asymptote runtime error.",
+  CHILD_PROCESS_SPAWN_ERR:      "An error occurred inside the server while spawning child process.",
+  CHILD_PROCESS_UNCAUGHT_ERR:   "Process uncaught error.",
+  CHILD_PROCESS_TERMINATED_ERR: "Child process was terminated via a signal.",
+  ASY_FILE_CREATED:             "Asymptote code file created successfully.",
+  ASY_OUTPUT_CREATED:           "Asymptote output file created successfully.",
+  NO_ASY_FILE_EXISTS:           "Requested Asymptote code file does not exist.",
+  NO_ASY_OUTPUT_EXISTS:         "Requested Asymptote output file does not exist.",
 }
 
-const OUT = {
-  ASY_FILE: "ASY_FILE",
-  NO_ASY_FILE: "NO_ASY_FILE",
-  OUTPUT_FILE: "OUTPUT_FILE",
-  NO_OUTPUT_FILE: "NO_OUTPUT_FILE",
-}
-
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   reqToRes
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-exports.reqToRes = function (dirname) {
-  return function (req, res, next) {
-    const reqType = req.body.reqType;
-    if (reqType === "usrConnect") {
-      usrConnect(req, res, next, dirname)
-    } else if (reqType === "run" || reqType === "preDownloadRun") {
-      runDownload(req, res, next, dirname);
-    } else if (reqType === "abort") {
-      abort(req, res, next, dirname, timeoutHandle);
-    } else if (reqType === "ping") {
-      ping(req, res, next, dirname)
+export const reqAnalyzer = (serverDir) => {
+  return (req, res, next) => {
+    const reqDest = usrDirMgr(req, serverDir);
+    const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
+    const codeFile = codeFilename + ".asy";
+    req.processedPayload = {
+      ...req.body,
+      ...reqDest,
+      codeFilename: codeFilename,
+      codeFile: codeFile,
+      codeFilePath: reqDest.usrAbsDirPath + "/" + codeFilename,
+      asyFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".asy",
+      htmlFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
+      outputFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + "." + req.body.requestedOutformat,
     }
+    console.log("processed payload", req.processedPayload);
+    next();
+    // onlyCodeChecked: codeOption && !outputOption,
+    // const existingHtmlFile = htmlFileToRemove;
   }
 }
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 usrConnect
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const usrConnect = function (req, res, next, dirname) {
-  const dest = usrDirMgr(req, dirname);
-  const usrDir = dest.usrAbsDirPath;
-  if (fs.existsSync(usrDir)) {
-    removeDir(usrDir);
-  }
-  makeDir(usrDir);
-  const asyVersion = childProcess.execSync('asy -c VERSION', {
-    timeout: 500,
-    encoding:"ascii"
-  })
-  const dateAndTime = dateTime();
-  const rawData = {
-    usrIP: req.connection.remoteAddress,
-    usrDir: dest.usrDirName,
-    date: dateAndTime.date,
-    time: dateAndTime.time,
-  };
-
-  const dataJSON = JSON.stringify(rawData) + "\n";
-  const logFilePath = dirname + "/logs/log";
-  fs.appendFile(logFilePath, dataJSON, (err) => {
-    if (err) {
-      console.log("error in writing log file");
-    }
-  })
-  const data = {
-    usrConnectStatus: "UDIC",
-    asyVersion: asyVersion
-  }
-
-  res.json(data);
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                       ping
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const ping = function (req, res, next, dirname) {
-  const dest = usrDirMgr(req, dirname);
-  if (fs.existsSync(dest.usrAbsDirPath)) {
-    writePing(dest.usrAbsDirPath);
-  } else {
-    makeDir(dest.usrAbsDirPath);
-  }
-  res.json("");
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      abort
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const abort = function (req, res, next, dirname, timeoutHandle) {
-  clearTimeout(timeoutHandle);
-  if (req.body.abortRequestFor === "Run") {
-    runChildProcess.kill("SIGKILL");
-  } else if (req.body.abortRequestFor === "preRun") {
-    preRunChildProcess.kill("SIGKILL");
-  }
-  const ajaxRes = {
-    responseType: "ERROR",
-    errorType: ERR.PROCESS_TERMINATED,
-    errorText: "Process was terminated.",
-    errorCode: null,
-    errorContent: null,
-    stdin: "",
-    stdout: "",
-    stderr: "",
-    entryExists: false
-  }
-  res.json(ajaxRes);
-}
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                runDownload
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-// ==========================       Internal module
-// ================================================
-const asyArgs = function (format, file) {
-  return ['-noV', '-outpipe', '2', '-noglobalread', '-f', format, file];
-}
-
-const onErrorHandler = function (res, ajaxRes) {
-  return function (error) {
-    clearTimeout(timeoutHandle);
-    ajaxRes.responseType = "ERROR";
-    ajaxRes.errorType = ERR.CH_PROC;
-    ajaxRes.errorText = "Server child process internal error.";
-    ajaxRes.errorCode = error.code;
-    ajaxRes.errorContent = error.toString();
-    res.send(encode(ajaxRes));
-  }
-}
-
-const onStdoutHandler = function (res, ajaxRes) {
-  return function (chunk) {
-    ajaxRes.stdout = chunk.toString();
-  }
-}
-const onStderrHandler = function (res, ajaxRes) {
-  return function (chunk) {
-    clearTimeout(timeoutHandle);
-    ajaxRes.responseType = "ERROR";
-    ajaxRes.stderr = chunk.toString();
-  }
-}
-const onExitHandler = function (childProcessType, res, dest, codeFilename, isUpdated, ajaxRes) {
-  return function (code, signal) {
-    clearTimeout(timeoutHandle);
-    if (signal === "SIGTERM") {
-      ajaxRes.responseType = "ERROR";
-      ajaxRes.errorType = ERR.PROCESS_TERMINATED;
-      ajaxRes.errorText = "Process terminated due to the server timeout.";
-      res.send(encode(ajaxRes));
-    } else if (signal !== "SIGKILL") {
-      if (code === 0) {
-        const outputFilePath = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-        if (fs.existsSync(outputFilePath)) {
-          ajaxRes.responseType = OUT.OUTPUT_FILE;
-          if (childProcessType === "run") {
-            ajaxRes.path = dest.usrRelDirPath + "/" + codeFilename + ".html";
-            ajaxRes.isUpdated = !isUpdated;
-          }
-          res.send(encode(ajaxRes));
-        } else {
-          ajaxRes.responseType = OUT.NO_OUTPUT_FILE;
-          ajaxRes.isUpdated = false;
-          res.send(encode(ajaxRes));
-        }
-      } else {
-        ajaxRes.responseType = "ERROR";
-        ajaxRes.errorType = ERR.ASY_CODE;
-        ajaxRes.errorText = "Asymptote run error";
-        ajaxRes.errorCode = code;
-        res.send(encode(ajaxRes));
+// ------------------------------------------------
+export const usrConnect = (serverDir) => {
+  return (req, res, next) => {
+    if (req.processedPayload.reqType === "usrConnect"){
+      const usrDir = req.processedPayload.usrAbsDirPath;
+      if (existsSync(usrDir)) {
+        removeDir(usrDir);
       }
-    }
-  }
-}
-const processKillManager = function (processHandle, serverTimeout) {
-  return setTimeout(() => {
-    processHandle.kill();
-  }, serverTimeout)
-}
-
-function childProcessManager(dest, childProcessType, res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename) {
-  const childProcessOption = {
-    cwd: dest.usrAbsDirPath
-  }
-  const localOutformat = (childProcessType === "run")? "html" : requestedOutformat;
-  const childProcessAtRun = childProcess.spawn('asy', asyArgs(localOutformat, codeFile), childProcessOption);
-  timeoutHandle = processKillManager(childProcessAtRun, serverTimeout);
-
-  childProcessAtRun.on('error', onErrorHandler(res, ajaxRes));
-  childProcessAtRun.stdout.on('data', onStdoutHandler(res, ajaxRes));
-  childProcessAtRun.stderr.on('data', onStderrHandler(res, ajaxRes))
-  childProcessAtRun.on('exit', onExitHandler(childProcessType, res, dest, codeFilename, isUpdated, ajaxRes));
-
-  if (childProcessType === "run"){
-    runChildProcess = childProcessAtRun;
-  } else {
-    preRunChildProcess = childProcessAtRun;
-  }
-}
-
-// ==========================       The middleware
-// ===============================================
-const runDownload = function (req, res, next, dirname) {
-
-  const dest = usrDirMgr(req, dirname);
-  const reqType = req.body.reqType;
-  const workspaceId = req.body.workspaceId;
-  const workspaceName = req.body.workspaceName;
-  const codeOption = req.body.codeOption.checked;
-  let codeText = req.body.codeText;
-  if (codeText[codeText.length - 1] !== "\n")
-    codeText += "\n";
-  const outputOption = req.body.outputOption.checked;
-  const requestedOutformat = req.body.requestedOutformat;
-  const isUpdated = req.body.isUpdated;
-
-  const codeFilename = workspaceName + "_" + workspaceId;
-  const codeFile = codeFilename + ".asy";
-  const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
-  const onlyCodeChecked = codeOption && !outputOption;
-
-  const asyFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".asy";
-  const htmlFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + ".html";
-  const existingHtmlFile = htmlFileToRemove;
-  const outputFileToRemove = dest.usrAbsDirPath + "/" + codeFilename + "." + requestedOutformat;
-
-  let htmlFileFlag = (fs.existsSync(existingHtmlFile)) ? true : false;
-  let ajaxRes = { // Keep these entries synchronized with decode in Util/util.js
-    responseType: null,
-    errorType: null,
-    errorText: null,
-    errorCode: null,
-    errorContent: null,
-    stdin: "",
-    stdout: "",
-    stderr: "",
-    entryExists: false,
-    isUpdated: isUpdated,
-    path: ""
-  }
-
-  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      run request
-
-  if (reqType === "run") {
-    if (fs.existsSync(htmlFileToRemove)) {
-      fs.unlinkSync(htmlFileToRemove);
-    }
-    fs.writeFile(codeFilePath, codeText, (err) => {
-      if (err) {
-        ajaxRes.responseType = "ERROR";
-        ajaxRes.errorType = ERR.ASY_WRITE;
-        ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
-        ajaxRes.errorCode = err.code;
-        ajaxRes.errorContent = err.toString();
-        res.send(encode(ajaxRes));
-      } else {
-        childProcessManager(dest, "run", res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
-      }
-    });
-
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%           preDownloadRun request
-
-  } else if (reqType === "preDownloadRun") {
-    if (onlyCodeChecked) {
-      fs.writeFile(codeFilePath, codeText, (err) => {
-        if (err) {
-          ajaxRes.responseType = "ERROR";
-          ajaxRes.errorType = ERR.ASY_WRITE;
-          ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
-          ajaxRes.errorCode = err.code;
-          ajaxRes.errorContent = err.toString();
-          res.send(encode(ajaxRes));
-        } else {
-          ajaxRes.responseType = OUT.ASY_FILE;
-          res.send(encode(ajaxRes));
-        }
+      makeDir(usrDir);
+      const asyVersion = execSync('asy -c VERSION', {
+        timeout: 500,
+        encoding:"ascii"
       })
-    } else {
-      if (requestedOutformat === "html" && htmlFileFlag) {
-        ajaxRes.responseType = OUT.OUTPUT_FILE;
-        res.send(encode(ajaxRes));
-      } else {
-        if (fs.existsSync(asyFileToRemove)) {
-          fs.unlinkSync(asyFileToRemove);
-        }
-        if (fs.existsSync(outputFileToRemove)) {
-          fs.unlinkSync(outputFileToRemove);
-        }
+      const dateAndTime = dateTime();
+      const rawData = {
+        usrIP: req.ip,
+        usrDir: req.processedPayload.usrDirName,
+        date: dateAndTime.date,
+        time: dateAndTime.time,
+      };
 
-        fs.writeFile(codeFilePath, codeText, (err) => {
-          if (err) {
-            ajaxRes.responseType = "ERROR";
-            ajaxRes.errorType = ERR.ASY_WRITE;
-            ajaxRes.errorText = "An error occurred inside the server while writing the asy file.";
-            ajaxRes.errorCode = err.code;
-            ajaxRes.errorContent = err.toString();
-            res.send(encode(ajaxRes));
-          } else {
-            childProcessManager(dest, "preRun", res, ajaxRes, requestedOutformat, isUpdated, codeFile, codeFilename)
-          }
-        });
+      const logFilePath = serverDir + "/logs/log";
+      appendFile(logFilePath, JSON.stringify(rawData, null, "\n"))
+      .then(() => console.log(`log file created successfully.`))
+      .catch((err) => console.log(`An error ocurred while writing log file!\n ${err.toString()}`));
+
+      const data = {
+        usrConnectStatus: "UDIC",
+        asyVersion: asyVersion
       }
+      res.send(data);
+    } else {
+        next();
     }
   }
 }
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                downloadReq
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-exports.downloadReq = function (dirname) {
+// ------------------------------------------------
+export const writeAsyFile = () => {
+  return (req, res, next) => {
+    const filePath = req.processedPayload.codeFilePath;
+    const fileContent = req.processedPayload.codeText;
+    console.log("filePath:", filePath);
+    console.log("fileContent:", fileContent);
+    appendFile(filePath, fileContent).then(() => {
+      next();
+    }).catch((err) => {
+      const responseObject = errResCreator("ASY_WRITE_FILE_ERR", err);
+      res.send(responseObject);
+    })
+  }
+}
+// ------------------------------------------------
+export const requestResolver = () => {
+  return (req, res, next) => {
+    const option = {
+      cwd: req.processedPayload.usrAbsDirPath,
+      codeFile: req.processedPayload.codeFile
+    }
+    switch (req.processedPayload.reqType) {
+      case "run":
+        option.outformat = "html"
+        asyRunManager(res, next, option);
+        break;
+      case "download":
+        option.outformat = req.processedPayload.requestedOutformat
+        asyRunManager(res, next, option);
+        break;
+      default:
+        break;
+    }
+  }
+}
+// ------------------------------------------------
+export const downloadReq =  (dirname) => {
   return function (req, res, next) {
     const dest = usrDirMgr(req, dirname);
     const workspaceId = req.body.workspaceId;
@@ -334,16 +131,55 @@ exports.downloadReq = function (dirname) {
 
     if (codeOption) {
       // console.log("server: here in only code");
-      if (fs.existsSync(codeFilePath)) {
+      if (existsSync(codeFilePath)) {
         res.download(codeFilePath);
       }
     }
     if (outputOption) {
       const outputFilePath = dest.usrAbsDirPath + "/" + outputFile;
       // console.log("server: here in only output");
-      if (fs.existsSync(outputFilePath)) {
+      if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }
     }
   }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Internal functions
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function errResCreator(flag, errObject = null, errorCode = null) {
+  const errResponse = {
+    responseType: "ERROR",
+    errorType: flag,
+    errorText: FLAGS[flag]
+  }
+  if (errObject === Object(errObject)){
+    errResponse.errorCode = errObject.code;
+    errResponse.errorContent = errObject.toString();
+  } else {
+    errResponse.errorCode = errorCode;
+  }
+  return errResponse;
+}
+// ------------------------------------------------
+function asyRunManager(res, next, option){
+  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
+  const chProcOption = {
+    cwd: option.cwd,
+    timeout: serverTimeout
+  }
+  let stderrData = "";
+  let stdoutData = "";
+  console.log("option:", option);
+  console.log("chProcOption:", chProcOption);
+  const chProcHndlr = spawn("asy", [...asyArgs], chProcOption);
+
+  chProcHndlr.on("error", (err) => {
+    const errResObject = errResCreator("CHILD_PROCESS_SPAWN_ERR", err)
+    res.send(errResObject);
+  });
+  chProcHndlr.stderr.on("data", (chunk) => {stderrData += chunk.toString()}).on('end', () => console.log(stderrData));
+  chProcHndlr.stdout.on("data", (chunk) => {stdoutData += chunk.toString()}).on('end', () => console.log(stdoutData));
+  chProcHndlr.on("close", () => {console.log("All stdio got closed.")});
+  chProcHndlr.on("exit", (code, signal) => {console.log(`Code: ${code}\nSignal: ${signal}`)});
 }
