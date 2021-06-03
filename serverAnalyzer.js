@@ -180,7 +180,7 @@ function asyRunManager(req,res, next, option){
   // ------------------------------- onClose
   chProcHandler.on('close', () => {
     stdioClosed = true;
-    writeFile(req.processedPayload.usrAbsDirPath + "/" + stdout.txt, stdoutData, (err) => console.log("Error:", err));
+    writeFile(req.processedPayload.usrAbsDirPath + "/stdout.txt", stdoutData, (err) => console.log("Error:", err));
   });
   // ------------------------------- onExit
   chProcHandler.on('exit', (code, signal) => {
