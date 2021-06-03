@@ -143,23 +143,8 @@ export const downloadReq =  (dirname) => {
   }
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        Internal functions
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function errResCreator(flag, errObject = null, errorCode = null) {
-  const errResponse = {
-    responseType: "ERROR",
-    errorType: flag,
-    errorText: FLAGS[flag]
-  }
-  if (errObject === Object(errObject)){
-    errResponse.errorCode = errObject.code;
-    errResponse.errorContent = errObject.toString();
-  } else {
-    errResponse.errorCode = errorCode;
-  }
-  return errResponse;
-}
-// ------------------------------------------------
 function asyRunManager(req,res, next, option){
   const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
@@ -194,46 +179,46 @@ function asyRunManager(req,res, next, option){
         isUpdated: false
       });
     } else {
-      if (stdioClosed){
-        const outputFilePath = req.processedPayload.usrAbsDirPath + "/" + req.processedPayload.codeFilename + ".html";
-        if (existsSync(outputFilePath)){
-          res.send({
-            responseType: FLAGS.ASY_OUTPUT_CREATED[0],
-            path: req.processedPayload.usrRelDirPath + "/" + req.processedPayload.codeFilename + ".html",
-            stdout: stdoutData,
-            stderr: stderrData,
-            isUpdated: !req.processedPayload.isUpdated,
-          });
-        } else {
-          res.send({
-            ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
-            stderr: stderrData,
-            stdout: stdoutData,
-            isUpdated: false
-          });
-        }
-      } else {
-        process.nextTick(() => {
-          const outputFilePath = req.processedPayload.usrAbsDirPath + "/" + req.processedPayload.codeFilename + ".html";
-          if (existsSync(outputFilePath)){
-            res.send({
-              responseType: FLAGS.ASY_OUTPUT_CREATED[0],
-              path: req.processedPayload.usrRelDirPath + "/" + req.processedPayload.codeFilename + ".html",
-              stdout: stdoutData,
-              stderr: stderrData,
-              isUpdated: !req.processedPayload.isUpdated,
-            });
-          } else {
-            res.send({
-              ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
-              stderr: stderrData,
-              stdout: stdoutData,
-              isUpdated: false
-            });
-          }
-        });
-      }
+      const outputFilePath = req.processedPayload.usrAbsDirPath + "/" + req.processedPayload.codeFilename + ".html";
+      const outputFileExists = (existsSync(outputFilePath))? true : false;
+      (stdioClosed)? outputResCreator(req, res, stderrData, stdoutData, outputFileExists) :
+      process.nextTick(outputResCreator(req, res, stderrData, stdoutData, outputFileExists));
     }
     // console.log(`Code: ${code}\nSignal: ${signal}`);
   });
+}
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Core internal functions
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function errResCreator(flag, errObject = null, errorCode = null) {
+  const errResponse = {
+    responseType: "ERROR",
+    errorType: flag[0],
+    errorText: flag[1]
+  }
+  if (errObject === Object(errObject)){
+    errResponse.errorCode = errObject.code;
+    errResponse.errorContent = errObject.toString();
+  } else {
+    errResponse.errorCode = errorCode;
+  }
+  return errResponse;
+}
+
+function outputResCreator(req, res, stderrData, stdoutData, outputFileExists){
+  if (outputFileExists){
+    res.send({
+      responseType: FLAGS.ASY_OUTPUT_CREATED[0],
+      path: req.processedPayload.usrRelDirPath + "/" + req.processedPayload.codeFilename + ".html",
+      stdout: stdoutData,
+      stderr: stderrData,
+      isUpdated: !req.processedPayload.isUpdated,
+    });
+  } else {
+    res.send({
+      ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
+      stderr: stderrData,
+      stdout: stdoutData,
+      isUpdated: false
+    });
+  }
 }
