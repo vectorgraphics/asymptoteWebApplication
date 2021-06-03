@@ -84,8 +84,8 @@ export const writeAsyFile = () => {
   return (req, res, next) => {
     const filePath = req.processedPayload.codeFilePath;
     const fileContent = req.processedPayload.codeText;
-    console.log("filePath:", filePath);
-    console.log("fileContent:", fileContent);
+    // console.log("filePath:", filePath);
+    // console.log("fileContent:", fileContent);
     appendFile(filePath, fileContent).then(() => {
       next();
     }).catch((err) => {
@@ -130,14 +130,12 @@ export const downloadReq =  (dirname) => {
     const outputFile = codeFilename + "." + requestedOutformat;
 
     if (codeOption) {
-      // console.log("server: here in only code");
       if (existsSync(codeFilePath)) {
         res.download(codeFilePath);
       }
     }
     if (outputOption) {
       const outputFilePath = dest.usrAbsDirPath + "/" + outputFile;
-      // console.log("server: here in only output");
       if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }
@@ -162,24 +160,80 @@ function errResCreator(flag, errObject = null, errorCode = null) {
   return errResponse;
 }
 // ------------------------------------------------
-function asyRunManager(res, next, option){
+function asyRunManager(req,res, next, option){
   const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
     timeout: serverTimeout
   }
-  let stderrData = "";
-  let stdoutData = "";
-  console.log("option:", option);
-  console.log("chProcOption:", chProcOption);
-  const chProcHndlr = spawn("asy", [...asyArgs], chProcOption);
-
-  chProcHndlr.on("error", (err) => {
-    const errResObject = errResCreator("CHILD_PROCESS_SPAWN_ERR", err)
+  let stderrData = "", stdoutData = "", stdioClosed = false;
+  const chProcHandler = spawn("asy", asyArgs, chProcOption);
+  // ------------------------------- onERROR
+  chProcHandler.on('error', (err) => {
+    const errResObject = errResCreator(FLAGS.CHILD_PROCESS_SPAWN_ERR, err)
+    chProcHandler.kill();
     res.send(errResObject);
   });
-  chProcHndlr.stderr.on("data", (chunk) => {stderrData += chunk.toString()}).on('end', () => console.log(stderrData));
-  chProcHndlr.stdout.on("data", (chunk) => {stdoutData += chunk.toString()}).on('end', () => console.log(stdoutData));
-  chProcHndlr.on("close", () => {console.log("All stdio got closed.")});
-  chProcHndlr.on("exit", (code, signal) => {console.log(`Code: ${code}\nSignal: ${signal}`)});
+  // ------------------------------- onData
+  chProcHandler.stderr.on('data', (chunk) => {stderrData += chunk.toString()});
+  chProcHandler.stdout.on('data', (chunk) => {stdoutData += chunk.toString()});
+  // ------------------------------- onClose
+  chProcHandler.on('close', () => {
+    stdioClosed = true;
+    writeFile(req.processedPayload.usrAbsDirPath + "/" + stdout.txt, stdoutData, (err) => console.log("Error:", err));
+  });
+  // ------------------------------- onExit
+  chProcHandler.on('exit', (code, signal) => {
+    if (code === null){
+      res.send(errResCreator(FLAGS.PROCESS_TERMINATED_ERR))
+    } else if (code !== 0){
+      res.send({
+        ...errResCreator(FLAGS.PROCESS_RUNTIME_ERR),
+        stderr: stderrData,
+        stdout: stdoutData,
+        isUpdated: false
+      });
+    } else {
+      if (stdioClosed){
+        const outputFilePath = req.processedPayload.usrAbsDirPath + "/" + req.processedPayload.codeFilename + ".html";
+        if (existsSync(outputFilePath)){
+          res.send({
+            responseType: FLAGS.ASY_OUTPUT_CREATED[0],
+            path: req.processedPayload.usrRelDirPath + "/" + req.processedPayload.codeFilename + ".html",
+            stdout: stdoutData,
+            stderr: stderrData,
+            isUpdated: !req.processedPayload.isUpdated,
+          });
+        } else {
+          res.send({
+            ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
+            stderr: stderrData,
+            stdout: stdoutData,
+            isUpdated: false
+          });
+        }
+      } else {
+        process.nextTick(() => {
+          const outputFilePath = req.processedPayload.usrAbsDirPath + "/" + req.processedPayload.codeFilename + ".html";
+          if (existsSync(outputFilePath)){
+            res.send({
+              responseType: FLAGS.ASY_OUTPUT_CREATED[0],
+              path: req.processedPayload.usrRelDirPath + "/" + req.processedPayload.codeFilename + ".html",
+              stdout: stdoutData,
+              stderr: stderrData,
+              isUpdated: !req.processedPayload.isUpdated,
+            });
+          } else {
+            res.send({
+              ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
+              stderr: stderrData,
+              stdout: stdoutData,
+              isUpdated: false
+            });
+          }
+        });
+      }
+    }
+    // console.log(`Code: ${code}\nSignal: ${signal}`);
+  });
 }
