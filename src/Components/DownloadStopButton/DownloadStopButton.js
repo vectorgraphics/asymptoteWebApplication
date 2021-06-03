@@ -164,7 +164,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
               };
               const dataJSON = JSON.stringify(data);
               fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
-              // Ajax("POST", "/").contentType("json").done(dataJSON, (response) => {
                 const parsedResponse = JSON.parse(responseContent);
                 this.props.getRunResponse(currentWorkspace.id, parsedResponse);
                 this.setState({
