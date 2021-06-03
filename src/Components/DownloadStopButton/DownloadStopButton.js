@@ -2,7 +2,7 @@ import React, { memo, Component } from 'react';
 import cssStyle from './DownloadStopButton.module.css';
 import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
-import { fetchOptionObj,  codeFormatter, workspaceInspector, decode } from '../../Util/util';
+import { fetchOptionObj,  codeFormatter, workspaceInspector } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
   {
