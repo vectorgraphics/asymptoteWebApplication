@@ -32,8 +32,8 @@ export const reqAnalyzer = (serverDir) => {
       ...reqDest,
       codeFilename: codeFilename,
       codeFile: codeFile,
-      codeFilePath: reqDest.usrAbsDirPath + "/" + codeFilename,
-      asyFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".asy",
+      codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
+      asyFileToRemove: reqDest.usrAbsDirPath + "/" + codeFile,
       htmlFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
       outputFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + "." + req.body.requestedOutformat,
     }
