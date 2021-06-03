@@ -86,16 +86,6 @@ export const removeDir = function(path){
     }
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     encode
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const encode = function (r) {
-  const esc = function (s) {
-    return (s+"").toString().replace(/:/g,":|")+"::";
-  }
-
-  return Object.values(r).map(esc).reduce((sum, x) => sum+x);
-}
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       drop root permission
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const dropRootPermission = (port) => {
