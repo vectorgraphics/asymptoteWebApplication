@@ -9,15 +9,15 @@ import { usrDirMgr, makeDir, removeDir, dateTime } from "./serverUtil.js";
 const serverTimeout = 60000;
 
 const FLAGS = {
-  ASY_WRITE_FILE_ERR:           "An error occurred inside the server while writing the asy file.",
-  ASY_CODE_COMPILE_ERR:         "Asymptote runtime error.",
-  CHILD_PROCESS_SPAWN_ERR:      "An error occurred inside the server while spawning child process.",
-  CHILD_PROCESS_UNCAUGHT_ERR:   "Process uncaught error.",
-  CHILD_PROCESS_TERMINATED_ERR: "Child process was terminated via a signal.",
-  ASY_FILE_CREATED:             "Asymptote code file created successfully.",
-  ASY_OUTPUT_CREATED:           "Asymptote output file created successfully.",
-  NO_ASY_FILE_EXISTS:           "Requested Asymptote code file does not exist.",
-  NO_ASY_OUTPUT_EXISTS:         "Requested Asymptote output file does not exist.",
+  ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
+  ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote runtime error."],
+  PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
+  PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated"],
+  PROCESS_RUNTIME_ERR:    ["PROCESS_RUNTIME_ERR",    "Process runtime error."],
+  ASY_FILE_CREATED:       ["ASY_FILE_CREATED",       "Asymptote code file created successfully."],
+  ASY_OUTPUT_CREATED:     ["ASY_OUTPUT_CREATED",     "Asymptote output file created successfully."],
+  NO_ASY_FILE_EXISTS:     ["NO_ASY_FILE_EXISTS",     "Requested Asymptote code file does not exist."],
+  NO_ASY_OUTPUT_EXISTS:   ["NO_ASY_OUTPUT_EXISTS",   "Requested Asymptote output file does not exist."],
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
