@@ -60,7 +60,9 @@ app.use("/clients", (req, res, next) => {
     }
 });
 
-app.route("/clients").post(express.json(), downloadReq(__dirname));
+app.route("/clients")
+.post(express.json(), reqAnalyzer(__dirname))
+.post(express.json(), downloadReq(__dirname));
 app.listen(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
