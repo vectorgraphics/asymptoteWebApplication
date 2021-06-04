@@ -118,24 +118,13 @@ export const requestResolver = () => {
 // ------------------------------------------------
 export const downloadReq =  (dirname) => {
   return function (req, res, next) {
-    const dest = usrDirMgr(req, dirname);
-    const workspaceId = req.body.workspaceId;
-    const workspaceName = req.body.workspaceName;
-    const codeOption = req.body.codeOption;
-    const outputOption = req.body.outputOption;
-    const codeFilename = workspaceName + "_" + workspaceId;
-    const codeFile = codeFilename + ".asy";
-    const codeFilePath = dest.usrAbsDirPath + "/" + codeFile;
-    const requestedOutformat = req.body.requestedOutformat;
-    const outputFile = codeFilename + "." + requestedOutformat;
-
-    if (codeOption) {
-      if (existsSync(codeFilePath)) {
-        res.download(codeFilePath);
+    if (req.body.codeOption) {
+      if (existsSync(req.body.codeFilePath)) {
+        res.download(req.body.codeFilePath);
       }
     }
-    if (outputOption) {
-      const outputFilePath = dest.usrAbsDirPath + "/" + outputFile;
+    if (req.body.outputOption) {
+      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.requestedOutformat;
       if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }
@@ -145,13 +134,13 @@ export const downloadReq =  (dirname) => {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function asyRunManager(req,res, next, option){
+function asyRunManager(req, res, next, option){
   const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
     timeout: serverTimeout
   }
-  let stderrData = "", stdoutData = "", stdioClosed = false;
+  let stderrData = "", stdoutData = "";
   const chProcHandler = spawn("asy", asyArgs, chProcOption);
   // ------------------------------- onERROR
   chProcHandler.on('error', (err) => {
@@ -164,25 +153,40 @@ function asyRunManager(req,res, next, option){
   chProcHandler.stdout.on('data', (chunk) => {stdoutData += chunk.toString()});
   // ------------------------------- onClose
   chProcHandler.on('close', () => {
-    stdioClosed = true;
-    writeFile(req.processedPayload.usrAbsDirPath + "/stdout.txt", stdoutData, (err) => console.log("Error:", err));
+    // writeFile(req.body.usrAbsDirPath + "/" + "stdout.txt", stdoutData, (err) => console.log("Error:", err));
   });
   // ------------------------------- onExit
   chProcHandler.on('exit', (code, signal) => {
     if (code === null){
       res.send(errResCreator(FLAGS.PROCESS_TERMINATED_ERR))
     } else if (code !== 0){
-      res.send({
+      const resObject = {
         ...errResCreator(FLAGS.PROCESS_RUNTIME_ERR),
         stderr: stderrData,
         stdout: stdoutData,
         isUpdated: false
-      });
+      }
+      res.send(resObject);
     } else {
-      const outputFilePath = req.processedPayload.usrAbsDirPath + "/" + req.processedPayload.codeFilename + ".html";
-      const outputFileExists = (existsSync(outputFilePath))? true : false;
-      (stdioClosed)? outputResCreator(req, res, stderrData, stdoutData, outputFileExists) :
-      process.nextTick(outputResCreator(req, res, stderrData, stdoutData, outputFileExists));
+      process.nextTick(() => {
+        const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + ".html";
+        if (existsSync(outputFilePath)){
+          res.send({
+            responseType: FLAGS.ASY_OUTPUT_CREATED[0],
+            path: req.body.usrRelDirPath + "/" + req.body.codeFilename + ".html",
+            stderr: stderrData,
+            stdout: stdoutData,
+            isUpdated: !req.body.isUpdated,
+          });
+        } else {
+          res.send({
+            ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
+            stderr: stderrData,
+            stdout: stdoutData,
+            isUpdated: false
+          });
+        }
+      });
     }
     // console.log(`Code: ${code}\nSignal: ${signal}`);
   });
@@ -202,23 +206,4 @@ export function errResCreator(flag, errObject = null, errorCode = null) {
     errResponse.errorCode = errorCode;
   }
   return errResponse;
-}
-
-function outputResCreator(req, res, stderrData, stdoutData, outputFileExists){
-  if (outputFileExists){
-    res.send({
-      responseType: FLAGS.ASY_OUTPUT_CREATED[0],
-      path: req.processedPayload.usrRelDirPath + "/" + req.processedPayload.codeFilename + ".html",
-      stdout: stdoutData,
-      stderr: stderrData,
-      isUpdated: !req.processedPayload.isUpdated,
-    });
-  } else {
-    res.send({
-      ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
-      stderr: stderrData,
-      stdout: stdoutData,
-      isUpdated: false
-    });
-  }
 }
