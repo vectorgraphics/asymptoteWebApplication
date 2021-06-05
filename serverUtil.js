@@ -5,7 +5,7 @@ const SHA1 = require("crypto-js/sha1");
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const usrDirMgr = function(req, serverDir){
+export function usrDirMgr(req, serverDir){
     const usrDirName = SHA1(req.ip);
      return {
         usrDirName: usrDirName,
@@ -17,7 +17,7 @@ export const usrDirMgr = function(req, serverDir){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  writePing
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const writePing = function(dir) {
+export function writePing(dir) {
     const pingFilePath = dir + "/ping";
     fs.writeFile(pingFilePath, "", (err) => {
         if(err) {
@@ -28,7 +28,7 @@ export const writePing = function(dir) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    makeDir
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const makeDir = function(dir) {
+export function makeDir(dir) {
   fs.mkdirSync(dir);
   writePing(dir);
 }
@@ -44,7 +44,7 @@ export const dirCheck = function(req, dirname) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const dateTime = function(){
+export function dateTime(){
     const dateObject = new Date();
 
     const year = dateObject.getFullYear();
@@ -66,7 +66,7 @@ export const dateTime = function(){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  removeDir
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const removeDir = function(path){
+export function removeDir(path){
     if (fs.existsSync(path)){
         const files = fs.readdirSync(path)
         if (files.length > 0){
@@ -86,9 +86,23 @@ export const removeDir = function(path){
     }
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      Flags
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export const FLAGS = {
+  ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
+  ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote runtime error."],
+  PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
+  PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated"],
+  PROCESS_RUNTIME_ERR:    ["PROCESS_RUNTIME_ERR",    "Process runtime error."],
+  ASY_FILE_CREATED:       ["ASY_FILE_CREATED",       "Asymptote code file created successfully."],
+  ASY_OUTPUT_CREATED:     ["ASY_OUTPUT_CREATED",     "Asymptote output file created successfully."],
+  NO_ASY_FILE_EXISTS:     ["NO_ASY_FILE_EXISTS",     "Requested Asymptote code file does not exist."],
+  NO_ASY_OUTPUT_EXISTS:   ["NO_ASY_OUTPUT_EXISTS",   "Requested Asymptote output file does not exist."],
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       drop root permission
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const dropRootPermission = (port) => {
+export function dropRootPermission(port) {
   let uid = parseInt(process.env.ASYMPTOTE_UID);
   let gid = parseInt(process.env.ASYMPTOTE_GID);
 
