@@ -1,25 +1,9 @@
-import { readFile, writeFile, appendFile } from "fs/promises";
+import { writeFile, appendFile } from "fs/promises";
 import { existsSync } from "fs";
 import {spawn, execSync} from "child_process";
-import { usrDirMgr, makeDir, removeDir, dateTime } from "./serverUtil.js";
+import { usrDirMgr, makeDir, removeDir, dateTime, FLAGS} from "./serverUtil.js";
 
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                    Globals
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const serverTimeout = 60000;
-
-const FLAGS = {
-  ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
-  ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote runtime error."],
-  PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
-  PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated"],
-  PROCESS_RUNTIME_ERR:    ["PROCESS_RUNTIME_ERR",    "Process runtime error."],
-  ASY_FILE_CREATED:       ["ASY_FILE_CREATED",       "Asymptote code file created successfully."],
-  ASY_OUTPUT_CREATED:     ["ASY_OUTPUT_CREATED",     "Asymptote output file created successfully."],
-  NO_ASY_FILE_EXISTS:     ["NO_ASY_FILE_EXISTS",     "Requested Asymptote code file does not exist."],
-  NO_ASY_OUTPUT_EXISTS:   ["NO_ASY_OUTPUT_EXISTS",   "Requested Asymptote output file does not exist."],
-}
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const reqAnalyzer = (serverDir) => {
@@ -27,7 +11,7 @@ export const reqAnalyzer = (serverDir) => {
     const reqDest = usrDirMgr(req, serverDir);
     const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
     const codeFile = codeFilename + ".asy";
-    req.processedPayload = {
+    req.body = {
       ...req.body,
       ...reqDest,
       codeFilename: codeFilename,
@@ -37,17 +21,15 @@ export const reqAnalyzer = (serverDir) => {
       htmlFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
       outputFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + "." + req.body.requestedOutformat,
     }
-    console.log("processed payload", req.processedPayload);
+    // console.log("processed payload", req.processedPayload);
     next();
-    // onlyCodeChecked: codeOption && !outputOption,
-    // const existingHtmlFile = htmlFileToRemove;
   }
 }
 // ------------------------------------------------
 export const usrConnect = (serverDir) => {
   return (req, res, next) => {
-    if (req.processedPayload.reqType === "usrConnect"){
-      const usrDir = req.processedPayload.usrAbsDirPath;
+    if (req.body.reqType === "usrConnect"){
+      const usrDir = req.body.usrAbsDirPath;
       if (existsSync(usrDir)) {
         removeDir(usrDir);
       }
@@ -59,7 +41,7 @@ export const usrConnect = (serverDir) => {
       const dateAndTime = dateTime();
       const rawData = {
         usrIP: req.ip,
-        usrDir: req.processedPayload.usrDirName,
+        usrDir: req.body.usrDirName,
         date: dateAndTime.date,
         time: dateAndTime.time,
       };
@@ -82,11 +64,11 @@ export const usrConnect = (serverDir) => {
 // ------------------------------------------------
 export const writeAsyFile = () => {
   return (req, res, next) => {
-    const filePath = req.processedPayload.codeFilePath;
-    const fileContent = req.processedPayload.codeText;
+    const filePath = req.body.codeFilePath;
+    const fileContent = req.body.codeText;
     // console.log("filePath:", filePath);
     // console.log("fileContent:", fileContent);
-    appendFile(filePath, fileContent).then(() => {
+    writeFile(filePath, fileContent).then(() => {
       next();
     }).catch((err) => {
       const responseObject = errResCreator("ASY_WRITE_FILE_ERR", err);
@@ -98,16 +80,16 @@ export const writeAsyFile = () => {
 export const requestResolver = () => {
   return (req, res, next) => {
     const option = {
-      cwd: req.processedPayload.usrAbsDirPath,
-      codeFile: req.processedPayload.codeFile
+      cwd: req.body.usrAbsDirPath,
+      codeFile: req.body.codeFile
     }
-    switch (req.processedPayload.reqType) {
+    switch (req.body.reqType) {
       case "run":
         option.outformat = "html"
-        asyRunManager(res, next, option);
+        asyRunManager(req, res, next, option);
         break;
       case "download":
-        option.outformat = req.processedPayload.requestedOutformat
+        option.outformat = req.body.requestedOutformat
         asyRunManager(res, next, option);
         break;
       default:
@@ -207,3 +189,4 @@ export function errResCreator(flag, errObject = null, errorCode = null) {
   }
   return errResponse;
 }
+

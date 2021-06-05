@@ -1,4 +1,4 @@
-import fs from "fs";
+import {existsSync, createReadStream, appendFile} from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
@@ -9,9 +9,8 @@ import { reqAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } f
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
-
-const defaultPort = 80;
-const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
+// const defaultPort = 80;
+// const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Express Application
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,8 +51,8 @@ app.use("/static/", function(req, res, next){
 app.use("/clients", (req, res, next) => {
     if(req.method === "GET"){
         const fileToServe = __dirname + req.originalUrl;
-        if (fs.existsSync(fileToServe)){
-            fs.createReadStream(fileToServe).pipe(res);
+        if (existsSync(fileToServe)){
+            createReadStream(fileToServe).pipe(res);
         }
     }else{
         next();
@@ -63,11 +62,11 @@ app.use("/clients", (req, res, next) => {
 app.route("/clients")
 .post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), downloadReq(__dirname));
-app.listen(port);
+app.listen(3000);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dropRootPermission(port);
+// dropRootPermission(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +81,7 @@ process.on("uncaughtException", (err) => {
     diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
     const dest = __dirname + "/logs/uncaughtExceptions"
     if (err){
-        fs.appendFile(dest, diagnoseJSON, (err) =>{
+        appendFile(dest, diagnoseJSON, (err) =>{
             if (err){
                 console.log("An error occurred while writing " + dest + ".");
             }
