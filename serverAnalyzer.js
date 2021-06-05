@@ -21,7 +21,7 @@ export const reqAnalyzer = (serverDir) => {
       htmlFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
       outputFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + "." + req.body.requestedOutformat,
     }
-    // console.log("processed payload", req.processedPayload);
+    // console.log("modified req.body", req.body);
     next();
   }
 }
