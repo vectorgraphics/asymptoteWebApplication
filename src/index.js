@@ -24,14 +24,9 @@ window.addEventListener("load", (event) => {
     ReactDOM.render(<Provider store={store}> <App asyVersion={asymptoteVersion} /> </Provider>, document.getElementById('root'));
     if (responseContent.usrConnectStatus === "UDIC") {
       setInterval(() => {
-        fetch('/',{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-          },
-          body: JSON.stringify(pingData)
-        }).then((resObj) => {console.log("here")})}, pingMilliseconds)
-      }
-    });
-  })
+        fetch('/',{...fetchOptionObj.post, body: JSON.stringify(pingData)}).then((resObj) => {})
+      }, pingMilliseconds)
+    }
+  });
+})
 
