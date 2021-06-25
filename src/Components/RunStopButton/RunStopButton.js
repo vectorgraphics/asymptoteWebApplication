@@ -11,6 +11,7 @@ const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces,
 
 const inactiveColor = "rgb(119, 136, 153)";
 const activeColor = "rgb(200, 200, 200)";
+let controller;
 
 const RunStopButton = ContainerConstructor(class extends Component {
   constructor(props) {
@@ -38,19 +39,17 @@ const RunStopButton = ContainerConstructor(class extends Component {
               reqType: "run",
               workspaceId: currentWorkspace.id,
               workspaceName: currentWorkspace.name.current,
-              codeOption: currentWorkspace.codeOption.checked,
-              outputOption: currentWorkspace.outputOption.checked,
               codeText: codeFormatter(currentWorkspace.codeText),
               isUpdated: currentWorkspace.output.isUpdated,
             };
             const dataJSON = JSON.stringify(data);
-            fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
-              // console.log(responseContent);
-              this.props.getRunResponse(currentWorkspace.id, responseContent);
+            controller = new AbortController();
+            fetch('/', {...fetchOptionObj.post, signal: controller.signal, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
+              this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
               this.setState({
                 buttonType: "Run",
               })
-            }).catch((reason) => {console.log("Reason:", reason)});
+            }).catch((err) => {});
             this.setState({
               buttonType: "Stop",
             })
@@ -62,19 +61,11 @@ const RunStopButton = ContainerConstructor(class extends Component {
       return (
         <button className={cssStyle.BtnAnimated} ref={(button) => { stopBtn = button }}
           onClick={(event) => {
+            controller.abort();
             stopBtn.disabled = true;
-            const data = {
-              reqType: "abort",
-              abortRequestFor: "Run",
-              workspaceId: currentWorkspace.id,
-              workspaceName: currentWorkspace.name.current,
-            };
-            const dataJSON = JSON.stringify(data);
-            fetch('/', {...fetchOptionObj.post, body: dataJSON}).then((resObj) => resObj.json()).then((responseContent) => {
-              this.setState({
-                buttonType: "Run",
-              })
-            });
+            this.setState({
+              buttonType: "Run",
+            })
             stopBtn.onClick = null;
           }}
         >Stop</button>

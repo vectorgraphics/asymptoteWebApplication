@@ -1,6 +1,6 @@
 import { writeFile, appendFile } from "fs/promises";
-import { existsSync } from "fs";
-import {spawn, execSync} from "child_process";
+import { existsSync, unlinkSync } from "fs";
+import { spawn, execSync } from "child_process";
 import { usrDirMgr, makeDir, removeDir, dateTime, FLAGS} from "./serverUtil.js";
 
 const serverTimeout = 60000;
@@ -17,11 +17,9 @@ export const reqAnalyzer = (serverDir) => {
       codeFilename: codeFilename,
       codeFile: codeFile,
       codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
-      asyFileToRemove: reqDest.usrAbsDirPath + "/" + codeFile,
-      htmlFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
-      outputFileToRemove: reqDest.usrAbsDirPath + "/" + codeFilename + "." + req.body.requestedOutformat,
+      htmlFile: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
     }
-    // console.log("modified req.body", req.body);
+    // console.log("modified req.body:\n", req.body);
     next();
   }
 }
@@ -66,13 +64,10 @@ export const writeAsyFile = () => {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
     const fileContent = req.body.codeText;
-    // console.log("filePath:", filePath);
-    // console.log("fileContent:", fileContent);
     writeFile(filePath, fileContent).then(() => {
       next();
     }).catch((err) => {
-      const responseObject = errResCreator("ASY_WRITE_FILE_ERR", err);
-      res.send(responseObject);
+      res.send(errResCreator(FLAGS.FAILURE.ASY_WRITE_FILE_ERR, err));
     })
   }
 }
@@ -81,7 +76,9 @@ export const requestResolver = () => {
   return (req, res, next) => {
     const option = {
       cwd: req.body.usrAbsDirPath,
-      codeFile: req.body.codeFile
+      codeFile: req.body.codeFile,
+      codeOption: req.body.codeOption,
+      outputOption: req.body.outputOption,
     }
     switch (req.body.reqType) {
       case "run":
@@ -89,8 +86,17 @@ export const requestResolver = () => {
         asyRunManager(req, res, next, option);
         break;
       case "download":
-        option.outformat = req.body.requestedOutformat
-        asyRunManager(res, next, option);
+        if (option.codeOption && !option.outputOption) {
+          res.send({
+            responseType: FLAGS.SUCCESS.ASY_FILE_CREATED,
+            isUpdated: !req.body.isUpdated
+          })
+          break;
+        } else if (option.outputOption) {
+          option.outformat = req.body.requestedOutformat;
+          asyRunManager(req, res, next, option);
+          break;
+        }
         break;
       default:
         break;
@@ -116,17 +122,28 @@ export const downloadReq =  (dirname) => {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function asyRunManager(req, res, next, option){
+function asyRunManager(req, res, next, option) {
   const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
     timeout: serverTimeout
   }
+  const htmlFileExists = existsSync(req.body.htmlFile);
+  if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
+    res.send({
+      responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
+      isUpdated: !req.body.isUpdated
+    });
+    return;
+  }
+  if (htmlFileExists) {
+    unlinkSync(req.body.htmlFile);
+  }
   let stderrData = "", stdoutData = "";
   const chProcHandler = spawn("asy", asyArgs, chProcOption);
-  // ------------------------------- onERROR
+  // ------------------------------- onError
   chProcHandler.on('error', (err) => {
-    const errResObject = errResCreator(FLAGS.CHILD_PROCESS_SPAWN_ERR, err)
+    const errResObject = errResCreator(FLAGS.FAILURE.CHILD_PROCESS_SPAWN_ERR, err);
     chProcHandler.kill();
     res.send(errResObject);
   });
@@ -134,35 +151,32 @@ function asyRunManager(req, res, next, option){
   chProcHandler.stderr.on('data', (chunk) => {stderrData += chunk.toString()});
   chProcHandler.stdout.on('data', (chunk) => {stdoutData += chunk.toString()});
   // ------------------------------- onClose
-  chProcHandler.on('close', () => {
-    // writeFile(req.body.usrAbsDirPath + "/" + "stdout.txt", stdoutData, (err) => console.log("Error:", err));
-  });
+  chProcHandler.on('close', () => {});
   // ------------------------------- onExit
   chProcHandler.on('exit', (code, signal) => {
-    if (code === null){
-      res.send(errResCreator(FLAGS.PROCESS_TERMINATED_ERR))
+    if (code === null) {
+      res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR))
     } else if (code !== 0){
-      const resObject = {
-        ...errResCreator(FLAGS.PROCESS_RUNTIME_ERR),
+      res.send({
+        ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
         stderr: stderrData,
         stdout: stdoutData,
         isUpdated: false
-      }
-      res.send(resObject);
+      });
     } else {
       process.nextTick(() => {
-        const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + ".html";
-        if (existsSync(outputFilePath)){
+        const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + option.outformat;
+        if (existsSync(outputFilePath)) {
           res.send({
-            responseType: FLAGS.ASY_OUTPUT_CREATED[0],
-            path: req.body.usrRelDirPath + "/" + req.body.codeFilename + ".html",
+            responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
             stderr: stderrData,
             stdout: stdoutData,
             isUpdated: !req.body.isUpdated,
+            path: (option.outformat === "html")? req.body.usrRelDirPath + "/" + req.body.codeFilename + "." + option.outformat: "" ,
           });
         } else {
           res.send({
-            ...errResCreator(FLAGS.ASY_CODE_COMPILE_ERR),
+            ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
             stderr: stderrData,
             stdout: stdoutData,
             isUpdated: false
@@ -181,7 +195,7 @@ export function errResCreator(flag, errObject = null, errorCode = null) {
     errorType: flag[0],
     errorText: flag[1]
   }
-  if (errObject === Object(errObject)){
+  if (errObject === Object(errObject)) {
     errResponse.errorCode = errObject.code;
     errResponse.errorContent = errObject.toString();
   } else {

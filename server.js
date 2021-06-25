@@ -19,10 +19,11 @@ const app = express();
 // Serving Static html File & Running Major Requests
 // -------------------------------------------------
 app.route("/")
-.get(function(req, res, next){
+.get(function(req, res, next ) {
     dirCheck(req, __dirname);
-    if(req.originalUrl === "/")
+    if (req.originalUrl === "/") {
       next();
+    }
 })
 .get(express.static(__dirname + "/build"))
 .post(express.json(), reqAnalyzer(__dirname))
@@ -37,8 +38,8 @@ app.route("/logo3d.html")
 
 // Serving Other Static Files
 // ----------------------------------------
-app.use("/static/", function(req, res, next){
-  if (/\/(?:css|js|media)\//.test(req.originalUrl)){
+app.use("/static/", function(req, res, next) {
+  if (/\/(?:css|js|media)\//.test(req.originalUrl)) {
     let urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg)$)/g.exec(req.originalUrl);
     if (urlMatched !== null && urlMatched[1] !== undefined) {
       res.sendFile(__dirname + "/build" + urlMatched[0]);
@@ -51,10 +52,10 @@ app.use("/static/", function(req, res, next){
 app.use("/clients", (req, res, next) => {
     if(req.method === "GET"){
         const fileToServe = __dirname + req.originalUrl;
-        if (existsSync(fileToServe)){
+        if (existsSync(fileToServe)) {
             createReadStream(fileToServe).pipe(res);
         }
-    }else{
+    } else {
         next();
     }
 });
@@ -62,7 +63,7 @@ app.use("/clients", (req, res, next) => {
 app.route("/clients")
 .post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), downloadReq(__dirname));
-app.listen(port);
+app.listen(3000);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,9 +81,9 @@ process.on("uncaughtException", (err) => {
     },
     diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
     const dest = __dirname + "/logs/uncaughtExceptions"
-    if (err){
-        appendFile(dest, diagnoseJSON, (err) =>{
-            if (err){
+    if (err) {
+        appendFile(dest, diagnoseJSON, (err) => {
+            if (err) {
                 console.log("An error occurred while writing " + dest + ".");
             }
         })

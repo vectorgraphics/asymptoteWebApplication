@@ -3,6 +3,21 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const SHA1 = require("crypto-js/sha1");
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      Flags
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export const FLAGS = {
+  SUCCESS: {
+    ASY_FILE_CREATED:       "ASY_FILE_CREATED",
+    ASY_OUTPUT_CREATED:     "ASY_OUTPUT_CREATED",
+  },
+  FAILURE: {
+    ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
+    ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote code runtime error."],
+    PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
+    PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated."],
+  }
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function usrDirMgr(req, serverDir){
@@ -20,8 +35,8 @@ export function usrDirMgr(req, serverDir){
 export function writePing(dir) {
     const pingFilePath = dir + "/ping";
     fs.writeFile(pingFilePath, "", (err) => {
-        if(err) {
-            console.log("error in writing ping file");
+        if (err) {
+            console.log("error in writing ping file!");
         }
     });
 }
@@ -37,14 +52,14 @@ export function makeDir(dir) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const dirCheck = function(req, dirname) {
     const dest = usrDirMgr(req, dirname);
-    if(!fs.existsSync(dest.usrAbsDirPath)) {
+    if (!fs.existsSync(dest.usrAbsDirPath)) {
         makeDir(dest.usrAbsDirPath);
     }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function dateTime(){
+export function dateTime() {
     const dateObject = new Date();
 
     const year = dateObject.getFullYear();
@@ -66,38 +81,24 @@ export function dateTime(){
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  removeDir
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function removeDir(path){
-    if (fs.existsSync(path)){
+export function removeDir(path) {
+    if (fs.existsSync(path)) {
         const files = fs.readdirSync(path)
-        if (files.length > 0){
+        if (files.length > 0) {
             files.forEach(function(filename){
-                if (fs.statSync(path + "/" + filename).isDirectory()){
-                    removeDir(path + "/" + filename)
+                if (fs.statSync(path + "/" + filename).isDirectory()) {
+                    removeDir(path + "/" + filename);
                 } else {
-                    fs.unlinkSync(path + "/" + filename)
+                    fs.unlinkSync(path + "/" + filename);
                 }
             })
-            fs.rmdirSync(path)
-        }else{
-            fs.rmdirSync(path)
+            fs.rmdirSync(path);
+        } else {
+            fs.rmdirSync(path);
         }
     } else {
-        console.log("Directory path not found.")
+        console.log("Directory path not found!");
     }
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      Flags
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const FLAGS = {
-  ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
-  ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote runtime error."],
-  PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
-  PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated"],
-  PROCESS_RUNTIME_ERR:    ["PROCESS_RUNTIME_ERR",    "Process runtime error."],
-  ASY_FILE_CREATED:       ["ASY_FILE_CREATED",       "Asymptote code file created successfully."],
-  ASY_OUTPUT_CREATED:     ["ASY_OUTPUT_CREATED",     "Asymptote output file created successfully."],
-  NO_ASY_FILE_EXISTS:     ["NO_ASY_FILE_EXISTS",     "Requested Asymptote code file does not exist."],
-  NO_ASY_OUTPUT_EXISTS:   ["NO_ASY_OUTPUT_EXISTS",   "Requested Asymptote output file does not exist."],
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       drop root permission
@@ -108,7 +109,7 @@ export function dropRootPermission(port) {
 
   if (uid === 0 || gid === 0) {
       const user = process.env.ASYMPTOTE_USER;
-      console.log(`Cannot run as uid 0 or gid 0; please first adduser`,user);
+      console.log(`Cannot run as uid 0 or gid 0; please first adduser`, user);
       process.exit(-1);
   }
 

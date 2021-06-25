@@ -118,13 +118,9 @@ export const actionFact = {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ............... Reducer Internal Function
 function updaterPro(workspace, action) {
-  var obj = { ...workspace };
-  var modifiedAction = { ...action };
+  const modifiedAction = { ...action };
   delete modifiedAction.type;
-  for (let item in modifiedAction) {
-    obj[item] = modifiedAction[item];
-  }
-  return obj;
+  return { ...workspace, ...modifiedAction };
 }
 export const workspaces = (state = [], action) => {
   switch (action.type) {
