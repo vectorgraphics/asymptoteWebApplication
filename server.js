@@ -3,7 +3,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import expressStaticGzip from "express-static-gzip";
-import { dirCheck, dateTime, dropRootPermission } from "./serverUtil.js";
+import { dateTime, dropRootPermission } from "./serverUtil.js";
 import { reqAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
 
 export const __filename = fileURLToPath(import.meta.url);
@@ -19,12 +19,6 @@ const app = express();
 // Serving Static html File & Running Major Requests
 // -------------------------------------------------
 app.route("/")
-.get(function(req, res, next ) {
-    dirCheck(req, __dirname);
-    if (req.originalUrl === "/") {
-      next();
-    }
-})
 .get(express.static(__dirname + "/build"))
 .post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), usrConnect(__dirname))
@@ -72,7 +66,6 @@ dropRootPermission(port);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 process.on("uncaughtException", (err) => {
-
     const diagnose = {
         errorType: "An uncaught error moved to the top of the stack!",
         registerTime: dateTime().time,

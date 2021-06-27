@@ -1,7 +1,7 @@
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
-import { usrDirMgr, makeDir, removeDir, dateTime, FLAGS} from "./serverUtil.js";
+import {usrDirMgr, makeDir, removeDir, dateTime, FLAGS, writePing} from "./serverUtil.js";
 
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
@@ -27,11 +27,10 @@ export const reqAnalyzer = (serverDir) => {
 export const usrConnect = (serverDir) => {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect"){
-      const usrDir = req.body.usrAbsDirPath;
-      if (existsSync(usrDir)) {
-        removeDir(usrDir);
+      if (existsSync(req.body.usrAbsDirPath)) {
+        removeDir(req.body.usrAbsDirPath);
       }
-      makeDir(usrDir);
+      makeDir(req.body.usrAbsDirPath);
       const asyVersion = execSync('asy -c VERSION', {
         timeout: 500,
         encoding:"ascii"
@@ -47,7 +46,7 @@ export const usrConnect = (serverDir) => {
       const logFilePath = serverDir + "/logs/log";
       appendFile(logFilePath, JSON.stringify(rawData, null, "\n"))
       .then(() => console.log(`log file created successfully.`))
-      .catch((err) => console.log(`An error ocurred while writing log file!\n ${err.toString()}`));
+      .catch((err) => console.log(`An error occurred while writing log file!\n ${err.toString()}`));
 
       const data = {
         usrConnectStatus: "UDIC",
@@ -60,7 +59,7 @@ export const usrConnect = (serverDir) => {
   }
 }
 // ------------------------------------------------
-export const writeAsyFile = () => {
+export const writeAsyFile = (serverDir) => {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
     const fileContent = req.body.codeText;
@@ -81,6 +80,9 @@ export const requestResolver = () => {
       outputOption: req.body.outputOption,
     }
     switch (req.body.reqType) {
+      case "ping":
+        writePing(req.body.usrAbsDirPath);
+        next();
       case "run":
         option.outformat = "html"
         asyRunManager(req, res, next, option);

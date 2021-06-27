@@ -29,8 +29,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
     const onlyOutputChecked = !currentWorkspace.codeOption.checked && currentWorkspace.outputOption.checked;
     const bothOptionsChecked = currentWorkspace.codeOption.checked && currentWorkspace.outputOption.checked;
 
-    let downloadBtn = "";
-    let stopBtn = "";
+    let downloadBtn = "", stopBtn = "";
 
     if (this.state.buttonType === "Download") {
       return (
@@ -61,7 +60,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 fetch('/', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType === "ASY_FILE_CREATED") {
-                    console.log("request for asy only");
                     fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
@@ -77,7 +75,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 fetch('/', {...fetchOptionObj.post, signal: controller.signal, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType === "ASY_OUTPUT_CREATED") {
-                    console.log("data:", data);
                     fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
@@ -114,7 +111,6 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                     this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                     data.codeOption = true;
                     data.outputOption = false;
-                    console.log("just asy");
                     fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");

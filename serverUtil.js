@@ -48,15 +48,6 @@ export function makeDir(dir) {
   writePing(dir);
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dirCheck
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const dirCheck = function(req, dirname) {
-    const dest = usrDirMgr(req, dirname);
-    if (!fs.existsSync(dest.usrAbsDirPath)) {
-        makeDir(dest.usrAbsDirPath);
-    }
-}
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function dateTime() {

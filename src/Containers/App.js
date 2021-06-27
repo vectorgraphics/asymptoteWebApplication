@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import store from "../Store/store";
-import cssStyle from './App.module.css';
+import store from "../Store/store";
+// import cssStyle from './App.module.css';
 import { workspaceInspector } from '../Util/util';
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 COMPONENTS
