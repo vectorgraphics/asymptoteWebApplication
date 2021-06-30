@@ -6,7 +6,7 @@ import {usrDirMgr, makeDir, removeDir, dateTime, FLAGS, writePing} from "./serve
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const reqAnalyzer = (serverDir) => {
+export function reqAnalyzer(serverDir) {
   return (req, res, next) => {
     const reqDest = usrDirMgr(req, serverDir);
     const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
@@ -24,7 +24,7 @@ export const reqAnalyzer = (serverDir) => {
   }
 }
 // ------------------------------------------------
-export const usrConnect = (serverDir) => {
+export function usrConnect(serverDir) {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect"){
       if (existsSync(req.body.usrAbsDirPath)) {
@@ -59,7 +59,7 @@ export const usrConnect = (serverDir) => {
   }
 }
 // ------------------------------------------------
-export const writeAsyFile = (serverDir) => {
+export function writeAsyFile(serverDir) {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
     const fileContent = req.body.codeText;
@@ -71,7 +71,7 @@ export const writeAsyFile = (serverDir) => {
   }
 }
 // ------------------------------------------------
-export const requestResolver = () => {
+export function requestResolver() {
   return (req, res, next) => {
     const option = {
       cwd: req.body.usrAbsDirPath,
@@ -106,7 +106,7 @@ export const requestResolver = () => {
   }
 }
 // ------------------------------------------------
-export const downloadReq =  (dirname) => {
+export function downloadReq(dirname) {
   return function (req, res, next) {
     if (req.body.codeOption) {
       if (existsSync(req.body.codeFilePath)) {
@@ -145,7 +145,7 @@ function asyRunManager(req, res, next, option) {
   const chProcHandler = spawn("asy", asyArgs, chProcOption);
   // ------------------------------- onError
   chProcHandler.on('error', (err) => {
-    const errResObject = errResCreator(FLAGS.FAILURE.CHILD_PROCESS_SPAWN_ERR, err);
+    const errResObject = errResCreator(FLAGS.FAILURE.PROCESS_SPAWN_ERR, err);
     chProcHandler.kill();
     res.send(errResObject);
   });
@@ -157,7 +157,7 @@ function asyRunManager(req, res, next, option) {
   // ------------------------------- onExit
   chProcHandler.on('exit', (code, signal) => {
     if (code === null) {
-      res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR))
+      res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR));
     } else if (code !== 0){
       res.send({
         ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
@@ -174,11 +174,11 @@ function asyRunManager(req, res, next, option) {
             stderr: stderrData,
             stdout: stdoutData,
             isUpdated: !req.body.isUpdated,
-            path: (option.outformat === "html")? req.body.usrRelDirPath + "/" + req.body.codeFilename + "." + option.outformat: "" ,
+            path: (option.outformat === "html")? req.body.usrRelDirPath + "/" + req.body.codeFilename + "." + option.outformat: ""
           });
         } else {
           res.send({
-            ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
+            responseType: FLAGS.SUCCESS.ASY_RUN_NO_OUTPUT,
             stderr: stderrData,
             stdout: stdoutData,
             isUpdated: false
@@ -186,7 +186,7 @@ function asyRunManager(req, res, next, option) {
         }
       });
     }
-    // console.log(`Code: ${code}\nSignal: ${signal}`);
+    console.log(`Code: ${code}\nSignal: ${signal}`);
   });
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Core internal functions

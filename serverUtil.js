@@ -9,10 +9,11 @@ export const FLAGS = {
   SUCCESS: {
     ASY_FILE_CREATED:       "ASY_FILE_CREATED",
     ASY_OUTPUT_CREATED:     "ASY_OUTPUT_CREATED",
+    ASY_RUN_NO_OUTPUT:      "ASY_RUN_NO_OUTPUT"
   },
   FAILURE: {
     ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
-    ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote code runtime error."],
+    ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote code compile error."],
     PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
     PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated."],
   }
@@ -20,7 +21,7 @@ export const FLAGS = {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function usrDirMgr(req, serverDir){
+export function usrDirMgr(req, serverDir) {
     const usrDirName = SHA1(req.ip);
      return {
         usrDirName: usrDirName,
@@ -76,7 +77,7 @@ export function removeDir(path) {
     if (fs.existsSync(path)) {
         const files = fs.readdirSync(path)
         if (files.length > 0) {
-            files.forEach(function(filename){
+            files.forEach(function(filename) {
                 if (fs.statSync(path + "/" + filename).isDirectory()) {
                     removeDir(path + "/" + filename);
                 } else {
