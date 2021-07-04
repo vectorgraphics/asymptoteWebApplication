@@ -186,7 +186,7 @@ function asyRunManager(req, res, next, option) {
         }
       });
     }
-    console.log(`Code: ${code}\nSignal: ${signal}`);
+    // console.log(`Code: ${code}\nSignal: ${signal}`);
   });
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Core internal functions
