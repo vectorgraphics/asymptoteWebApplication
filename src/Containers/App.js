@@ -6,27 +6,31 @@ import { workspaceInspector } from '../Util/util';
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 COMPONENTS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-import ToggleKey from '../Components/ToggleKey/ToggleKey';
-import RunStopButton from '../Components/RunStopButton/RunStopButton';
-import UploadButton from '../Components/UploadButton/UploadButton';
+import ToggleKey          from '../Components/ToggleKey/ToggleKey';
+import RunStopButton      from '../Components/RunStopButton/RunStopButton';
+import UploadButton       from '../Components/UploadButton/UploadButton';
 import DownloadStopButton from '../Components/DownloadStopButton/DownloadStopButton';
-import Options from '../Components/Options/Options';
-import Outformats from '../Components/Outformats/Outformats';
-import ClearButton from '../Components/ClearButton/ClearButton';
-import WorkspacePane from '../Components/WorkspacePane/WorkspacePane';
-import CodePaneHeader from '../Components/CodePaneHeader/CodePaneHeader';
-import OutputPaneHeader from '../Components/OutputPaneHeader/OutputPaneHeader';
-import Editor from '../Components/Editor/Editor';
-import Terminal from '../Components/Terminal/Terminal';
-import Output from '../Components/Output/Output';
+import Options            from '../Components/Options/Options';
+import Outformats         from '../Components/Outformats/Outformats';
+import ClearButton        from '../Components/ClearButton/ClearButton';
+import WorkspacePane      from '../Components/WorkspacePane/WorkspacePane';
+import CodePaneHeader     from '../Components/CodePaneHeader/CodePaneHeader';
+import OutputPaneHeader   from '../Components/OutputPaneHeader/OutputPaneHeader';
+import Editor             from '../Components/Editor/Editor';
+import Terminal           from '../Components/Terminal/Terminal';
+import Output             from '../Components/Output/Output';
+import {actionFact} from "../Store/store";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const ContainerConstructor = connect((store) => ({
   workspaces: store.workspaces,
   selectedWorkspace: store.selectedWorkspace,
-  workspacePaneStatus: store.workspacePaneStatus
-}), {});
+  workspacePaneStatus: store.workspacePaneStatus,
+  usrID: store.usrID
+}), {
+  assignUsrID: actionFact.assignUsrID,
+});
 
 const App = ContainerConstructor(class extends Component {
 
@@ -34,6 +38,7 @@ const App = ContainerConstructor(class extends Component {
     // console.log(store.getState());
     const currentWorkspace = workspaceInspector(this.props);
     let link = null;
+    this.props.assignUsrID(this.props.id);
 
     return (
       <div id="AppCont" className={cssStyle.app}>

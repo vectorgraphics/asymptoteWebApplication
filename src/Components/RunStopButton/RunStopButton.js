@@ -4,10 +4,13 @@ import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
 import { fetchOptionObj, codeFormatter,  workspaceInspector } from '../../Util/util';
 
-const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
-  {
-    getRunResponse: actionFact.getRunResponse,
-  })
+const ContainerConstructor = connect((store) => ({
+  workspaces: store.workspaces,
+  selectedWorkspace: store.selectedWorkspace,
+  usrID: store.usrID
+}),{
+  getRunResponse: actionFact.getRunResponse,
+})
 
 const inactiveColor = "rgb(119, 136, 153)";
 const activeColor = "rgb(200, 200, 200)";
@@ -37,6 +40,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
             runBtn.disabled = true;
             const data = {
               reqType: "run",
+              id: this.props.usrID,
               workspaceId: currentWorkspace.id,
               workspaceName: currentWorkspace.name.current,
               codeText: codeFormatter(currentWorkspace.codeText),

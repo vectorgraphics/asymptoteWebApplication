@@ -1,14 +1,49 @@
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
-import {usrDirMgr, makeDir, removeDir, dateTime, FLAGS, writePing} from "./serverUtil.js";
+import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
 
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function usrConnect(serverDir) {
+  return (req, res, next) => {
+    if (req.body.reqType === "usrConnect") {
+      const id = usrID();
+      const reqDest = usrDirMgr(req, serverDir, id);
+      makeDir(reqDest.usrAbsDirPath);
+      const asyVersion = execSync('asy -c VERSION', {
+        timeout: 500,
+        encoding:"ascii"
+      })
+      const dateAndTime = dateTime();
+      const rawData = {
+        usrIP: req.ip,
+        usrDir: reqDest.usrDirName,
+        date: dateAndTime.date,
+        time: dateAndTime.time,
+      };
+
+      const logFilePath = serverDir + "/logs/log";
+      appendFile(logFilePath, JSON.stringify(rawData, null, "\n"))
+      .then(() => console.log(`log file created successfully.`))
+      .catch((err) => console.log(`An error occurred while writing log file!\n ${err.toString()}`));
+
+      const data = {
+        usrID: id,
+        usrConnectStatus: "UDIC",
+        asyVersion: asyVersion
+      }
+      res.send(data);
+    } else {
+        next();
+    }
+  }
+}
+// ------------------------------------------------
 export function reqAnalyzer(serverDir) {
   return (req, res, next) => {
-    const reqDest = usrDirMgr(req, serverDir);
+    const reqDest = usrDirMgr(req, serverDir, req.body.id);
     const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
     const codeFile = codeFilename + ".asy";
     req.body = {
@@ -21,41 +56,6 @@ export function reqAnalyzer(serverDir) {
     }
     // console.log("modified req.body:\n", req.body);
     next();
-  }
-}
-// ------------------------------------------------
-export function usrConnect(serverDir) {
-  return (req, res, next) => {
-    if (req.body.reqType === "usrConnect"){
-      if (existsSync(req.body.usrAbsDirPath)) {
-        removeDir(req.body.usrAbsDirPath);
-      }
-      makeDir(req.body.usrAbsDirPath);
-      const asyVersion = execSync('asy -c VERSION', {
-        timeout: 500,
-        encoding:"ascii"
-      })
-      const dateAndTime = dateTime();
-      const rawData = {
-        usrIP: req.ip,
-        usrDir: req.body.usrDirName,
-        date: dateAndTime.date,
-        time: dateAndTime.time,
-      };
-
-      const logFilePath = serverDir + "/logs/log";
-      appendFile(logFilePath, JSON.stringify(rawData, null, "\n"))
-      .then(() => console.log(`log file created successfully.`))
-      .catch((err) => console.log(`An error occurred while writing log file!\n ${err.toString()}`));
-
-      const data = {
-        usrConnectStatus: "UDIC",
-        asyVersion: asyVersion
-      }
-      res.send(data);
-    } else {
-        next();
-    }
   }
 }
 // ------------------------------------------------

@@ -9,22 +9,24 @@ import './index.css';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      FETCHING ASYMPTOTE VERSION
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      SETTING USER DIR & PINGING
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+let usrID = "";
 let pingMilliseconds = 600000;
 let asymptoteVersion = "";
-const data = {
+const connectionRequest = {
   reqType: "usrConnect"
 };
-const pingData = {
+const pingRequest = {
   reqType: "ping"
 };
 
 window.addEventListener("load", (event) => {
-  fetch('/', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+  fetch('/', {...fetchOptionObj.post, body: JSON.stringify(connectionRequest)}).then((resObj) => resObj.json()).then((responseContent) => {
     asymptoteVersion = responseContent.asyVersion;
-    ReactDOM.render(<Provider store={store}> <App asyVersion={asymptoteVersion} /> </Provider>, document.getElementById('root'));
+    usrID = responseContent.usrID;
+    ReactDOM.render(<Provider store={store}> <App id={usrID} asyVersion={asymptoteVersion} /> </Provider>, document.getElementById('root'));
     if (responseContent.usrConnectStatus === "UDIC") {
       setInterval(() => {
-        fetch('/',{...fetchOptionObj.post, body: JSON.stringify(pingData)}).then((resObj) => {})
+        fetch('/',{...fetchOptionObj.post, body: JSON.stringify(pingRequest)}).then((resObj) => {})
       }, pingMilliseconds)
     }
   });

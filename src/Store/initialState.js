@@ -42,8 +42,8 @@ const initialState = {
   },
   workspacePaneStatus: {
     view: true
-  }
-
+  },
+  usrID: null
 }
 
 export default initialState;

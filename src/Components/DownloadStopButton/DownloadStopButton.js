@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
 import { fetchOptionObj as basicfetchOption,  codeFormatter, workspaceInspector } from '../../Util/util';
 
-const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
+const ContainerConstructor = connect((store) => ({
+      workspaces: store.workspaces,
+      selectedWorkspace: store.selectedWorkspace,
+      usrID: store.usrID
+}),
   {
     getRunResponse: actionFact.getRunResponse,
   })
@@ -42,6 +46,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
               const link = document.createElement("a");
               const data = {
                 reqType: "download",
+                id : this.props.usrID,
                 workspaceId: currentWorkspace.id,
                 workspaceName: currentWorkspace.name.current,
                 codeOption: currentWorkspace.codeOption.checked,

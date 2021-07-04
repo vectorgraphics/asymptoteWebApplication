@@ -8,7 +8,8 @@ export const actionTypes = {
   remove: "REMOVE",
   select: "SELECT",
   update: "UPDATE",
-  view: "VIEW"
+  view:   "VIEW",
+  setID:  "SET_ID"
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          ACTION FACTORIES
@@ -111,8 +112,15 @@ export const actionFact = {
       type: actionTypes.view,
       view: statusValue
     }
+  },
+  assignUsrID: function (usrID) {
+    return {
+      type: actionTypes.setID,
+      usrID: usrID
+    }
   }
 }
+
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  REDUCERS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +213,16 @@ export const workspacePaneStatus = (state = {}, action) => {
   }
 }
 
+export const usrID = (state = null, action) => {
+  switch (action.type) {
+    case actionTypes.setID:
+      return {...getActionData(action)}.usrID;
+    default:
+      return state
+  }
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     STORE
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus }), initialState);
+const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus, usrID }), initialState);
 export default store;

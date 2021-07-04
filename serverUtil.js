@@ -1,8 +1,8 @@
 import fs from "fs";
 import { createRequire } from "module";
+import { customAlphabet } from 'nanoid'
 const require = createRequire(import.meta.url);
 const SHA1 = require("crypto-js/sha1");
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      Flags
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const FLAGS = {
@@ -19,10 +19,17 @@ export const FLAGS = {
   }
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      usrID
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function usrID() {
+  const nanoid = customAlphabet('1234567890abcdef', 3);
+  return nanoid();
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function usrDirMgr(req, serverDir) {
-    const usrDirName = SHA1(req.ip);
+export function usrDirMgr(req, serverDir, id) {
+    const usrDirName = SHA1(req.ip).toString() + id;
      return {
         usrDirName: usrDirName,
         usrDirPath: "/" + usrDirName,

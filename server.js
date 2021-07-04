@@ -20,8 +20,8 @@ const app = express();
 // -------------------------------------------------
 app.route("/")
 .get(express.static(__dirname + "/build"))
-.post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), usrConnect(__dirname))
+.post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), writeAsyFile(__dirname))
 .post(express.json(), requestResolver())
 
