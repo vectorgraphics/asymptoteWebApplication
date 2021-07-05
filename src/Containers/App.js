@@ -38,46 +38,53 @@ const App = ContainerConstructor(class extends Component {
     // console.log(store.getState());
     const currentWorkspace = workspaceInspector(this.props);
     let link = null;
-    this.props.assignUsrID(this.props.id);
+    if (this.props.id !== "-1") {
+      this.props.assignUsrID(this.props.id);
+      return (
+        <div id="AppCont" className={cssStyle.app}>
+          <div className={cssStyle.header}>
+            <ToggleKey />
+            <div className={cssStyle.menuBar}>
+              <div className={cssStyle.uploadRunPanel}>
+                <UploadButton cssClass={cssStyle.controls} />
+                <RunStopButton cssClass={cssStyle.controls} />
+              </div>
+              <div className={cssStyle.downloadPanel}>
+                <div className={cssStyle.subcomponentContainer}> <DownloadStopButton /> </div>
+                <div className={cssStyle.subcomponentContainer}> <Options /> </div>
+                <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]} /> </div>
+              </div>
+              <ClearButton cssClass={cssStyle.controls} />
+            </div>
 
-    return (
-      <div id="AppCont" className={cssStyle.app}>
-        <div className={cssStyle.header}>
-          <ToggleKey />
-          <div className={cssStyle.menuBar}>
-            <div className={cssStyle.uploadRunPanel}>
-              <UploadButton cssClass={cssStyle.controls} />
-              <RunStopButton cssClass={cssStyle.controls} />
+            <div className={cssStyle.homeLink} onClick={(event) => link.click()} >
+              <a ref={(a) => link = a} href="https://asymptote.sourceforge.io/" target="_"> </a>
             </div>
-            <div className={cssStyle.downloadPanel}>
-              <div className={cssStyle.subcomponentContainer}> <DownloadStopButton /> </div>
-              <div className={cssStyle.subcomponentContainer}> <Options /> </div>
-              <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]} /> </div>
-            </div>
-            <ClearButton cssClass={cssStyle.controls} />
           </div>
 
-          <div className={cssStyle.homeLink} onClick={(event) => link.click()} >
-            <a ref={(a) => link = a} href="https://asymptote.sourceforge.io/" target="_"> </a>
+          <div className={cssStyle.mainBody}>
+            <WorkspacePane asyVersion={this.props.asyVersion}/>
+            <div className={cssStyle.centralPanes}>
+              <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.codePane) ? { display: "flex" } : { display: "none" }}>
+                <CodePaneHeader />
+                <Editor />
+                <Terminal />
+              </div>
+              <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.outputPane) ? { display: "flex" } : { display: "none" }}>
+                <OutputPaneHeader />
+                <Output />
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className={cssStyle.mainBody}>
-          <WorkspacePane asyVersion={this.props.asyVersion}/>
-          <div className={cssStyle.centralPanes}>
-            <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.codePane) ? { display: "flex" } : { display: "none" }}>
-              <CodePaneHeader />
-              <Editor />
-              <Terminal />
-            </div>
-            <div className={cssStyle.corePanes} style={(currentWorkspace.corePanesDisplay.outputPane) ? { display: "flex" } : { display: "none" }}>
-              <OutputPaneHeader />
-              <Output />
-            </div>
-          </div>
+      );
+    } else {
+      return (
+        <div id="AppCont" className={cssStyle.appReplacement}>
+          <p className={cssStyle.maxLimit}> Server received too many independent applications from your IP address! </p>
         </div>
-      </div>
-    );
+      )
+    }
   }
 })
 

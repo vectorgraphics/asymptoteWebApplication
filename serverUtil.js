@@ -1,8 +1,14 @@
 import fs from "fs";
 import { createRequire } from "module";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import { customAlphabet } from 'nanoid'
 const require = createRequire(import.meta.url);
-const SHA1 = require("crypto-js/sha1");
+const SHA1 = require("crypto-js/sha1")
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      Flags
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const FLAGS = {
@@ -21,9 +27,20 @@ export const FLAGS = {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      usrID
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function usrID() {
-  const nanoid = customAlphabet('1234567890abcdef', 3);
-  return nanoid();
+const uAlphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const lAlphabets = "abcdefghijklmnopqrstuvwxyz";
+const digits = "0123456789"
+const nanoid = customAlphabet(digits + lAlphabets + uAlphabets, 4);
+export function usrID(ip) {
+  let count = 0;
+  const relativeIPBasedPath = SHA1(ip).toString();
+  const clientsPath = __dirname + "/clients";
+  const files = fs.readdirSync(clientsPath);
+  files.forEach((element) => {
+    // console.log(element);
+    (element.includes(relativeIPBasedPath))? count++ : null;
+  });
+  return (count >= 5)? "-1" : nanoid();
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr

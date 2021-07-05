@@ -9,9 +9,13 @@ const serverTimeout = 60000;
 export function usrConnect(serverDir) {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect") {
-      const id = usrID();
-      const reqDest = usrDirMgr(req, serverDir, id);
-      makeDir(reqDest.usrAbsDirPath);
+      let id = usrID(req.ip);
+      if (id !== "-1") {
+        var reqDest = usrDirMgr(req, serverDir, id);
+        makeDir(reqDest.usrAbsDirPath);
+      } else {
+        reqDest = usrDirMgr(req, serverDir, "");
+      }
       const asyVersion = execSync('asy -c VERSION', {
         timeout: 500,
         encoding:"ascii"
@@ -36,7 +40,7 @@ export function usrConnect(serverDir) {
       }
       res.send(data);
     } else {
-        next();
+      next();
     }
   }
 }
@@ -73,6 +77,7 @@ export function writeAsyFile(serverDir) {
 // ------------------------------------------------
 export function requestResolver() {
   return (req, res, next) => {
+    console.log(req.body.reqType);
     const option = {
       cwd: req.body.usrAbsDirPath,
       codeFile: req.body.codeFile,
@@ -80,6 +85,10 @@ export function requestResolver() {
       outputOption: req.body.outputOption,
     }
     switch (req.body.reqType) {
+      case "delete":
+        console.log("Delete requested");
+        (existsSync(req.body.usrAbsDirPath))? removeDir(req.body.usrAbsDirPath): null;
+        break;
       case "ping":
         writePing(req.body.usrAbsDirPath);
         next();

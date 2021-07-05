@@ -1,4 +1,4 @@
-import {existsSync, createReadStream, appendFile} from "fs";
+import { existsSync, createReadStream, appendFile } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
@@ -6,8 +6,8 @@ import expressStaticGzip from "express-static-gzip";
 import { dateTime, dropRootPermission } from "./serverUtil.js";
 import { reqAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
 
-export const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const defaultPort = 80;
 const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
@@ -58,7 +58,6 @@ app.route("/clients")
 .post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), downloadReq(__dirname));
 app.listen(port);
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dropRootPermission(port);
