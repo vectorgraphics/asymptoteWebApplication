@@ -36,9 +36,9 @@ window.addEventListener('load', (event) => {
   });
 })
 
-window.onbeforeunload= (event) => {
+window.addEventListener("unload", (event) => {
   const id = store.getState().usrID;
   navigator.sendBeacon('/delete', `deleteReq&${id}`);
-}
+});
 
 
