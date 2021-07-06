@@ -18,7 +18,7 @@ export function usrConnect(serverDir) {
       }
       const asyVersion = execSync('asy -c VERSION', {
         timeout: 500,
-        encoding:"ascii"
+        encoding: "ascii"
       })
       const dateAndTime = dateTime();
       const rawData = {
@@ -29,7 +29,7 @@ export function usrConnect(serverDir) {
       };
 
       const logFilePath = serverDir + "/logs/log";
-      appendFile(logFilePath, JSON.stringify(rawData, null, "\n"))
+      appendFile(logFilePath, JSON.stringify(rawData, null, `\n`))
       .then(() => console.log(`log file created successfully.`))
       .catch((err) => console.log(`An error occurred while writing log file!\n ${err.toString()}`));
 
@@ -63,6 +63,22 @@ export function reqAnalyzer(serverDir) {
   }
 }
 // ------------------------------------------------
+export function delAnalyzer(serverDir) {
+  return (req, res, next) => {
+    let requestAndId = /(\w+)&(\w+)/gi.exec(req.body);
+    if (requestAndId[1] === "deleteReq") {
+      const reqDest = usrDirMgr(req, serverDir, requestAndId[2]);
+      if (existsSync(reqDest.usrAbsDirPath)) {
+        removeDir(reqDest.usrAbsDirPath);
+      } else {
+        res.send(null);
+      }
+    } else {
+      res.send(null);
+    }
+  }
+}
+// ------------------------------------------------
 export function writeAsyFile(serverDir) {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
@@ -77,7 +93,6 @@ export function writeAsyFile(serverDir) {
 // ------------------------------------------------
 export function requestResolver() {
   return (req, res, next) => {
-    console.log(req.body.reqType);
     const option = {
       cwd: req.body.usrAbsDirPath,
       codeFile: req.body.codeFile,
@@ -85,10 +100,6 @@ export function requestResolver() {
       outputOption: req.body.outputOption,
     }
     switch (req.body.reqType) {
-      case "delete":
-        console.log("Delete requested");
-        (existsSync(req.body.usrAbsDirPath))? removeDir(req.body.usrAbsDirPath): null;
-        break;
       case "ping":
         writePing(req.body.usrAbsDirPath);
         next();
@@ -151,7 +162,7 @@ function asyRunManager(req, res, next, option) {
     unlinkSync(req.body.htmlFile);
   }
   let stderrData = "", stdoutData = "";
-  const chProcHandler = spawn("asy", asyArgs, chProcOption);
+  const chProcHandler = spawn('asy', asyArgs, chProcOption);
   // ------------------------------- onError
   chProcHandler.on('error', (err) => {
     const errResObject = errResCreator(FLAGS.FAILURE.PROCESS_SPAWN_ERR, err);
@@ -167,7 +178,7 @@ function asyRunManager(req, res, next, option) {
   chProcHandler.on('exit', (code, signal) => {
     if (code === null) {
       res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR));
-    } else if (code !== 0){
+    } else if (code !== 0) {
       res.send({
         ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
         stderr: stderrData,
@@ -183,7 +194,8 @@ function asyRunManager(req, res, next, option) {
             stderr: stderrData,
             stdout: stdoutData,
             isUpdated: !req.body.isUpdated,
-            path: (option.outformat === "html")? req.body.usrRelDirPath + "/" + req.body.codeFilename + "." + option.outformat: ""
+            path: (option.outformat === "html")? req.body.usrRelDirPath
+                + "/" + req.body.codeFilename + "." + option.outformat: ""
           });
         } else {
           res.send({

@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import express from "express";
 import expressStaticGzip from "express-static-gzip";
 import { dateTime, dropRootPermission } from "./serverUtil.js";
-import { reqAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
+import { reqAnalyzer, delAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,7 +23,10 @@ app.route("/")
 .post(express.json(), usrConnect(__dirname))
 .post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), writeAsyFile(__dirname))
-.post(express.json(), requestResolver())
+.post(express.json(), requestResolver());
+
+app.route("/delete")
+.post(express.text(), delAnalyzer(__dirname));
 
 // Serving Static Logo html File
 // ----------------------------------------
@@ -44,14 +47,14 @@ app.use("/static/", function(req, res, next) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 app.use("/clients", (req, res, next) => {
-    if(req.method === "GET"){
-        const fileToServe = __dirname + req.originalUrl;
-        if (existsSync(fileToServe)) {
-            createReadStream(fileToServe).pipe(res);
-        }
-    } else {
-        next();
+  if(req.method === "GET"){
+    const fileToServe = __dirname + req.originalUrl;
+    if (existsSync(fileToServe)) {
+      createReadStream(fileToServe).pipe(res);
     }
+  } else {
+    next();
+  }
 });
 
 app.route("/clients")
@@ -65,19 +68,19 @@ dropRootPermission(port);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 process.on("uncaughtException", (err) => {
-    const diagnose = {
-        errorType: "An uncaught error moved to the top of the stack!",
-        registerTime: dateTime().time,
-        exception: err,
-        errorStack: err.stack,
-    },
-    diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
-    const dest = __dirname + "/logs/uncaughtExceptions"
-    if (err) {
-        appendFile(dest, diagnoseJSON, (err) => {
-            if (err) {
-                console.log("An error occurred while writing " + dest + ".");
-            }
-        })
-    }
+  const diagnose = {
+    errorType: "An uncaught error moved to the top of the stack!",
+    registerTime: dateTime().time,
+    exception: err,
+    errorStack: err.stack,
+  },
+  diagnoseJSON = JSON.stringify(diagnose).replace(/\\n/g,'\n') + '\n';
+  const dest = __dirname + "/logs/uncaughtExceptions"
+  if (err) {
+    appendFile(dest, diagnoseJSON, (err) => {
+      if (err) {
+          console.log("An error occurred while writing " + dest + ".");
+      }
+    })
+  }
 })

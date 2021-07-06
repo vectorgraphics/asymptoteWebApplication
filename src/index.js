@@ -17,23 +17,28 @@ const connectionRequest = {
 const pingRequest = {
   reqType: "ping"
 };
-const cleanupRequest = {
-  reqType: "delete"
-}
 
-window.addEventListener("load", (event) => {
-  fetch('/', {...fetchOptionObj.post, body: JSON.stringify(connectionRequest)}).then((resObj) => resObj.json()).then((responseContent) => {
-    ReactDOM.render(<Provider store={store}> <App id={responseContent.usrID} asyVersion={responseContent.asyVersion} /> </Provider>, document.getElementById('root'));
-    if (responseContent.usrConnectStatus === "UDIC") {
-      timeIntervalID = setInterval(() => {
-        fetch('/',{...fetchOptionObj.post, body: JSON.stringify(pingRequest)}).then((resObj) => {})
+window.addEventListener('load', (event) => {
+  fetch('/', {...fetchOptionObj.post, body: JSON.stringify(connectionRequest)})
+    .then((resObj) => resObj.json())
+    .then((responseContent) => {
+      ReactDOM.render(
+        <Provider store={store}>
+          <App id={responseContent.usrID} asyVersion={responseContent.asyVersion} />
+        </Provider>,
+        document.getElementById('root')
+      );
+      if (responseContent.usrConnectStatus === "UDIC") {
+        timeIntervalID = setInterval(() => {
+        fetch('/',{...fetchOptionObj.post, body: JSON.stringify(pingRequest)}).then(() => {})
       }, pingMilliseconds)
     }
   });
 })
-window.addEventListener("beforeunload", (event) => {
-  timeIntervalID = null;
-})
 
+window.onbeforeunload= (event) => {
+  const id = store.getState().usrID;
+  navigator.sendBeacon('/delete', `deleteReq&${id}`);
+}
 
 
