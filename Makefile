@@ -34,6 +34,7 @@ node_modules: package.json
 	npm install
 
 run:
+	rm -rf clients/*
 	node server.js
 
 # Run front end only (for testing)
