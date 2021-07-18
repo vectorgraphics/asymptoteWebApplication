@@ -3,8 +3,8 @@
     font-size: 0.85rem;
     flex: 1 1 0;
     max-height: 1.5rem;
-    color: rgb(200, 200, 200);
-    background-color: rgb(45, 45, 45);     
+    color: rgb(255, 128, 128);
+    background-color: #555555;
 }
 .title{
     line-height: 1.25rem;
@@ -28,7 +28,6 @@
     width: 0.5rem;
     height: 0.5rem;
     content: "";
-    /* border: 2.5px solid rgb(255, 128, 128); */
     border-left: 2.5px solid rgb(255, 128, 128);
     border-bottom: 2.5px solid rgb(255, 128, 128);
     transform: rotateZ(45deg);

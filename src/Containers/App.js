@@ -19,7 +19,7 @@ import OutputPaneHeader   from '../Components/OutputPaneHeader/OutputPaneHeader'
 import Editor             from '../Components/Editor/Editor';
 import Terminal           from '../Components/Terminal/Terminal';
 import Output             from '../Components/Output/Output';
-import {actionFact} from "../Store/store";
+import {actionFact}       from "../Store/store";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

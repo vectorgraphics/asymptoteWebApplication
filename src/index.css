@@ -1,7 +1,9 @@
 *{
     box-sizing: border-box;
 }
-html{height: 100%;}
+html{
+    height: 100%;
+}
 body, header, div, iframe, form, label, input, button{
     margin: 0;
     padding: 0;

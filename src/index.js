@@ -18,6 +18,7 @@ const pingRequest = {
   reqType: "ping"
 };
 
+
 window.addEventListener('load', (event) => {
   fetch('/', {...fetchOptionObj.post, body: JSON.stringify(connectionRequest)})
     .then((resObj) => resObj.json())
@@ -40,5 +41,3 @@ window.addEventListener("unload", (event) => {
   const id = store.getState().usrID;
   navigator.sendBeacon('/delete', `deleteReq&${id}`);
 });
-
-
