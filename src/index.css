@@ -11,6 +11,7 @@ body, header, div, iframe, form, label, input, button{
 body{
     font-family: system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     height: 100%;
+    min-width: 1024px;
 }
 a{
     display: block;
