@@ -1,7 +1,6 @@
 export const workspaceInspector = function(props){
     const length = props.workspaces.length;
-    const selectedWorkspace = props.selectedWorkspace;
-    const index = selectedWorkspace.index;
+    const index = props.selectedWorkspace.index;
 
     if(length === 0){
         return {
