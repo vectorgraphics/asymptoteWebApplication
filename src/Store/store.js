@@ -9,7 +9,8 @@ export const actionTypes = {
   select: "SELECT",
   update: "UPDATE",
   view:   "VIEW",
-  setID:  "SET_ID"
+  setID:  "SET_ID",
+  setKeyBinding: "SET_KEY_BINDING"
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          ACTION FACTORIES
@@ -118,6 +119,12 @@ export const actionFact = {
       type: actionTypes.setID,
       usrID: usrID
     }
+  },
+  setBinding: function (keyModel) {
+    return {
+      type: actionTypes.setKeyBinding,
+      keyBinding: keyModel
+    }
   }
 }
 
@@ -222,7 +229,16 @@ export const usrID = (state = null, action) => {
   }
 }
 
+export const editorKeyBinding = (state = "emacs", action) => {
+  switch (action.type) {
+    case actionTypes.setKeyBinding:
+      return {...getActionData(action)}.keyBinding;
+    default:
+      return state
+  }
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     STORE
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus, usrID }), initialState);
+const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus, usrID, editorKeyBinding }), initialState);
 export default store;

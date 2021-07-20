@@ -1,4 +1,5 @@
 .corePanesHeader{
+    position: relative;
     display: flex;
     font-size: 0.85rem;
     flex: 1 1 0;

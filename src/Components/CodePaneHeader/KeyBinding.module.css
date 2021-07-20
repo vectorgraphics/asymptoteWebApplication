@@ -1,0 +1,36 @@
+.kbContainer {
+    display: block;
+    position: absolute;
+    width: 6rem;
+    top: 0;
+    left: 75%;
+    /*border: 1px solid white;*/
+    z-index: 1500;
+}
+
+.kbIcon {
+    display: block;
+    position: relative;
+    text-align: center;
+    font-size: 1.5rem;
+}
+.kbTextEditor {
+    display: block;
+    width: 6rem;
+    margin: 0.125rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.5rem;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    color: rgb(200, 200, 200);
+    border-radius: 0.125rem;
+    /* box-shadow: 0rem 0.065rem 0.065rem 0.065rem black; */
+    background-color: rgb(53, 56, 56);
+}
+
+.kbTextEditor:hover {
+    background-color: rgb(103, 106, 106);
+}

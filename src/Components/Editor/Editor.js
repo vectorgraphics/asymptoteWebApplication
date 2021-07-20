@@ -7,11 +7,17 @@ import { workspaceInspector } from '../../Util/util';
 import './codemirror.css'
 import './theme.css'
 import './asymptote'
+import './keymap/emacs'
+import './keymap/sublime'
+import './keymap/vim'
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
-const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
-  {
-    updateTextareaContent: actionFact.updateTextareaContent,
-  })
+const ContainerConstructor = connect((store) => ({
+  workspaces: store.workspaces,
+  selectedWorkspace: store.selectedWorkspace,
+  editorKeyBinding: store.editorKeyBinding
+}), {
+  updateTextareaContent: actionFact.updateTextareaContent,
+})
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     EDITOR COMPONENT
 const instructionText = "TO START CODING, FIRST CREATE A NEW WORKSPACE!";
@@ -28,7 +34,8 @@ const Editor = ContainerConstructor((props) => {
       },
       theme: "asyDracula",
       lineNumbers: true,
-      lineWrapping: true
+      lineWrapping: true,
+      keyMap: props.editorKeyBinding
     });
     const scrollbarFiller = document.querySelector('.CodeMirror-scrollbar-filler');
     scrollbarFiller.parentElement.removeChild(scrollbarFiller);

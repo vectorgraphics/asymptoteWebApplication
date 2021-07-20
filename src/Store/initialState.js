@@ -43,7 +43,8 @@ const initialState = {
   workspacePaneStatus: {
     view: true
   },
-  usrID: null
+  usrID: null,
+  editorKeyBinding: "emacs"
 }
 
 export default initialState;

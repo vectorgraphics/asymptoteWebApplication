@@ -1,9 +1,4 @@
 .cmContainer {
     flex: 10 1 0;
-    /*height: 100%;*/
-    font-family: inherit;
-    outline: none;
-    border: none;
-    resize: inherit;
     overflow-y: auto;
 }
