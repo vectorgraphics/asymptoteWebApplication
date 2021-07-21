@@ -21,6 +21,7 @@ export const FLAGS = {
     ASY_WRITE_FILE_ERR:     ["ASY_WRITE_FILE_ERR",     "An error occurred inside the server while writing the asy file."],
     ASY_CODE_COMPILE_ERR:   ["ASY_CODE_COMPILE_ERR",   "Asymptote code compile error."],
     PROCESS_SPAWN_ERR:      ["PROCESS_SPAWN_ERR",      "An error occurred inside the server while spawning child process."],
+    PROCESS_TIMEDOUT_ERR:   ["PROCESS_TIMEDOUT_ERR", "Process timed out."],
     PROCESS_TERMINATED_ERR: ["PROCESS_TERMINATED_ERR", "Process terminated."],
   }
 }

@@ -148,7 +148,6 @@ function asyRunManager(req, res, next, option) {
   const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
-    timeout: serverTimeout
   }
   const htmlFileExists = existsSync(req.body.htmlFile);
   if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
@@ -163,6 +162,9 @@ function asyRunManager(req, res, next, option) {
   }
   let stderrData = "", stdoutData = "";
   const chProcHandler = spawn('asy', asyArgs, chProcOption);
+  setTimeout(() => {
+    chProcHandler.kill("SIGTERM");
+  }, serverTimeout)
   // ------------------------------- onError
   chProcHandler.on('error', (err) => {
     const errResObject = errResCreator(FLAGS.FAILURE.PROCESS_SPAWN_ERR, err);
@@ -177,7 +179,8 @@ function asyRunManager(req, res, next, option) {
   // ------------------------------- onExit
   chProcHandler.on('exit', (code, signal) => {
     if (code === null) {
-      res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR));
+      (signal === "SIGTERM") ? res.send(errResCreator(FLAGS.FAILURE.PROCESS_TIMEDOUT_ERR)) :
+          res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR));
     } else if (code !== 0) {
       res.send({
         ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
