@@ -61,8 +61,10 @@ const Editor = ContainerConstructor((props) => {
   }, [currentWorkspace.id]);
 
   useEffect(() => {
-    cmInstance.current.setOption('keyMap', props.editorKeyBinding);
-  }, [props.editorKeyBinding])
+    if (props.editorKeyBinding !== 'default') {
+      cmInstance.current.setOption('keyMap', props.editorKeyBinding);
+    }
+  }, [props.editorKeyBinding]);
 
   return (
     <div className={cssStyle.cmContainer}>
