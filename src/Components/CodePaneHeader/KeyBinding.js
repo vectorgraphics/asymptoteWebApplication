@@ -25,6 +25,13 @@ const KeyBinding = Containerconstructor((props) => {
       </div>
       <div style={wrapperStyleObj}>
         <button
+          style={(selectedBinding === "default")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
+          className ={cssStyle.kbTextEditor}
+          onClick={(event) => {
+            flagUpdater(!displayFlag);
+            props.setBinding("default");
+          }}> Default </button>
+        <button
           style={(selectedBinding === "emacs")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
           className ={cssStyle.kbTextEditor}
           onClick={(event) => {
@@ -37,7 +44,7 @@ const KeyBinding = Containerconstructor((props) => {
           onClick={(event) => {
             flagUpdater(!displayFlag);
             props.setBinding("sublime");
-          }}> Sublime Text </button>
+          }}> Sublime </button>
         <button
           style={(selectedBinding === "vim")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
           className={cssStyle.kbTextEditor}

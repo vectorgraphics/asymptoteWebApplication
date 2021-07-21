@@ -1,7 +1,7 @@
 .kbContainer {
     display: block;
     position: absolute;
-    width: 6rem;
+    width: 5rem;
     top: 0;
     left: 75%;
     /*border: 1px solid white;*/
@@ -16,7 +16,7 @@
 }
 .kbTextEditor {
     display: block;
-    width: 6rem;
+    width: 5rem;
     margin: 0.125rem;
     font-family: inherit;
     font-size: 0.85rem;

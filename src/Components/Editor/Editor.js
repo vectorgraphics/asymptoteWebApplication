@@ -26,17 +26,20 @@ const Editor = ContainerConstructor((props) => {
   const currentWorkspace = workspaceInspector(props);
   const cmInstance = useRef(null);
 
+  let optionObj = {
+    mode: {
+    name: "asymptote",
+      styleDefs: true
+    },
+    theme: "asyDracula",
+    lineNumbers: true,
+    lineWrapping: true,
+  }
+
+  optionObj = (props.editorKeyBinding !== "default")? {...optionObj, keyMap: props.editorKeyBinding} : optionObj;
+
   useEffect(() => {
-    cmInstance.current = CodeMirror.fromTextArea(document.getElementById("tmpTextarea"), {
-      mode: {
-        name: "asymptote",
-        styleDefs: true
-      },
-      theme: "asyDracula",
-      lineNumbers: true,
-      lineWrapping: true,
-      keyMap: props.editorKeyBinding
-    });
+    cmInstance.current = CodeMirror.fromTextArea(document.getElementById("tmpTextarea"), optionObj);
     const scrollbarFiller = document.querySelector('.CodeMirror-scrollbar-filler');
     scrollbarFiller.parentElement.removeChild(scrollbarFiller);
     return () => {

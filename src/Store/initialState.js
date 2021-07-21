@@ -44,7 +44,7 @@ const initialState = {
     view: true
   },
   usrID: null,
-  editorKeyBinding: "emacs"
+  editorKeyBinding: "default"
 }
 
 export default initialState;
