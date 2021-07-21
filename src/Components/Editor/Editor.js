@@ -38,9 +38,13 @@ const Editor = ContainerConstructor((props) => {
     });
     const scrollbarFiller = document.querySelector('.CodeMirror-scrollbar-filler');
     scrollbarFiller.parentElement.removeChild(scrollbarFiller);
+    if (props.editorKeyBinding !== 'default') {
+      cmInstance.current.setOption('keyMap', props.editorKeyBinding);
+    }
+
     return () => cmInstance.current.toTextArea();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.editorKeyBinding]);
 
   useEffect(() => {
     function txtToStore(cm) {
@@ -58,13 +62,7 @@ const Editor = ContainerConstructor((props) => {
     cmInstance.current.on('change', txtToStore);
     return () => cmInstance.current.off('change', txtToStore);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentWorkspace.id]);
-
-  useEffect(() => {
-    if (props.editorKeyBinding !== 'default') {
-      cmInstance.current.setOption('keyMap', props.editorKeyBinding);
-    }
-  }, [props.editorKeyBinding]);
+  }, [currentWorkspace.id, props.editorKeyBinding]);
 
   return (
     <div className={cssStyle.cmContainer}>
