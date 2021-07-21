@@ -18,35 +18,33 @@ const KeyBinding = Containerconstructor((props) => {
 
   return (
     <div className={cssStyle.kbContainer}>
-      <div
-        className={cssStyle.kbIcon}
-        onClick={(event) => flagUpdater(!displayFlag)}>
-        <FaKeyboard/>
+      <div className={cssStyle.kbIcon} onClick={(event) => flagUpdater(!displayFlag)}>
+        <FaKeyboard className={cssStyle.fakeyboard}/>
       </div>
       <div style={wrapperStyleObj}>
         <button
-          style={(selectedBinding === "default")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
+          style={(selectedBinding === "default") ? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
           className ={cssStyle.kbTextEditor}
           onClick={(event) => {
             flagUpdater(!displayFlag);
             props.setBinding("default");
           }}> Default </button>
         <button
-          style={(selectedBinding === "emacs")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
+          style={(selectedBinding === "emacs") ? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
           className ={cssStyle.kbTextEditor}
           onClick={(event) => {
             flagUpdater(!displayFlag);
             props.setBinding("emacs");
           }}> Emacs </button>
         <button
-          style={(selectedBinding === "sublime")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
+          style={(selectedBinding === "sublime") ? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
           className={cssStyle.kbTextEditor}
           onClick={(event) => {
             flagUpdater(!displayFlag);
             props.setBinding("sublime");
           }}> Sublime </button>
         <button
-          style={(selectedBinding === "vim")? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
+          style={(selectedBinding === "vim") ? {color: "rgb(255, 128, 128)"} : {color: "rgb(200, 200, 200)"}}
           className={cssStyle.kbTextEditor}
           onClick={(event) => {
             props.setBinding("vim");

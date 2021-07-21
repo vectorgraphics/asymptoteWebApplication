@@ -26,27 +26,21 @@ const Editor = ContainerConstructor((props) => {
   const currentWorkspace = workspaceInspector(props);
   const cmInstance = useRef(null);
 
-  let optionObj = {
-    mode: {
-    name: "asymptote",
-      styleDefs: true
-    },
-    theme: "asyDracula",
-    lineNumbers: true,
-    lineWrapping: true,
-  }
-
-  optionObj = (props.editorKeyBinding !== "default")? {...optionObj, keyMap: props.editorKeyBinding} : optionObj;
-
   useEffect(() => {
-    cmInstance.current = CodeMirror.fromTextArea(document.getElementById("tmpTextarea"), optionObj);
+    cmInstance.current = CodeMirror.fromTextArea(document.getElementById("tmpTextarea"), {
+      mode: {
+      name: "asymptote",
+        styleDefs: true
+      },
+      theme: "asyDracula",
+      lineNumbers: true,
+      lineWrapping: true,
+    });
     const scrollbarFiller = document.querySelector('.CodeMirror-scrollbar-filler');
     scrollbarFiller.parentElement.removeChild(scrollbarFiller);
-    return () => {
-      cmInstance.current.toTextArea();
-    }
+    return () => cmInstance.current.toTextArea();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
     function txtToStore(cm) {
@@ -58,16 +52,18 @@ const Editor = ContainerConstructor((props) => {
     } else {
       cmInstance.current.setOption('readOnly', false);
       cmInstance.current.focus();
-      console.log(currentWorkspace.codeText);
       cmInstance.current.doc.setValue(currentWorkspace.codeText);
       cmInstance.current.doc.setCursor(cmInstance.current.doc.lineCount(), 0);
     }
-    cmInstance.current.on("change", txtToStore);
-    return () => {
-      cmInstance.current.off("change", txtToStore);
-    }
+    cmInstance.current.on('change', txtToStore);
+    return () => cmInstance.current.off('change', txtToStore);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentWorkspace.id]);
+
+  useEffect(() => {
+    cmInstance.current.setOption('keyMap', props.editorKeyBinding);
+  }, [props.editorKeyBinding])
+
   return (
     <div className={cssStyle.cmContainer}>
       <textarea id="tmpTextarea" autoFocus={true}></textarea>
