@@ -25,6 +25,7 @@ const WorkspacePane = ContainerConstructor((props) => {
       </div>
       <WorkspaceBody />
       <iframe id="logo" style={{ marginTop: "2rem" }} title="logoFrame" src="./logo3d.html" frameBorder="0"></iframe>
+      <div className={cssStyle.versionBox}> {props.asyVersion} </div>
     </div>
   )
 })
