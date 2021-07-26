@@ -1,0 +1,38 @@
+/*
+  Name:       asyDracula
+  Author:     Pedram Emami
+  Based on dracula theme created by Michael Kaminsky (http://github.com/mkaminsky11).
+*/
+
+.cm-s-asyDracula.CodeMirror, .cm-s-asyDracula .CodeMirror-gutters {
+  background-color: #21252b !important;
+  color: #f8f8f2 !important;
+  border: none;
+}
+.cm-s-asyDracula .CodeMirror-gutters { color: #282a36; }
+.cm-s-asyDracula .CodeMirror-cursor { border-left: solid thin #f8f8f0; }
+.cm-s-asyDracula .CodeMirror-linenumber { color: #6D8A88; }
+.cm-s-asyDracula .CodeMirror-selected { background: rgba(255, 255, 255, 0.20); }
+.cm-s-asyDracula .CodeMirror-line::selection, .cm-s-asyDracula .CodeMirror-line > span::selection, .cm-s-asyDracula .CodeMirror-line > span > span::selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-asyDracula .CodeMirror-line::-moz-selection, .cm-s-asyDracula .CodeMirror-line > span::-moz-selection, .cm-s-asyDracula .CodeMirror-line > span > span::-moz-selection { background: rgba(255, 255, 255, 0.10); }
+.cm-s-asyDracula span.cm-atom { color: #bd93f9; }
+.cm-s-asyDracula span.cm-type { color:  #bb729a; }
+.cm-s-asyDracula span.cm-keyword { color: #d55fde; }
+.cm-s-asyDracula span.cm-variable { color: #abb2bf; }
+.cm-s-asyDracula span.cm-variable-2 { color: #e06c75; }
+.cm-s-asyDracula span.cm-variable-3 { color: #61afef; }
+.cm-s-asyDracula span.cm-comment { color: #5c6370; }
+.cm-s-asyDracula span.cm-string { color: #98c379; }
+.cm-s-asyDracula span.cm-string-2 { color: #98c379; }
+.cm-s-asyDracula span.cm-number { color: #e5c07b; }
+.cm-s-asyDracula span.cm-operator { color: #abb2bf; }
+.cm-s-asyDracula span.cm-def { color: #61afef; }
+.cm-s-asyDracula span.cm-builtin { color: #2bbac5; }
+.cm-s-asyDracula span.cm-meta { color: #f8f8f2; }
+.cm-s-asyDracula span.cm-tag { color: #bb729a; }
+.cm-s-asyDracula span.cm-attribute { color: #50fa7b; }
+.cm-s-asyDracula span.cm-qualifier { color: #50fa7b; }
+.cm-s-asyDracula span.cm-property { color: #66d9ef; }
+
+.cm-s-asyDracula .CodeMirror-activeline-background { background: rgba(255,255,255,0.1); }
+.cm-s-asyDracula .CodeMirror-matchingbracket { text-decoration: underline; color: white !important; }
