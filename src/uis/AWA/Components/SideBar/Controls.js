@@ -4,19 +4,16 @@ import HomeIcon from "@material-ui/icons/Home";
 
 const useStyle = makeStyles((theme) => ({
   control_container: {
-    display: "flex",
-    flexFlow: "column nowrap",
-    alignContent: "center",
-    marginBottom: "3rem",
+    display: "block",
+    height: "6rem",
+    gridRow: "3/4",
   },
   control: {
     display: "flex",
     flexFlow: "column nowrap",
     justifyContent: "center",
-    height: "3rem",
-    fontSize: "1rem",
+    minHeight: "3rem",
     color: "white",
-    // border: "1px solid white",
     "&:hover": {
       color: "maroon",
     }

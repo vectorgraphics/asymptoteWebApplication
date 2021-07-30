@@ -5,35 +5,40 @@ import { SideBar } from "../SideBar/SideBar";
 
 const useStyle = makeStyles({
   awaplatform: {
-    display: "grid",
-    gridTemplateColumns: "2rem minmax(200px, 1fr) minmax(800px, 6fr)",
+    display: "flex",
+    flexFlow: "row nowrap",
+    minWidth: "64rem",
+    minHeight: "50rem",
+    justifyContent: "center",
+    alignContent: "stretch",
+    overflow: "hidden",
   },
-  sidebar: {
+  sidebar_container: {
     display: "block",
-    gridColumnStart: "1",
-    gridColumnEnd: "2",
+    flex: "1 1 auto",
+    minWidth: "2rem",
+    maxWidth: "2rem",
   },
-  controlpanel: {
+  controlpanel_container: {
     display: "block",
-    gridColumnStart: "2",
-    gridColumnEnd: "3",
+    flex: "1 1 auto",
+    minWidth: "14.1rem",
+    maxWidth: "17.2rem",
   },
-  modulepanel: {
+  modulepanel_container: {
     display: "block",
-    gridColumnStart: "3",
-    gridColumnEnd: "4",
+    flex: "2 1 auto",
+    minWidth: "37rem",
   }
 })
 
-function AWAPlatform(props) {
+export function AWAPlatform(props) {
   const classes = useStyle();
   return (
     <div className={classes.awaplatform}>
-      <div className={classes.sidebar}> <SideBar/> </div>
-      <div className={classes.controlpanel}> <ControlPanel/> </div>
-      <div className={classes.modulepanel}> <ModulePanel/> </div>
+    <div className={classes.sidebar_container}>         <SideBar/>      </div>
+      <div className={classes.controlpanel_container}>  <ControlPanel/> </div>
+      <div className={classes.modulepanel_container}>   <ModulePanel/>  </div>
     </div>
   );
 }
-
-export default AWAPlatform;

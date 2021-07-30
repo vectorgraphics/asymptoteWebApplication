@@ -5,25 +5,27 @@ const useStyle = makeStyles((theme) => ({
   tab_container: {
     display: "flex",
     flexFlow: "column nowrap",
-    alignContent: "center",
+    gridRow: "1/2",
+    justifyContent: "center",
     backgroundColor: theme.palette.common.SidBarTabs_Bg,
   },
   tab: {
     display: "flex",
     flexFlow: "column nowrap",
-    justifyContent: "center",
     height: "6rem",
-    fontSize: "1rem",
     color: "white",
+    cursor: "default",
     border: "1px solid black",
   },
   text: {
     display: "block",
+    height: "6rem",
+    margin: "0 auto",
     fontSize: "1rem",
-    lineHeight: "2.1rem",
+    textAlign: "center",
     writingMode: "vertical-lr",
     transform: "rotate(180deg)",
-    // border: "1px solid black",
+    // border: "1px solid white",
   },
 }))
 
