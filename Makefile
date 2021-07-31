@@ -58,4 +58,4 @@ clean:  tidy
 	asy -nowarn unbounded -f html -o public/ $<
 
 %.html.gz: %.html
-	cd public && gzip $<
+	cd public && gzip -f $<
