@@ -47,7 +47,7 @@ export const fetchOptionObj = {
   get: {
     method: "GET",
     headers: {
-      "Content-Type": "text/html",
+      "Content-type": "text/html",
       "pragma": "no-cache",
       "cache-control": "no-cache"
     }
@@ -55,7 +55,7 @@ export const fetchOptionObj = {
   post: {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-type": "application/json; charset=utf-8",
     }
   }
 }
