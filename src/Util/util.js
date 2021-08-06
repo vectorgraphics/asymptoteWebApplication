@@ -46,8 +46,8 @@ export const workspaceInspector = function(props){
 export const fetchOptionObj = {
   get: {
     method: "GET",
+    referrerPolicy: 'no-referrer-when-downgrade',
     headers: {
-      'Referrer-Policy': "no-referrer-when-downgrade",
       'Access-Control-Allow-Origin':'*',
       "Content-type": "text/html",
       "pragma": "no-cache",
@@ -56,8 +56,8 @@ export const fetchOptionObj = {
   },
   post: {
     method: "POST",
+    referrerPolicy: 'no-referrer-when-downgrade',
     headers: {
-      'Referrer-Policy': "no-referrer-when-downgrade",
       'Access-Control-Allow-Origin':'*',
       "Content-type": "application/json; charset=utf-8",
     }
