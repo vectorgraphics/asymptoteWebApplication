@@ -47,7 +47,8 @@ const RunStopButton = ContainerConstructor(class extends Component {
               isUpdated: currentWorkspace.output.isUpdated,
             };
             controller = new AbortController();
-            fetch('/', {...fetchOptionObj.post, signal: controller.signal, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+            const JSONData = JSON.stringify(data);
+            fetch('/', {...fetchOptionObj.post, signal: controller.signal, body: JSONData}).then((resObj) => resObj.json()).then((responseContent) => {
               this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
               this.setState({
                 buttonType: "Run",
