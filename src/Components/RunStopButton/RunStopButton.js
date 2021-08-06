@@ -52,7 +52,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
               this.setState({
                 buttonType: "Run",
               })
-            }).catch((err) => {});
+            }).catch((err) => console.log(err));
             this.setState({
               buttonType: "Stop",
             })
