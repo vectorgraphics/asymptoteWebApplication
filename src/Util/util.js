@@ -47,6 +47,7 @@ export const fetchOptionObj = {
   get: {
     method: "GET",
     headers: {
+      'Referrer-Policy': "no-referrer-when-downgrade",
       'Access-Control-Allow-Origin':'*',
       "Content-type": "text/html",
       "pragma": "no-cache",
@@ -56,6 +57,7 @@ export const fetchOptionObj = {
   post: {
     method: "POST",
     headers: {
+      'Referrer-Policy': "no-referrer-when-downgrade",
       'Access-Control-Allow-Origin':'*',
       "Content-type": "application/json; charset=utf-8",
     }
