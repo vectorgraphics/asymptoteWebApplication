@@ -36,26 +36,30 @@ const useStyle = makeStyles((theme) => ({
     backgroundColor: "#e0e0e0",
   },
   rootList: {
+    display: "flex",
+    flexFlow: "column nowrap",
     minWidth: "7.5rem",
     maxWidth: "7.5rem",
-    paddingTop: "2px",
-    paddingBottom: "2px",
+    padding: 0,
+    margin: 0,
     borderRadius: "1px",
   },
   rootItem: {
+    flex: "1 1 auto",
+    minWidth: "100%",
     minHeight: "1.5rem",
     maxHeight: "1.5rem",
+    padding: 0,
+    margin: "0.125rem 0",
+    justifyContent: "space-evenly",
     fontSize: "0.875rem",
-    textAlign: "center",
     lineHeight: "1.5rem",
   },
   paper: {
-    marginTop: "2px",
+    marginTop: "0.25rem",
     borderRadius: "1px",
   },
 }))
-
-
 
 export function SplitBtn({children, className, ...props}) {
   const options = props.items;
@@ -107,7 +111,6 @@ export function SplitBtn({children, className, ...props}) {
                       <MenuItem
                         classes={{root: toOverride.rootItem}}
                         key={option}
-                        disabled={index === 2}
                         selected={index === selectedIndex}
                         onClick={(event) => handleMenuItemClick(event, index)}
                       >

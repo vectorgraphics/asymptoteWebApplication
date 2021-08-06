@@ -1,20 +1,23 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { CodeModule } from "../CodeModule/CodeModule";
+import { GraphModule } from "../GraphModule/GraphModule";
 
 const useStyle = makeStyles((theme) => ({
-  modulepanel: {
+  modulePanel: {
     display: "block",
+    flex: "2 1 auto",
     height: "100%",
-    backgroundColor: theme.palette.common.ModulePanel_Bg,
-    // borderLeft: `2px solid ${theme.palette.common.ControlPanel_Bg}`,
+    minWidth: "37rem",
+    backgroundColor: theme.palette.background.ModulePanel,
   }
 }))
 
 export function ModulePanel(props) {
   const classes = useStyle();
   return (
-    <div className={classes.modulepanel}>
+    <div className={classes.modulePanel}>
       <CodeModule/>
+      {/*<GraphModule/>*/}
     </div>
   );
 }

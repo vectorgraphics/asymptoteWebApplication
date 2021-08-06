@@ -5,7 +5,7 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   var cmds = CodeMirror.commands;
   var Pos = CodeMirror.Pos;
-  function posEq(a, b) { return a.line == b.line && a.ch == b.ch; }
+  function posEq(a, b) { return a.line === b.line && a.ch === b.ch; }
 
   // Kill 'ring'
 
@@ -27,13 +27,13 @@ import CodeMirror from 'codemirror/src/codemirror';
   function _kill(cm, from, to, ring, text) {
     if (text == null) text = cm.getRange(from, to);
 
-    if (ring == "grow" && lastKill && lastKill.cm == cm && posEq(from, lastKill.pos) && cm.isClean(lastKill.gen))
+    if (ring === "grow" && lastKill && lastKill.cm === cm && posEq(from, lastKill.pos) && cm.isClean(lastKill.gen))
       growRingTop(text);
     else if (ring !== false)
       addToRing(text);
     cm.replaceRange("", from, to, "+delete");
 
-    if (ring == "grow") lastKill = {cm: cm, pos: from, gen: cm.changeGeneration()};
+    if (ring === "grow") lastKill = {cm: cm, pos: from, gen: cm.changeGeneration()};
     else lastKill = null;
   }
 
@@ -76,7 +76,7 @@ import CodeMirror from 'codemirror/src/codemirror';
     for (;;) {
       var next = text.charAt(ch + (dir < 0 ? -1 : 0));
       if (!next) { // End/beginning of line reached
-        if (line == (dir < 0 ? cm.firstLine() : cm.lastLine())) return Pos(line, ch);
+        if (line === (dir < 0 ? cm.firstLine() : cm.lastLine())) return Pos(line, ch);
         text = cm.getLine(line + dir);
         if (!/\S/.test(text)) return Pos(line, ch);
         line += dir;
@@ -92,13 +92,13 @@ import CodeMirror from 'codemirror/src/codemirror';
   function byExpr(cm, pos, dir) {
     var wrap;
     if (cm.findMatchingBracket && (wrap = cm.findMatchingBracket(pos, {strict: true}))
-        && wrap.match && (wrap.forward ? 1 : -1) == dir)
+        && wrap.match && (wrap.forward ? 1 : -1) === dir)
       return dir > 0 ? Pos(wrap.to.line, wrap.to.ch + 1) : wrap.to;
 
     for (var first = true;; first = false) {
       var token = cm.getTokenAt(pos);
       var after = Pos(pos.line, dir < 0 ? token.start : token.end);
-      if (first && dir > 0 && token.end == pos.ch || !/\w/.test(token.string)) {
+      if (first && dir > 0 && token.end === pos.ch || !/\w/.test(token.string)) {
         var newPos = cm.findPosH(after, dir, "char");
         if (posEq(after, newPos)) return pos;
         else pos = newPos;
@@ -114,11 +114,11 @@ import CodeMirror from 'codemirror/src/codemirror';
     var digits = cm.state.emacsPrefix;
     if (!digits) return precise ? null : 1;
     clearPrefix(cm);
-    return digits == "-" ? -1 : Number(digits);
+    return digits === "-" ? -1 : Number(digits);
   }
 
   function repeated(cmd) {
-    var f = typeof cmd == "string" ? function(cm) { cm.execCommand(cmd); } : cmd;
+    var f = typeof cmd === "string" ? function(cm) { cm.execCommand(cmd); } : cmd;
     return function(cm) {
       var prefix = getPrefix(cm);
       f(cm);
@@ -168,7 +168,7 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   function addPrefix(cm, digit) {
     if (cm.state.emacsPrefix) {
-      if (digit != "-") cm.state.emacsPrefix += digit;
+      if (digit !== "-") cm.state.emacsPrefix += digit;
       return;
     }
     // Not active yet
@@ -192,7 +192,7 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   function maybeDuplicateInput(cm, event) {
     var dup = getPrefix(cm);
-    if (dup > 1 && event.origin == "+input") {
+    if (dup > 1 && event.origin === "+input") {
       var one = event.text.join("\n"), txt = "";
       for (var i = 1; i < dup; ++i) txt += one;
       cm.replaceSelection(txt);
@@ -200,7 +200,7 @@ import CodeMirror from 'codemirror/src/codemirror';
   }
 
   function maybeRemovePrefixMap(cm, arg) {
-    if (typeof arg == "string" && (/^\d$/.test(arg) || arg == "Ctrl-U")) return;
+    if (typeof arg == "string" && (/^\d$/.test(arg) || arg === "Ctrl-U")) return;
     cm.removeKeyMap(prefixMap);
     cm.state.emacsPrefixMap = false;
     cm.off("keyHandled", maybeRemovePrefixMap);
@@ -250,13 +250,13 @@ import CodeMirror from 'codemirror/src/codemirror';
       var text = cm.getLine(line);
       for (var i = ch == null ? text.length : ch; i > 0;) {
         var ch = text.charAt(--i);
-        if (ch == ")")
+        if (ch === ")")
           stack.push("(");
-        else if (ch == "]")
+        else if (ch === "]")
           stack.push("[");
-        else if (ch == "}")
+        else if (ch === "}")
           stack.push("{");
-        else if (/[\(\{\[]/.test(ch) && (!stack.length || stack.pop() != ch))
+        else if (/[\(\{\[]/.test(ch) && (!stack.length || stack.pop() !== ch))
           return cm.extendSelection(Pos(line, i));
       }
       --line; ch = null;
@@ -385,7 +385,7 @@ import CodeMirror from 'codemirror/src/codemirror';
   cmds.capitalizeWord = repeated(function(cm) {
     operateOnWord(cm, function(w) {
       var letter = w.search(/\w/);
-      if (letter == -1) return w;
+      if (letter === -1) return w;
       return w.slice(0, letter) + w.charAt(letter).toUpperCase() +
           w.slice(letter + 1).toLowerCase();
     });
@@ -415,7 +415,7 @@ import CodeMirror from 'codemirror/src/codemirror';
 
     getInput(cm, "Goto line", function(str) {
       var num;
-      if (str && !isNaN(num = Number(str)) && num == (num|0) && num > 0)
+      if (str && !isNaN(num = Number(str)) && num === (num|0) && num > 0)
       cm.setCursor(num - 1);
     });
   };

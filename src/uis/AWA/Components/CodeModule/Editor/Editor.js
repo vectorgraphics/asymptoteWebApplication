@@ -1,14 +1,15 @@
+import { makeStyles } from "@material-ui/core/styles";
 import { useEffect, useRef } from 'react';
 // import CodeMirror from 'codemirror/src/codemirror'
 // import { connect } from 'react-redux';
 // import { actionFact } from '../../Store/store';
 // import { workspaceInspector } from '../../Util/util';
-// import './codemirror.css'
-// import './theme.css'
-// import './asymptote'
-// import './keymap/emacs'
-// import './keymap/sublime'
-// import './keymap/vim'
+import './codemirror/codemirror.css';
+import './codemirror/theme.css';
+import './codemirror/asymptote';
+import './codemirror/keymap/emacs';
+import './codemirror/keymap/sublime';
+import './codemirror/keymap/vim';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 // const ContainerConstructor = connect((store) => ({
 //   workspaces: store.workspaces,
@@ -18,11 +19,21 @@ import { useEffect, useRef } from 'react';
 //   updateTextareaContent: actionFact.updateTextareaContent,
 // })
 
+const useStyle = makeStyles((theme) => ({
+  editor: {
+    display: "block",
+    flex: "10 1 auto",
+    overflowY: "auto",
+    // backgroundColor: "green",
+  },
+}));
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     EDITOR COMPONENT
-const instructionText = "TO START CODING, FIRST CREATE A NEW WORKSPACE!";
+// const instructionText = "TO START CODING, FIRST CREATE A NEW WORKSPACE!";
 
 // const Editor = ContainerConstructor((props) => {
 export function Editor(props) {
+  const classes = useStyle();
   // const currentWorkspace = workspaceInspector(props);
   // const cmInstance = useRef(null);
 
@@ -65,8 +76,9 @@ export function Editor(props) {
   // }, [currentWorkspace.id, props.editorKeyBinding]);
 
   return (
-    <div className={cssStyle.cmContainer}>
-      <textarea id="tmpTextarea" autoFocus={true}></textarea>
+    <div className={classes.editor}>
+      {/*<textarea id="tmpTextarea" autoFocus={true}></textarea>*/}
     </div>
   );
-})
+// })
+}

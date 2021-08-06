@@ -11,22 +11,22 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   // This is not exactly Sublime's algorithm. I couldn't make heads or tails of that.
   function findPosSubword(doc, start, dir) {
-    if (dir < 0 && start.ch == 0) return doc.clipPos(Pos(start.line - 1));
+    if (dir < 0 && start.ch === 0) return doc.clipPos(Pos(start.line - 1));
     var line = doc.getLine(start.line);
     if (dir > 0 && start.ch >= line.length) return doc.clipPos(Pos(start.line + 1, 0));
     var state = "start", type, startPos = start.ch;
-    for (var pos = startPos, e = dir < 0 ? 0 : line.length, i = 0; pos != e; pos += dir, i++) {
+    for (var pos = startPos, e = dir < 0 ? 0 : line.length, i = 0; pos !== e; pos += dir, i++) {
       var next = line.charAt(dir < 0 ? pos - 1 : pos);
-      var cat = next != "_" && CodeMirror.isWordChar(next) ? "w" : "o";
-      if (cat == "w" && next.toUpperCase() == next) cat = "W";
-      if (state == "start") {
-        if (cat != "o") { state = "in"; type = cat; }
+      var cat = next !== "_" && CodeMirror.isWordChar(next) ? "w" : "o";
+      if (cat === "w" && next.toUpperCase() === next) cat = "W";
+      if (state === "start") {
+        if (cat !== "o") { state = "in"; type = cat; }
         else startPos = pos + dir
-      } else if (state == "in") {
-        if (type != cat) {
-          if (type == "w" && cat == "W" && dir < 0) pos--;
-          if (type == "W" && cat == "w" && dir > 0) { // From uppercase to lowercase
-            if (pos == startPos + 1) { type = "w"; continue; }
+      } else if (state === "in") {
+        if (type !== cat) {
+          if (type === "w" && cat === "W" && dir < 0) pos--;
+          if (type === "W" && cat === "w" && dir > 0) { // From uppercase to lowercase
+            if (pos === startPos + 1) { type = "w"; continue; }
             else pos--;
           }
           break;
@@ -72,9 +72,9 @@ import CodeMirror from 'codemirror/src/codemirror';
     for (var i = 0; i < ranges.length; i++) {
       var from = ranges[i].from(), to = ranges[i].to();
       for (var line = from.line; line <= to.line; ++line)
-        if (!(to.line > from.line && line == to.line && to.ch == 0))
-          lineRanges.push({anchor: line == from.line ? from : Pos(line, 0),
-                           head: line == to.line ? to : Pos(line)});
+        if (!(to.line > from.line && line === to.line && to.ch === 0))
+          lineRanges.push({anchor: line === from.line ? from : Pos(line, 0),
+                           head: line === to.line ? to : Pos(line)});
     }
     cm.setSelections(lineRanges, 0);
   };
@@ -125,8 +125,8 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   cmds.selectNextOccurrence = function(cm) {
     var from = cm.getCursor("from"), to = cm.getCursor("to");
-    var fullWord = cm.state.sublimeFindFullWord == cm.doc.sel;
-    if (CodeMirror.cmpPos(from, to) == 0) {
+    var fullWord = cm.state.sublimeFindFullWord === cm.doc.sel;
+    if (CodeMirror.cmpPos(from, to) === 0) {
       var word = wordAt(cm, from);
       if (!word.word) return;
       cm.setSelection(word.from, word.to);
@@ -150,10 +150,10 @@ import CodeMirror from 'codemirror/src/codemirror';
   cmds.skipAndSelectNextOccurrence = function(cm) {
     var prevAnchor = cm.getCursor("anchor"), prevHead = cm.getCursor("head");
     cmds.selectNextOccurrence(cm);
-    if (CodeMirror.cmpPos(prevAnchor, prevHead) != 0) {
+    if (CodeMirror.cmpPos(prevAnchor, prevHead) !== 0) {
       cm.doc.setSelections(cm.doc.listSelections()
           .filter(function (sel) {
-            return sel.anchor != prevAnchor || sel.head != prevHead;
+            return sel.anchor !== prevAnchor || sel.head !== prevHead;
           }));
     }
   }
@@ -181,8 +181,8 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   function isSelectedRange(ranges, from, to) {
     for (var i = 0; i < ranges.length; i++)
-      if (CodeMirror.cmpPos(ranges[i].from(), from) == 0 &&
-          CodeMirror.cmpPos(ranges[i].to(), to) == 0) return true
+      if (CodeMirror.cmpPos(ranges[i].from(), from) === 0 &&
+          CodeMirror.cmpPos(ranges[i].to(), to) === 0) return true
     return false
   }
 
@@ -195,10 +195,10 @@ import CodeMirror from 'codemirror/src/codemirror';
       for (;;) {
         var closing = cm.scanForBracket(pos, 1);
         if (!closing) return false;
-        if (closing.ch == mirror.charAt(mirror.indexOf(opening.ch) + 1)) {
+        if (closing.ch === mirror.charAt(mirror.indexOf(opening.ch) + 1)) {
           var startPos = Pos(opening.pos.line, opening.pos.ch + 1);
-          if (CodeMirror.cmpPos(startPos, range.from()) == 0 &&
-              CodeMirror.cmpPos(closing.pos, range.to()) == 0) {
+          if (CodeMirror.cmpPos(startPos, range.from()) === 0 &&
+              CodeMirror.cmpPos(closing.pos, range.to()) === 0) {
             opening = cm.scanForBracket(opening.pos, -1);
             if (!opening) return false;
           } else {
@@ -227,7 +227,7 @@ import CodeMirror from 'codemirror/src/codemirror';
   cmds.goToBracket = function(cm) {
     cm.extendSelectionsBy(function(range) {
       var next = cm.scanForBracket(range.head, 1, puncType(cm.getTokenTypeAt(range.head)));
-      if (next && CodeMirror.cmpPos(next.pos, range.head) != 0) return next.pos;
+      if (next && CodeMirror.cmpPos(next.pos, range.head) !== 0) return next.pos;
       var prev = cm.scanForBracket(range.head, -1, puncType(cm.getTokenTypeAt(Pos(range.head.line, range.head.ch + 1))));
       return prev && Pos(prev.pos.line, prev.pos.ch + 1) || range.head;
     });
@@ -240,7 +240,7 @@ import CodeMirror from 'codemirror/src/codemirror';
       var range = ranges[i], from = range.from().line - 1, to = range.to().line;
       newSels.push({anchor: Pos(range.anchor.line - 1, range.anchor.ch),
                     head: Pos(range.head.line - 1, range.head.ch)});
-      if (range.to().ch == 0 && !range.empty()) --to;
+      if (range.to().ch === 0 && !range.empty()) --to;
       if (from > at) linesToMove.push(from, to);
       else if (linesToMove.length) linesToMove[linesToMove.length - 1] = to;
       at = to;
@@ -265,7 +265,7 @@ import CodeMirror from 'codemirror/src/codemirror';
     var ranges = cm.listSelections(), linesToMove = [], at = cm.lastLine() + 1;
     for (var i = ranges.length - 1; i >= 0; i--) {
       var range = ranges[i], from = range.to().line + 1, to = range.from().line;
-      if (range.to().ch == 0 && !range.empty()) from--;
+      if (range.to().ch === 0 && !range.empty()) from--;
       if (from < at) linesToMove.push(from, to);
       else if (linesToMove.length) linesToMove[linesToMove.length - 1] = to;
       at = to;
@@ -274,7 +274,7 @@ import CodeMirror from 'codemirror/src/codemirror';
       for (var i = linesToMove.length - 2; i >= 0; i -= 2) {
         var from = linesToMove[i], to = linesToMove[i + 1];
         var line = cm.getLine(from);
-        if (from == cm.lastLine())
+        if (from === cm.lastLine())
           cm.replaceRange("", Pos(from - 1), Pos(from), "+swapLine");
         else
           cm.replaceRange("", Pos(from, 0), Pos(from + 1, 0), "+swapLine");
@@ -293,7 +293,7 @@ import CodeMirror from 'codemirror/src/codemirror';
     for (var i = 0; i < ranges.length; i++) {
       var range = ranges[i], from = range.from();
       var start = from.line, end = range.to().line;
-      while (i < ranges.length - 1 && ranges[i + 1].from().line == end)
+      while (i < ranges.length - 1 && ranges[i + 1].from().line === end)
         end = ranges[++i].to().line;
       joined.push({start: start, end: end, anchor: !range.empty() && from});
     }
@@ -304,7 +304,7 @@ import CodeMirror from 'codemirror/src/codemirror';
         var anchor = obj.anchor && Pos(obj.anchor.line - offset, obj.anchor.ch), head;
         for (var line = obj.start; line <= obj.end; line++) {
           var actual = line - offset;
-          if (line == obj.end) head = Pos(actual, cm.getLine(actual).length + 1);
+          if (line === obj.end) head = Pos(actual, cm.getLine(actual).length + 1);
           if (actual < cm.lastLine()) {
             cm.replaceRange(" ", Pos(actual), Pos(actual + 1, /^\s*/.exec(cm.getLine(actual + 1))[0].length));
             ++offset;
@@ -338,7 +338,7 @@ import CodeMirror from 'codemirror/src/codemirror';
       var range = ranges[i];
       if (range.empty()) continue;
       var from = range.from().line, to = range.to().line;
-      while (i < ranges.length - 1 && ranges[i + 1].from().line == to)
+      while (i < ranges.length - 1 && ranges[i + 1].from().line === to)
         to = ranges[++i].to().line;
       if (!ranges[i].to().ch) to--;
       toSort.push(from, to);
@@ -353,12 +353,12 @@ import CodeMirror from 'codemirror/src/codemirror';
         var start = Pos(from, 0), end = Pos(to);
         var lines = cm.getRange(start, end, false);
         if (caseSensitive)
-          lines.sort(function(a, b) { return a < b ? -direction : a == b ? 0 : direction; });
+          lines.sort(function(a, b) { return a < b ? -direction : a === b ? 0 : direction; });
         else
           lines.sort(function(a, b) {
             var au = a.toUpperCase(), bu = b.toUpperCase();
-            if (au != bu) { a = au; b = bu; }
-            return a < b ? -direction : a == b ? 0 : direction;
+            if (au !== bu) { a = au; b = bu; }
+            return a < b ? -direction : a === b ? 0 : direction;
           });
         cm.replaceRange(lines, start, end);
         if (selected) ranges.push({anchor: start, head: Pos(to + 1, 0)});
@@ -406,12 +406,12 @@ import CodeMirror from 'codemirror/src/codemirror';
         if (found[j].sublimeBookmark) {
           found[j].clear();
           for (var k = 0; k < marks.length; k++)
-            if (marks[k] == found[j])
+            if (marks[k] === found[j])
               marks.splice(k--, 1);
           break;
         }
       }
-      if (j == found.length)
+      if (j === found.length)
         marks.push(cm.markText(from, to, {sublimeBookmark: true, clearWhenEmpty: false}));
     }
   };
@@ -469,12 +469,12 @@ import CodeMirror from 'codemirror/src/codemirror';
         // Delete by one character by default
         var deletePos = cm.findPosH(cursor, -1, "char", false);
 
-        if (toStartOfLine && !/\S/.test(toStartOfLine) && column % indentUnit == 0) {
+        if (toStartOfLine && !/\S/.test(toStartOfLine) && column % indentUnit === 0) {
           var prevIndent = new Pos(cursor.line,
             CodeMirror.findColumn(toStartOfLine, column - indentUnit, indentUnit));
 
           // Smart delete only if we found a valid prevIndent location
-          if (prevIndent.ch != cursor.ch) deletePos = prevIndent;
+          if (prevIndent.ch !== cursor.ch) deletePos = prevIndent;
         }
 
         cm.replaceRange("", deletePos, cursor, "+delete");
@@ -535,7 +535,7 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   function getTarget(cm) {
     var from = cm.getCursor("from"), to = cm.getCursor("to");
-    if (CodeMirror.cmpPos(from, to) == 0) {
+    if (CodeMirror.cmpPos(from, to) === 0) {
       var word = wordAt(cm, from);
       if (!word.word) return;
       from = word.from;
@@ -707,6 +707,6 @@ import CodeMirror from 'codemirror/src/codemirror';
   };
   CodeMirror.normalizeKeyMap(keyMap.pcSublime);
 
-  var mac = keyMap.default == keyMap.macDefault;
+  var mac = keyMap.default === keyMap.macDefault;
   keyMap.sublime = mac ? keyMap.macSublime : keyMap.pcSublime;
 });

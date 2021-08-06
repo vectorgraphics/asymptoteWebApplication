@@ -1,47 +1,36 @@
-import { Fragment } from "react"
-import { makeStyles } from "@material-ui/core";
+import { useState, Fragment } from "react";
+import { makeStyles, useTheme } from "@material-ui/core";
+import { AlertDialog } from "../../Atoms/AlertDialog";
+import { WorkspaceItem } from "./WorkspaceItem";
 
 const useStyle = makeStyles((theme) => ({
-  container: {
-    overflow: "auto",
-    // backgroundColor: "blue",
-  },
-  header: {
-    display: "block",
-    boxSizing: "content-box",
-    lineHeight: "2rem",
-    textAlign: "center",
-    margin: "0 auto",
-    width: "100%",
-    maxHeight: "2rem",
-    color: "white",
-    fontWeight: "800",
-    backgroundColor: "#5d6980",
-    boxShadow: theme.shadows[3],
-  },
-  body: {
+  itemCont: {
     display: "flex",
     flexFlow: "column nowrap",
+    flex: "10 0 auto",
+    paddingTop: "0.5rem",
     minHeight: "532px",
-    maxHeight: "calc(100vh - 19.5rem)",
-    justifyContent: "flex-start",
-    alignContent: "center",
     overflow: "auto",
   }
 }))
 
 export function Workspace(props) {
   const classes = useStyle();
+  const [isOpen, setOpenState] = useState(false);
+
+  const openDialog = () => {
+    setOpenState(true);
+  };
+  const closeDialog = () => {
+    setOpenState(false);
+  };
+
   return (
-    <div className={classes.container}>
-      <div className={classes.header}> Workspace </div>
-      <div className={classes.body}>
-        <p> test </p>
-        <p> test </p>
-        <p> test </p>
-        <p> test </p>
-        <p> test </p>
+    <Fragment>
+      <div className={classes.itemCont}>
+        <WorkspaceItem openDialog={openDialog}/>
       </div>
-    </div>
-);
+      <AlertDialog isOpen={isOpen} closeDialog={closeDialog}/>
+    </Fragment>
+  );
 }
