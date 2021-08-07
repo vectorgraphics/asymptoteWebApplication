@@ -1,11 +1,25 @@
+import { createRequire } from 'module'
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
 import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
+import express from "express";
+const require = createRequire(import.meta.url);
+const multer = require("multer");
 
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function reqTypeRouter() {
+  return (req, res, next) => {
+    if (req.is("application/json") === "application/json") {
+      return express.json()(req, res, next);
+    } else if (req.get('Content-Type').includes("multipart/form-data")) {
+      return multer().none().call(null, req, res, next);
+    }
+  }
+}
+// ------------------------------------------------
 export function usrConnect(serverDir) {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect") {
@@ -58,6 +72,7 @@ export function reqAnalyzer(serverDir) {
       codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
       htmlFile: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
     }
+    req.body.isUpdated = req.body.isUpdated.includes("true");
     // console.log("modified req.body:\n", req.body);
     next();
   }

@@ -4,13 +4,13 @@ import { fileURLToPath } from "url";
 import express from "express";
 import expressStaticGzip from "express-static-gzip";
 import { dateTime, dropRootPermission } from "./serverUtil.js";
-import { reqAnalyzer, delAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
+import { reqTypeRouter, reqAnalyzer, delAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const defaultPort = 80;
-const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
+// const defaultPort = 80;
+// const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Express Application
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,10 +20,7 @@ const app = express();
 // -------------------------------------------------
 app.route("/")
 .get(express.static(__dirname + "/build"))
-.post(express.json(), usrConnect(__dirname))
-.post(express.json(), reqAnalyzer(__dirname))
-.post(express.json(), writeAsyFile(__dirname))
-.post(express.json(), requestResolver());
+.post(reqTypeRouter(), usrConnect(__dirname), reqAnalyzer(__dirname), writeAsyFile(__dirname), requestResolver())
 
 app.route("/delete")
 .post(express.text(), delAnalyzer(__dirname));
@@ -60,10 +57,11 @@ app.use("/clients", (req, res, next) => {
 app.route("/clients")
 .post(express.json(), reqAnalyzer(__dirname))
 .post(express.json(), downloadReq(__dirname));
-app.listen(port);
+// app.listen(port);
+app.listen(3000);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dropRootPermission(port);
+// dropRootPermission(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

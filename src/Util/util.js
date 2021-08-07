@@ -46,21 +46,20 @@ export const workspaceInspector = function(props){
 export const fetchOptionObj = {
   get: {
     method: "GET",
-    referrerPolicy: 'no-referrer-when-downgrade',
     headers: {
-      'Access-Control-Allow-Origin':'*',
-      "Content-type": "text/html",
+      "Content-Type": "text/html; charset=UTF-8",
+      "cache-control": "no-cache",
       "pragma": "no-cache",
-      "cache-control": "no-cache"
     }
   },
   post: {
     method: "POST",
-    referrerPolicy: 'no-referrer-when-downgrade',
     headers: {
-      'Access-Control-Allow-Origin':'*',
-      "Content-type": "application/json; charset=utf-8",
+      "Content-Type": "application/json; charset=utf-8",
     }
+  },
+  postFormData: {
+    method: "POST",
   }
 }
 
@@ -69,4 +68,12 @@ export function codeFormatter(codeText){
     codeText += "\n";
   }
   return codeText;
+}
+
+export function toFormData(dataObj) {
+  const formDataObj = new FormData();
+  for (const member of Object.keys(dataObj)) {
+    formDataObj.append(member, dataObj[member])
+  }
+  return formDataObj
 }
