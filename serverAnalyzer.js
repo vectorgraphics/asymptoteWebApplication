@@ -12,15 +12,9 @@ const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function reqTypeRouter() {
   return (req, res, next) => {
-    // console.log(req);
-    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     if (req.is("application/json") === "application/json") {
-      // console.log("json");
       return express.json()(req, res, next);
     } else if (req.get('Content-Type').includes("multipart/form-data")) {
-      // console.log("formData");
       return multer().none()(req, res, next);
     }
   }
