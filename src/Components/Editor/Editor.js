@@ -62,7 +62,7 @@ const Editor = ContainerConstructor((props) => {
     cmInstance.current.on('change', txtToStore);
     return () => cmInstance.current.off('change', txtToStore);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentWorkspace.id, props.editorKeyBinding]);
+  }, [currentWorkspace.id, currentWorkspace.codeText, props.editorKeyBinding]);
 
   return (
     <div className={cssStyle.cmContainer}>
