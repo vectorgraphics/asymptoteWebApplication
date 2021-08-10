@@ -15,7 +15,7 @@ export function reqTypeRouter() {
     if (req.is("application/json") === "application/json") {
       return express.json()(req, res, next);
     } else if (req.get('Content-Type').includes("multipart/form-data")) {
-      return multer().none().call(null, req, res, next);
+      return multer().none()(req, res, next);
     }
   }
 }
@@ -23,6 +23,7 @@ export function reqTypeRouter() {
 export function usrConnect(serverDir) {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect") {
+      console.log(req.body);
       let id = usrID(req.ip);
       if (id !== "-1") {
         var reqDest = usrDirMgr(req, serverDir, id);
@@ -61,6 +62,8 @@ export function usrConnect(serverDir) {
 // ------------------------------------------------
 export function reqAnalyzer(serverDir) {
   return (req, res, next) => {
+    console.log("inside reqanalyzer:\n%%%%%%%%%%%%%%%%%%%%%%");
+    console.log(req.body);
     const reqDest = usrDirMgr(req, serverDir, req.body.id);
     const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
     const codeFile = codeFilename + ".asy";
@@ -72,7 +75,9 @@ export function reqAnalyzer(serverDir) {
       codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
       htmlFile: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
     }
-    req.body.isUpdated = req.body.isUpdated.includes("true");
+    if (typeof req.body.isUpdated === "string") {
+      req.body.isUpdated =  req.body.isUpdated.includes("true");
+    }
     // console.log("modified req.body:\n", req.body);
     next();
   }
