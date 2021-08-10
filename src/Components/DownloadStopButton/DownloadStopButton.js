@@ -2,7 +2,7 @@ import React, { memo, Component } from 'react';
 import cssStyle from './DownloadStopButton.module.css';
 import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
-import { fetchOptionObj as basicfetchOption,  codeFormatter, workspaceInspector } from '../../Util/util';
+import { fetchOptionObj, codeFormatter, workspaceInspector, toUrlEncoded } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({
       workspaces: store.workspaces,
@@ -59,13 +59,12 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 buttonType: "Stop",
               })
               controller = new AbortController();
-              const fetchOptionObj = {...basicfetchOption, signal: controller.signal};
               // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY CODE
               if (onlyCodeChecked) {
-                fetch('/', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+                fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType === "ASY_FILE_CREATED") {
-                    fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
@@ -77,10 +76,10 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 }).catch((err) => {});
                 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  ONLY OUTPUT
               } else if (onlyOutputChecked) {
-                fetch('/', {...fetchOptionObj.post, signal: controller.signal, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+                fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType === "ASY_OUTPUT_CREATED") {
-                    fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
                       link.click();
@@ -92,18 +91,18 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 }).catch((err) => {});
                 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  BOTH CODE & OUTPUT
               } else if (bothOptionsChecked) {
-                fetch('/', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+                fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType !== "ERROR") {
                     data.codeOption = true;
                     data.outputOption = false;
-                    fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
                       data.codeOption = false;
                       data.outputOption = true;
-                      fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                         link.href = window.URL.createObjectURL(responseContent);
                         link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
                         link.click();
@@ -116,7 +115,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                     this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                     data.codeOption = true;
                     data.outputOption = false;
-                    fetch('/clients', {...fetchOptionObj.post, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();

@@ -20,7 +20,7 @@ const pingRequest = {
 
 
 window.addEventListener('load', (event) => {
-  fetch('/', {...fetchOptionObj.post, body: JSON.stringify(connectionRequest)})
+  fetch('/', {...fetchOptionObj.postJson, body: JSON.stringify(connectionRequest)})
     .then((resObj) => resObj.json())
     .then((responseContent) => {
       ReactDOM.render(
@@ -31,7 +31,7 @@ window.addEventListener('load', (event) => {
       );
       if (responseContent.usrConnectStatus === "UDIC") {
         timeIntervalID = setInterval(() => {
-        fetch('/',{...fetchOptionObj.post, body: JSON.stringify(pingRequest)}).then(() => {})
+        fetch('/',{...fetchOptionObj.postJson, body: JSON.stringify(pingRequest)}).then(() => {})
       }, pingMilliseconds)
     }
   });

@@ -52,14 +52,11 @@ export const fetchOptionObj = {
       "pragma": "no-cache",
     }
   },
-  post: {
+  postJson: {
     method: "POST",
     headers: {
       "Content-Type": "application/json; charset=utf-8",
     }
-  },
-  postFormData: {
-    method: "POST",
   },
   postUrlEncode: {
     method: "POST",
