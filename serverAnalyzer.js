@@ -16,6 +16,8 @@ export function reqTypeRouter() {
       return express.json()(req, res, next);
     } else if (req.get('Content-Type').includes("multipart/form-data")) {
       return multer().none()(req, res, next);
+    } else if (req.get('Content-Type').includes("application/x-www")) {
+      return express.urlencoded({extended: true})(req, res, next);
     }
   }
 }

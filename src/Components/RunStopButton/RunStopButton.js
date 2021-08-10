@@ -2,7 +2,7 @@ import React, { Component, memo } from 'react';
 import cssStyle from './RunStopButton.module.css';
 import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
-import { fetchOptionObj, codeFormatter,  workspaceInspector, toFormData } from '../../Util/util';
+import { fetchOptionObj, codeFormatter,  workspaceInspector, toUrlEncoded } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({
   workspaces: store.workspaces,
@@ -47,8 +47,9 @@ const RunStopButton = ContainerConstructor(class extends Component {
               isUpdated: currentWorkspace.output.isUpdated,
             };
             controller = new AbortController();
-            const formData = toFormData(data);
-            fetch('/', {...fetchOptionObj.postFormData, signal: controller.signal, body: formData}).then((resObj) => resObj.json()).then((responseContent) => {
+            const encoded = toUrlEncoded(data);
+            console.log("encoded:", encoded);
+            fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: encoded}).then((resObj) => resObj.json()).then((responseContent) => {
               this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
               this.setState({
                 buttonType: "Run",

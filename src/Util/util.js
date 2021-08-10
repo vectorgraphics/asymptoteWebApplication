@@ -60,7 +60,14 @@ export const fetchOptionObj = {
   },
   postFormData: {
     method: "POST",
+  },
+  postUrlEncode: {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    }
   }
+
 }
 
 export function codeFormatter(codeText){
@@ -70,10 +77,11 @@ export function codeFormatter(codeText){
   return codeText;
 }
 
-export function toFormData(dataObj) {
-  const formDataObj = new FormData();
+export function toUrlEncoded(dataObj) {
+  const str = [];
   for (const member of Object.keys(dataObj)) {
-    formDataObj.append(member, dataObj[member])
+    console.log(typeof member, member);
+    str.push(encodeURIComponent(member) + "=" + encodeURIComponent(dataObj[member]));
   }
-  return formDataObj
+  return str.join("&");
 }
