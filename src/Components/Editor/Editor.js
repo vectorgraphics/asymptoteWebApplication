@@ -4,12 +4,12 @@ import cssStyle from './Editor.module.css';
 import { connect } from 'react-redux';
 import { actionFact } from '../../Store/store';
 import { workspaceInspector } from '../../Util/util';
-import './codemirror.css'
-import './theme.css'
-import './asymptote'
-import './keymap/emacs'
-import './keymap/sublime'
-import './keymap/vim'
+import './codemirror.css';
+import './theme.css';
+import './asymptote';
+import './keymap/emacs';
+import './keymap/sublime';
+import './keymap/vim';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     REACT-REDUX CONNECTION
 const ContainerConstructor = connect((store) => ({
   workspaces: store.workspaces,
@@ -41,7 +41,6 @@ const Editor = ContainerConstructor((props) => {
     if (props.editorKeyBinding !== 'default') {
       cmInstance.current.setOption('keyMap', props.editorKeyBinding);
     }
-
     return () => cmInstance.current.toTextArea();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.editorKeyBinding]);
@@ -62,7 +61,11 @@ const Editor = ContainerConstructor((props) => {
     cmInstance.current.on('change', txtToStore);
     return () => cmInstance.current.off('change', txtToStore);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentWorkspace.id, currentWorkspace.codeText, props.editorKeyBinding]);
+  }, [currentWorkspace.id]);
+
+  useEffect(() => {
+    cmInstance.current.setValue(currentWorkspace.codeText);
+  }, [currentWorkspace.uploaded]);
 
   return (
     <div className={cssStyle.cmContainer}>

@@ -6,7 +6,7 @@ import { workspaceInspector } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
   {
-    getRunResponse: actionFact.getRunResponse,
+    uploadCode: actionFact.uploadCode,
     updateTextareaContent: actionFact.updateTextareaContent
   })
 
@@ -29,6 +29,7 @@ const UploadButton = ContainerConstructor((props) => {
           let reader = new FileReader();
           reader.addEventListener("load", (loadEvent) => {
             props.updateTextareaContent(currentWorkspace.id, loadEvent.target.result.toString());
+            props.uploadCode(currentWorkspace.id, !currentWorkspace.uploaded);
           }, false)
           reader.readAsText(this.files[0]);
         }, false)

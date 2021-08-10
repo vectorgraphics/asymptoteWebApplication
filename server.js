@@ -44,7 +44,7 @@ app.use("/static/", function(req, res, next) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 app.use("/clients", (req, res, next) => {
-  if(req.method === "GET"){
+  if (req.method === "GET") {
     const fileToServe = __dirname + req.originalUrl;
     if (existsSync(fileToServe)) {
       createReadStream(fileToServe).pipe(res);

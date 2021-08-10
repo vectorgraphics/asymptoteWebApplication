@@ -15,6 +15,7 @@ const initialState = {
         disabled: false,
       },
       codeText: "",
+      uploaded: false,
       outformat: "html",
       output: {
         responseType: null,

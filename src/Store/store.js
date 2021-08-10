@@ -87,11 +87,11 @@ export const actionFact = {
       codeText: textValue
     }
   },
-  updateTerminalText: function (id, value) {
+  uploadCode: function (id, value) {
     return {
       type: actionTypes.update,
       id: id,
-      output: value
+      uploaded: value
     }
   },
   corePanesDisplay: function (id, status) {
@@ -157,6 +157,7 @@ export const workspaces = (state = [], action) => {
           },
           outformat: "html",
           codeText: "",
+          uploaded: false,
           output: {
             responseType: null,
             errorType: null,
@@ -205,7 +206,7 @@ function getActionData(action) {
 export const selectedWorkspace = (state = {}, action) => {
   switch (action.type) {
     case actionTypes.select:
-      return { ...getActionData(action) };
+      return {...getActionData(action)};
     default:
       return state
   }
@@ -214,7 +215,16 @@ export const selectedWorkspace = (state = {}, action) => {
 export const workspacePaneStatus = (state = {}, action) => {
   switch (action.type) {
     case actionTypes.view:
-      return { ...getActionData(action) };
+      return {...getActionData(action)};
+    default:
+      return state
+  }
+}
+
+export const uploadCode = (state = {}, action) => {
+  switch (action.type) {
+    case actionTypes.update:
+      return {...getActionData(action)};
     default:
       return state
   }
@@ -240,5 +250,6 @@ export const editorKeyBinding = (state = "emacs", action) => {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     STORE
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus, usrID, editorKeyBinding }), initialState);
+const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus,
+  uploadCode, usrID, editorKeyBinding }), initialState);
 export default store;
