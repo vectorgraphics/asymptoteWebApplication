@@ -64,7 +64,8 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType === "ASY_FILE_CREATED") {
-                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    delete (data.codeText);
+                    fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
@@ -79,7 +80,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
                   this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                   if (responseContent.responseType === "ASY_OUTPUT_CREATED") {
-                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
                       link.click();
@@ -96,13 +97,14 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                   if (responseContent.responseType !== "ERROR") {
                     data.codeOption = true;
                     data.outputOption = false;
-                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    delete (data.codeText);
+                    fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();
                       data.codeOption = false;
                       data.outputOption = true;
-                      fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                      fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                         link.href = window.URL.createObjectURL(responseContent);
                         link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
                         link.click();
@@ -115,7 +117,8 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                     this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});
                     data.codeOption = true;
                     data.outputOption = false;
-                    fetch('/clients', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                    delete (data.codeText);
+                    fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
                       link.href = window.URL.createObjectURL(responseContent);
                       link.setAttribute("download", currentWorkspace.name.current + ".asy");
                       link.click();

@@ -42,6 +42,7 @@ const ClearSubMenu = ContainerConstructor((props) => {
             clearedOutput.responseType = "CLEARED";
             props.getRunResponse(currentWorkspace.id, clearedOutput);
             props.updateTextareaContent(currentWorkspace.id, "");
+            props.uploadCode(currentWorkspace.id, !currentWorkspace.uploaded);
             props.wipeSubMenuOut()
           }
           }

@@ -76,6 +76,12 @@ export function reqAnalyzer(serverDir) {
     if (typeof req.body.isUpdated === "string") {
       req.body.isUpdated =  req.body.isUpdated.includes("true");
     }
+    if (req.body.codeOption !== undefined && typeof req.body.codeOption === "string") {
+      req.body.codeOption =  req.body.codeOption.includes("true");
+    }
+    if (req.body.outputOption !== undefined && typeof req.body.outputOption === "string") {
+      req.body.outputOption =  req.body.outputOption.includes("true");
+    }
     // console.log("modified req.body:\n", req.body);
     next();
   }

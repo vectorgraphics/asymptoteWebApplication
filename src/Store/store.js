@@ -250,6 +250,5 @@ export const editorKeyBinding = (state = "emacs", action) => {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     STORE
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus,
-  uploadCode, usrID, editorKeyBinding }), initialState);
+const store = createStore(combineReducers({ workspaces, selectedWorkspace, workspacePaneStatus, usrID, editorKeyBinding }), initialState);
 export default store;

@@ -77,7 +77,6 @@ export function codeFormatter(codeText){
 export function toUrlEncoded(dataObj) {
   const str = [];
   for (const member of Object.keys(dataObj)) {
-    console.log(typeof member, member);
     str.push(encodeURIComponent(member) + "=" + encodeURIComponent(dataObj[member]));
   }
   return str.join("&");
