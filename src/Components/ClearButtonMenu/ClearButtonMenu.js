@@ -6,6 +6,7 @@ import { workspaceInspector } from '../../Util/util';
 
 const ContainerConstructor = connect((store) => ({ workspaces: store.workspaces, selectedWorkspace: store.selectedWorkspace }),
   {
+    uploadCode: actionFact.uploadCode,
     updateTextareaContent: actionFact.updateTextareaContent,
     getRunResponse: actionFact.getRunResponse
   })
@@ -21,6 +22,7 @@ const ClearSubMenu = ContainerConstructor((props) => {
         <button className={cssStyle.menuBtn}
           onClick={(event) => {
             props.updateTextareaContent(currentWorkspace.id, "");
+            props.uploadCode(currentWorkspace.id, !currentWorkspace.uploaded);
             props.wipeSubMenuOut()
           }
           }
