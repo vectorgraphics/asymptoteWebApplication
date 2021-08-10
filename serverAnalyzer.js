@@ -23,7 +23,6 @@ export function reqTypeRouter() {
 export function usrConnect(serverDir) {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect") {
-      console.log(req.body);
       let id = usrID(req.ip);
       if (id !== "-1") {
         var reqDest = usrDirMgr(req, serverDir, id);
@@ -62,8 +61,6 @@ export function usrConnect(serverDir) {
 // ------------------------------------------------
 export function reqAnalyzer(serverDir) {
   return (req, res, next) => {
-    console.log("inside reqanalyzer:\n%%%%%%%%%%%%%%%%%%%%%%");
-    console.log(req.body);
     const reqDest = usrDirMgr(req, serverDir, req.body.id);
     const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
     const codeFile = codeFilename + ".asy";
