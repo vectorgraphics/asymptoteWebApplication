@@ -1,76 +1,35 @@
-import React from 'react';
+import { useRef, useState } from 'react';
+import { enActionCreator } from "../../../store/workspaces";
 import { makeStyles } from "@material-ui/core";
-import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { PropsStrainer } from "./PropsStrainer";
+import { Button, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-
 
 const useStyle = makeStyles((theme) => ({
-  rootGbtn: {
-    maxWidth: "7.5rem",
-    minWidth: "7.5rem",
-    maxHeight: "1.5rem",
-    borderRadius: "1px",
-  },
-  rootSBtn: {
-    maxWidth: "1.5rem",
-    minWidth: "1.5rem",
-    maxHeight: "1.5rem",
-    borderRadius: "1px",
-  },
-  rootBox: {
-    minWidth: "6rem",
-    maxWidth: "6rem",
-    maxHeight: "1.5rem",
-    fontSize: "0.875rem",
-    textAlign: "center",
-    lineHeight: "1.5rem",
-    borderRadius: "1px",
-    backgroundColor: "#e0e0e0",
-  },
-  rootList: {
-    display: "flex",
-    flexFlow: "column nowrap",
-    minWidth: "7.5rem",
-    maxWidth: "7.5rem",
-    padding: 0,
-    margin: 0,
-    borderRadius: "1px",
-  },
-  rootItem: {
-    flex: "1 1 auto",
-    minWidth: "100%",
-    minHeight: "1.5rem",
-    maxHeight: "1.5rem",
-    padding: 0,
-    margin: "0.125rem 0",
-    justifyContent: "space-evenly",
-    fontSize: "0.875rem",
-    lineHeight: "1.5rem",
-  },
-  paper: {
-    marginTop: "0.25rem",
-    borderRadius: "1px",
+  rootGBtn: (props) => props.cssStyle.gBtn,
+  rootSBtn: (props) => props.cssStyle.sBtn,
+  rootBox:  (props) => props.cssStyle.box,
+  rootList: (props) => props.cssStyle.list,
+  rootItem: (props) => props.cssStyle.item,
+  paper:    (props) => props.cssStyle.paper,
+  popper: {
+    zIndex: 2000,
   },
 }))
 
-export function SplitBtn({children, className, ...props}) {
-  const options = props.items;
-
-  const toOverride = useStyle();
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+export function SplitBtn(
+  {
+    children, items=["test1", "test2"], btnIcon=false, disableElevation=false,
+    passedHandler=() => {}, passedData=1, dispatch=false, ...props
+  }) {
+  const locClasses = useStyle(props);
+  const anchorRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
+    passedHandler();
     setOpen(false);
   };
 
@@ -86,30 +45,29 @@ export function SplitBtn({children, className, ...props}) {
   };
 
   return (
-      <Box>
-        <ButtonGroup classes={{root: toOverride.rootGbtn}} variant="contained" ref={anchorRef}>
-          <Box className={toOverride.rootBox}>{options[selectedIndex]}</Box>
-          <Button classes={{root: toOverride.rootSBtn}}
-            size="small"
-            onClick={handleToggle}
-          >
-            <ArrowDropDownIcon />
-          </Button>
+      <div>
+        <ButtonGroup classes={{root: locClasses.rootGBtn}} variant="contained" ref={anchorRef} disableElevation={disableElevation}>
+          <PropsStrainer>
+            <Box className={locClasses.rootBox}>{(btnIcon)? btnIcon: "icon"}</Box>
+          </PropsStrainer>
+            <Button classes={{root: locClasses.rootSBtn}} size="small" onClick={handleToggle}>
+              <ArrowDropDownIcon />
+            </Button>
         </ButtonGroup>
-        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal placement={"bottom-start"}>
+        <Popper
+          className={locClasses.popper} open={open}
+          anchorEl={anchorRef.current} role={undefined}
+          transition disablePortal placement={"bottom-start"}>
           {({ TransitionProps, placement }) => (
             <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin: placement === 'bottom-start' ? 'center top' : 'left bottom',
-              }}
+              {...TransitionProps} style={{transformOrigin: (placement === "bottom-start")? "center top": "left bottom",}}
             >
-              <Paper classes={{root: toOverride.paper}}>
+              <Paper classes={{root: locClasses.paper}}>
                 <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList classes={{root: toOverride.rootList}} id="split-button-menu">
-                    {options.map((option, index) => (
+                  <MenuList classes={{root: locClasses.rootList}} id="split-button-menu">
+                    {items.map((option, index) => (
                       <MenuItem
-                        classes={{root: toOverride.rootItem}}
+                        classes={{root: locClasses.rootItem}}
                         key={option}
                         selected={index === selectedIndex}
                         onClick={(event) => handleMenuItemClick(event, index)}
@@ -123,6 +81,6 @@ export function SplitBtn({children, className, ...props}) {
             </Grow>
           )}
         </Popper>
-      </Box>
+      </div>
   );
 }

@@ -1,6 +1,8 @@
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Tooltip } from "@material-ui/core";
-
+import { useSelector } from "react-redux";
+import { idSelector } from "../../../../store/selectors";
+import {checkedoutWorkspaceId} from "../../../../store/workspaces";
 
 const useStyle = makeStyles((theme) => ({
   tabCont: {
@@ -15,6 +17,7 @@ const useStyle = makeStyles((theme) => ({
     flexFlow: "column nowrap",
     minHeight: "6rem",
     maxHeight: "6rem",
+    justifyContent: "center",
     color: "white",
     cursor: "default",
     border: "none",
@@ -46,48 +49,44 @@ const useStyle = makeStyles((theme) => ({
   text: {
     display: "block",
     margin: "0 auto",
+    padding: "0.125rem 0",
     fontSize: "1rem",
     textAlign: "center",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap",
     writingMode: "vertical-lr",
     transform: "rotate(180deg)",
   },
 }))
 
-
 export function Tabs(props) {
+  const locClasses = useStyle();
+  const theme = useTheme();
   let isCPExpanded = props.isCPExpanded;
   const setCPExpand = props.setCPExpand;
-  const theme = useTheme();
-  const classes = useStyle();
+  const id = useSelector(idSelector);
+  const wsName = useSelector((store) => store.workspaces.entities[id].name);
 
   return (
-    <div className={classes.tabCont}>
-      <div className={classes.tab}>
-        <button className={classes.button} onClick={event => setCPExpand(!isCPExpanded)}>
+    <div className={locClasses.tabCont}>
+      <div className={locClasses.tab}>
+        <button className={locClasses.button} onClick={(event) => setCPExpand(!isCPExpanded)}>
           {
             (isCPExpanded)
-              ? <div className={classes.text} style={{color: "white"}}> {"collapse"} </div>
-              : <div className={classes.text} style={{color: theme.palette.text.SideBarTabsActivated}}> {"expand"} </div>
+              ? <div className={locClasses.text} style={{color: "white"}}> {"Collapse"} </div>
+              : <div className={locClasses.text} style={{color: theme.palette.text.SideBarTabsActivated}}> {"Expand"} </div>
           }
         </button>
       </div>
       {(!isCPExpanded)
-        ?
-        <div className={classes.tab}>
-        <Tooltip title="LongWorkspaceName" placement="right">
-          <div className={classes.text}> {checkLength("LongWorkspaceName")} </div>
-        </Tooltip>
-        </div>
-        :
-        <div className={classes.lowerTab}></div>
+        ? <div className={locClasses.tab}>
+            <Tooltip title={wsName} placement="right">
+             <div className={locClasses.text}> {wsName} </div>
+            </Tooltip>
+          </div>
+        : <div className={locClasses.lowerTab}/>
       }
     </div>
   );
-}
-function checkLength(arg) {
-  const length = arg.length;
-  if (length > 9) {
-    return (arg.substr(0, 7)+ " ...");
-  }
-  return arg;
 }

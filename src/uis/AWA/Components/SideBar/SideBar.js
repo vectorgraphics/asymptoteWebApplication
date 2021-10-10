@@ -19,12 +19,12 @@ const useStyle = makeStyles((theme) => ({
 export function SideBar(props) {
   const isCPExpanded = props.isCPExapnded;
   const setCPExpand = props.setCPExpand;
-  const classes = useStyle(props);
+  const locClasses = useStyle(props);
 
   return (
-    <div className={classes.sideBar}>
+    <div className={locClasses.sideBar}>
         <Tabs isCPExpanded={isCPExpanded} setCPExpand={setCPExpand}/>
-        <Controls />
+        <Controls/>
     </div>
   );
 }

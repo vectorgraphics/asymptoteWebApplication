@@ -7,36 +7,36 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyle = makeStyles((theme) => ({
-  root: {
+  dialogRoot: {
     boxShadow: theme.shadows[5],
   },
+  dialogTitleRoot: {
+    color: theme.palette.text.textActivated,
+  },
+  dialogContentTextRoot: {
+    color: "black",
+  }
 }))
 
-export function AlertDialog({isOpen, closeDialog}) {
-  const classes = useStyle();
+export function AlertDialog({isOpen, closeDialog, OKAction, dialogText="", ...props}) {
+  const locClasses = useStyle();
   return (
     <div>
-      <Dialog classes={{paper: classes.root}} open={isOpen} onClose={closeDialog}>
-        <DialogTitle id="alert-dialog-title">{"Attention"}</DialogTitle>
+      <Dialog classes={{paper: locClasses.dialogRoot}} open={isOpen} onClose={closeDialog}>
+        <DialogTitle classes={{root: locClasses.dialogTitleRoot}}>{"Warning"}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            By deleting the workspace, you will lose access to your work on the server!
+          <DialogContentText classes={{root: locClasses.dialogContentTextRoot}}>
+            {dialogText}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={closeDialog} color="primary" autoFocus>
-            Ok
-          </Button>
+          <Button color="primary" onClick={closeDialog}> Cancel </Button>
+          <Button color="primary" autoFocus onClick={() => {
+            closeDialog();
+            setTimeout(() => OKAction(), 200);
+          }}> Ok </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 }
-
-
-// <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-//   Open alert dialog
-// </Button>

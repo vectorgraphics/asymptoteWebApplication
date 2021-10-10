@@ -5,7 +5,23 @@ export const asymptoteTheme = createTheme({
     MuiButton: {
       root: {
         textTransform: "none",
-      }
+      },
+    },
+    MuiTab: {
+      root: {
+        textTransform: "none",
+      },
+    },
+  },
+  props: {
+    MuiButton: {
+      disableRipple: true,
+    },
+    MuiButtonGroup: {
+      disableRipple: true,
+    },
+    MuiTab: {
+      disableRipple: true,
     }
   },
   palette: {
@@ -28,21 +44,24 @@ export const asymptoteTheme = createTheme({
       HeaderTitles1: "#FFFFFF",
       HeaderTitles2: "#FFFFFF",
       SideBarTabs: "#FFFFFF",
-      SideBarTabsActivated: "#F44336",
+      SideBarTabsActivated: "#FF0000",
+      textActivated: "#FF0000",
       Buttons: "#000000",
       WorkspaceItems: "#FFFFFF",
       RadioAndCheckbox: "#000000",
     },
     icon: {
       SideBarControls: "#FFFFFF",
-      SideBarControlsHover: "#F44336",
+      SideBarControlsHover: "#FF0000",
       Wiki: "#ef6c00",
       Upload: "#283593",
+      Donwload: "#283593",
       Run: "#2E7D32",
-      Clear: "#C62828",
+      Stop: "#F44336",
+      Clear: "#FF0000",
     },
     radioAndCheckbox: {
-      Selected: "#F44336",
+      Selected: "#FF0000",
       Unselected: "#FFFFFF",
     },
   }

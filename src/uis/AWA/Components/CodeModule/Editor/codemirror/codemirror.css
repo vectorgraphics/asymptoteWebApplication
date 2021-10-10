@@ -1,12 +1,13 @@
 /* BASICS */
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
-  font-family: monospace;
   position: fixed;
   height: 100%;
   color: black;
   direction: ltr;
   overflow-y: scroll;
+  font-family: monospace;
+  font-size: 14px;
 }
 
 /* PADDING */

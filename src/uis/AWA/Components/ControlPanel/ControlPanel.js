@@ -1,7 +1,14 @@
+import { Fragment } from "react";
+import { useDispatch } from "react-redux";
+import { wsActionCreator } from "../../../../store/workspaces";
 import { makeStyles } from "@material-ui/core/styles";
 import { ControlMenu } from "./ControlMenu";
-import { Workspace } from "./Workspace";
+import { WorkspaceBody } from "./WorkspaceBody";
 import { LogoPane } from "./LogoPane";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
+import { createUID } from "../../../../utils/generalTools";
+
 
 const useStyle = makeStyles((theme) => ({
   controlPanelShow: {
@@ -41,6 +48,7 @@ const useStyle = makeStyles((theme) => ({
   },
   header: {
     display: "block",
+    position: "relative",
     flex: "1 1 auto",
     lineHeight: "3rem",
     textAlign: "center",
@@ -53,20 +61,24 @@ const useStyle = makeStyles((theme) => ({
     boxShadow: theme.shadows[2],
     textShadow: "-2px 2px 3px black",
   },
-  body: {
-    paddingTop: "0.75rem",
-    overflowY: "auto",
-    "&::-webkit-scrollbar": {
-      width: "0.5rem",
-    },
-    "&::-webkit-scrollbar-track": {
-      "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.5)",
-      boxShadow: "inset 0 0 6px rgba(0,0,0,0.5)",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "darkgrey",
-      outline: "1px solid slategrey",
-    },
+  fab: {
+    position: "absolute",
+    left: 0,
+    top: "0.5rem",
+    minWidth: "2rem",
+    maxWidth: "2rem",
+    minHeight: "2rem",
+    maxHeight: "2rem",
+    margin: "0 0.25rem",
+    marginBottom: "0.2rem",
+    verticalAlign: "middle",
+    boxShadow: "none",
+    color: "lightgray",
+    backgroundColor: "transparent",
+    "&:hover": {
+      color: "lightgreen",
+      backgroundColor: "transparent",
+    }
   },
   logoPaneCont: {
     gridRow: "3/4",
@@ -76,20 +88,30 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 export function ControlPanel(props) {
-  const classes = useStyle(props);
+  const locClasses = useStyle(props);
+  const dispatch = useDispatch();
+
   return (
-    <div className={(props.isCPExapnded)? classes.controlPanelShow: classes.controlPanelHide}>
-      <div className={classes.controlMenuCont}>
+    <div className={(props.isCPExapnded)? locClasses.controlPanelShow: locClasses.controlPanelHide}>
+      <div className={locClasses.controlMenuCont}>
         {(props.isCPExapnded)? <ControlMenu/>: null}
       </div>
-      <div className={classes.workspaceCont}>
-        <div className={classes.header}> Workspaces </div>
-        <div className={classes.body}>
-          {(props.isCPExapnded)? <Workspace/>: null}
+      <div className={locClasses.workspaceCont}>
+        <div className={locClasses.header}>
+          {
+            (props.isCPExapnded)?
+              <Fragment>
+                <Fab classes={{root: locClasses.fab}} size="small" disableFocusRipple={true}>
+                  <AddIcon onClick={() => dispatch(wsActionCreator.add(createUID()))}/>
+                </Fab> Workspaces
+              </Fragment>
+            : null
+          }
         </div>
+        {(props.isCPExapnded)? <WorkspaceBody/>: null}
       </div>
-      <div className={classes.logoPaneCont}>
-        {/*{(props.isCPExapnded)? <LogoPane/>: null}*/}
+      <div className={locClasses.logoPaneCont}>
+        {(props.isCPExapnded)? <LogoPane/>: null}
       </div>
     </div>
   );

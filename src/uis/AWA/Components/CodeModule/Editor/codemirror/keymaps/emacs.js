@@ -439,7 +439,7 @@ import CodeMirror from 'codemirror/src/codemirror';
 
   CodeMirror.emacs = {kill: _kill, killRegion: _killRegion, repeated: repeated};
 
-  // Actual keymap
+  // Actual keymaps
   var keyMap = CodeMirror.keyMap.emacs = CodeMirror.normalizeKeyMap({
     "Ctrl-W": "killRegion",
     "Ctrl-K": "killLineEmacs",

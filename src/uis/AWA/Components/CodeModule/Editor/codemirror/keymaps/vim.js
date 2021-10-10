@@ -22,7 +22,7 @@
  *                      Event object: {mode: "visual", subMode: "linewise"}
  *
  * Code structure:
- *  1. Default keymap
+ *  1. Default keymaps
  *  2. Variable declarations and short basic helpers
  *  3. Instance (External API) implementation
  *  4. Internal state tracking objects (input state, counter) implementation
@@ -30,7 +30,7 @@
  *  5. Key handler (the main command dispatcher) implementation
  *  6. Motion, operator, and action implementations
  *  7. Helper functions for the key handler, motions, operators, and actions
- *  8. Set up Vim to work as a keymap for CodeMirror.
+ *  8. Set up Vim to work as a keymaps for CodeMirror.
  *  9. Ex command implementations.
  */
 
@@ -325,7 +325,7 @@ import CodeMirror from 'codemirror/src/codemirror';
       cm.state.fatCursorMarks = null;
     }
 
-    // Deprecated, simply setting the keymap works again.
+    // Deprecated, simply setting the keymaps works again.
     CodeMirror.defineOption('vimMode', false, function(cm, val, prev) {
       if (val && cm.getOption("keyMap") !== "vim")
         cm.setOption("keyMap", "vim");
@@ -728,7 +728,7 @@ import CodeMirror from 'codemirror/src/codemirror';
     var lastInsertModeKeyTimer;
     var vimApi= {
       buildKeyMap: function() {
-        // TODO: Convert keymap into dictionary format for fast lookup.
+        // TODO: Convert keymaps into dictionary format for fast lookup.
       },
       // Testing hook, though it might be useful to expose the register
       // controller anyway.
@@ -775,7 +775,7 @@ import CodeMirror from 'codemirror/src/codemirror';
               (!ctx || !mapping.context || mapping.context === ctx) &&
               mapping.type.substr(0, 2) !== 'ex' &&
               mapping.type.substr(0, 3) !== 'key') {
-            // Make a shallow copy of the original keymap entry.
+            // Make a shallow copy of the original keymaps entry.
             var newMapping = {};
             for (var key in mapping) {
               newMapping[key] = mapping[key];
@@ -785,7 +785,7 @@ import CodeMirror from 'codemirror/src/codemirror';
             if (ctx && !newMapping.context) {
               newMapping.context = ctx;
             }
-            // Add it to the keymap with a higher priority than the original.
+            // Add it to the keymaps with a higher priority than the original.
             this._mapCommand(newMapping);
             // Record the mapped contexts as complete.
             var mappedCtxs = toCtxArray(mapping.context);
@@ -796,7 +796,7 @@ import CodeMirror from 'codemirror/src/codemirror';
       },
       // Remove all user-defined mappings for the provided context.
       mapclear: function(ctx) {
-        // Partition the existing keymap into user-defined and true defaults.
+        // Partition the existing keymaps into user-defined and true defaults.
         var actualLength = defaultKeymap.length,
             origLength = defaultKeymapLength;
         var userKeymap = defaultKeymap.slice(0, actualLength - origLength);
@@ -810,7 +810,7 @@ import CodeMirror from 'codemirror/src/codemirror';
               if (mapping.context) {
                 this._mapCommand(mapping);
               } else {
-                // `mapping` applies to all contexts so create keymap copies
+                // `mapping` applies to all contexts so create keymaps copies
                 // for each context except the one being cleared.
                 var contexts = ['normal', 'insert', 'visual'];
                 for (var j in contexts) {
@@ -1042,7 +1042,7 @@ import CodeMirror from 'codemirror/src/codemirror';
     }
 
     /*
-     * Register stores information about copy and paste registers.  Besides
+     * Register store information about copy and paste registers.  Besides
      * text, a register must store whether it is linewise (i.e., when it is
      * pasted, should it insert itself into a new line, or should the text be
      * inserted at the cursor position.)
@@ -5415,7 +5415,7 @@ import CodeMirror from 'codemirror/src/codemirror';
       _mapCommand(command);
     }
 
-    // The timeout in milliseconds for the two-character ESC keymap should be
+    // The timeout in milliseconds for the two-character ESC keymaps should be
     // adjusted according to your typing speed to prevent false positives.
     defineOption('insertModeEscKeysTimeout', 200, 'number');
 

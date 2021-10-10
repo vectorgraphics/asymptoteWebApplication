@@ -5,8 +5,9 @@
 */
 
 .cm-s-asyDracula.CodeMirror, .cm-s-asyDracula .CodeMirror-gutters {
-  background-color: #21252b !important;
-  color: #f8f8f2 !important;
+  /*background-color: #21252b !important;*/
+  background-color: #282C34 !important;
+  color: white !important;
   border: none;
 }
 .cm-s-asyDracula .CodeMirror-gutters { color: #282a36; }

@@ -7,14 +7,14 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     flexFlow: "row nowrap",
     justifyContent: "space-between",
-    alignItems: "center",
+    minWidth: "70rem",
   },
 }));
 
 export function Controls(props) {
-  const classes = useStyle();
+  const locClasses = useStyle();
   return (
-    <div className={classes.controls}>
+    <div className={locClasses.controls}>
       <MainButtons/>
       <Outformats/>
     </div>

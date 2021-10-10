@@ -18,11 +18,11 @@ const useStyle = makeStyles({
 })
 
 export function AWAPlatform(props) {
-  const classes = useStyle(props);
+  const locClasses = useStyle(props);
   const [isCPExpanded, setCPExpand] = useState(true);
 
   return (
-    <div className={classes.awaPlatform}>
+    <div className={locClasses.awaPlatform} >
       <SideBar isCPExapnded={isCPExpanded} setCPExpand={setCPExpand}/>
       <ControlPanel isCPExapnded={isCPExpanded}/>
       <ModulePanel/>
