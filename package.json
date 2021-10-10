@@ -1,26 +1,28 @@
 {
-  "name": "asy-react-app",
-  "version": "0.2.2",
+  "name": "asymptote_web_application",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "body-parser": "^1.19.0",
     "codemirror": "^5.62.2",
     "crypto-js": "^4.1.1",
     "express": "^4.17.1",
     "express-static-gzip": "^2.0.7",
     "nanoid": "^3.1.23",
     "react": "^17.0.2",
+    "react-color": "^2.17.3",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
     "react-redux": "^7.2.0",
     "react-scripts": "^4.0.3",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "reselect": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -44,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "redux-devtools-extension": "^2.13.9",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0"
   }

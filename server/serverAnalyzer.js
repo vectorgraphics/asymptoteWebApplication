@@ -134,7 +134,7 @@ export function downloadReq(dirname) {
       }
     }
     if (req.body.outputOption) {
-      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.requestedOutformat;
+      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.outformat;
       if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }
