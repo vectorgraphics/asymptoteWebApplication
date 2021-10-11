@@ -5,6 +5,7 @@ import { dirname } from "path";
 import { customAlphabet } from 'nanoid'
 const require = createRequire(import.meta.url);
 const SHA1 = require("crypto-js/sha1")
+const SHA256 = require("crypto-js/sha256")
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -71,6 +72,12 @@ export function writePing(dir) {
 export function makeDir(dir) {
   fs.mkdirSync(dir);
   writePing(dir);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   hashCode
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function hashCode(codeContent) {
+  return SHA256(codeContent.trim());
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime

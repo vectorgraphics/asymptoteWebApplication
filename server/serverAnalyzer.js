@@ -1,11 +1,24 @@
+import { createRequire } from 'module'
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
 import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
+import express from "express";
+const require = createRequire(import.meta.url);
 
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function reqTypeRouter() {
+  return (req, res, next) => {
+    if (req.is("application/json") === "application/json") {
+      return express.json()(req, res, next);
+    } else if (req.get('Content-Type').includes("application/x-www")) {
+      return express.urlencoded({extended: true})(req, res, next);
+    }
+  }
+}
+// ------------------------------------------------
 export function usrConnect(serverDir) {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect") {
@@ -57,6 +70,15 @@ export function reqAnalyzer(serverDir) {
       codeFile: codeFile,
       codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
       htmlFile: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
+    }
+    if (typeof req.body.isUpdated === "string") {
+      req.body.isUpdated =  req.body.isUpdated.includes("true");
+    }
+    if (req.body.codeOption !== undefined && typeof req.body.codeOption === "string") {
+      req.body.codeOption =  req.body.codeOption.includes("true");
+    }
+    if (req.body.outputOption !== undefined && typeof req.body.outputOption === "string") {
+      req.body.outputOption =  req.body.outputOption.includes("true");
     }
     // console.log("modified req.body:\n", req.body);
     next();
@@ -134,7 +156,7 @@ export function downloadReq(dirname) {
       }
     }
     if (req.body.outputOption) {
-      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.outformat;
+      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.requestedOutformat;
       if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }
@@ -145,7 +167,7 @@ export function downloadReq(dirname) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function asyRunManager(req, res, next, option) {
-  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
+  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-once', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
   }
