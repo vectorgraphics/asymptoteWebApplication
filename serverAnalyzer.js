@@ -169,7 +169,7 @@ export function downloadReq(dirname) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function asyRunManager(req, res, next, option) {
-  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-once', '-f', option.outformat, option.codeFile];
+  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
   }
