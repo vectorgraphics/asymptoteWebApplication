@@ -15,7 +15,6 @@ const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(pr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Express Application
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const app = express();
-
 // Serving Static html File & Running Major Requests
 // -------------------------------------------------
 app.route("/")
