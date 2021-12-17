@@ -9,8 +9,8 @@ import { reqTypeRouter, reqAnalyzer, delAnalyzer, usrConnect, requestResolver, w
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// const defaultPort = 80;
-// const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
+const defaultPort = 80;
+const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Express Application
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,11 +60,10 @@ app.use("/clients", (req, res, next) => {
 
 app.route("/clients")
 .post(express.urlencoded({extended: true}), reqAnalyzer(__dirname) , downloadReq(__dirname))
-// app.listen(port);
-app.listen(3000);
+app.listen(port);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// dropRootPermission(port);
+dropRootPermission(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
