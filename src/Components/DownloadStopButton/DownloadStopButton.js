@@ -88,6 +88,10 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                         buttonType: "Download",
                       });
                     }).catch((err) => {});
+                  } else {
+                    this.setState({
+                      buttonType: "Download",
+                    });
                   }
                 }).catch((err) => {});
                 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  BOTH CODE & OUTPUT
@@ -104,14 +108,20 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                       link.click();
                       data.codeOption = false;
                       data.outputOption = true;
-                      fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
-                        link.href = window.URL.createObjectURL(responseContent);
-                        link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
-                        link.click();
+                      if (responseContent.responseType === "ASY_OUTPUT_CREATED") {
+                        fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                          link.href = window.URL.createObjectURL(responseContent);
+                          link.setAttribute("download", currentWorkspace.name.current + "." + currentWorkspace.outformat);
+                          link.click();
+                          this.setState({
+                            buttonType: "Download",
+                          });
+                        }).catch((err) => {});
+                      } else {
                         this.setState({
                           buttonType: "Download",
-                        })
-                      }).catch((err) => {});
+                        });
+                      }
                     }).catch((err) => {});
                   } else if (responseContent.responseType === "ERROR" && responseContent.errorType !== "ASY_WRITE_FILE_ERR") {
                     this.props.getRunResponse(currentWorkspace.id, {...currentWorkspace.output, ...responseContent});

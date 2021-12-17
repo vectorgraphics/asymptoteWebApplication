@@ -87,6 +87,13 @@ export const actionFact = {
       codeText: textValue
     }
   },
+  updateTerminalText: function (id, dataObj) {
+    return {
+      type: actionTypes.update,
+      id: id,
+      output: dataObj
+    }
+  },
   uploadCode: function (id, value) {
     return {
       type: actionTypes.update,
