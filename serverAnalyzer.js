@@ -2,11 +2,13 @@ import { createRequire } from 'module'
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
-import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
+import { createUCID, usrDirMgr, makeDir, removeDir, dateTime, writePing, hashCode, FLAGS } from "./serverUtil.js";
 import express from "express";
 const require = createRequire(import.meta.url);
 
 const serverTimeout = 60000;
+let codeContentSHA256 = "";
+let isUpdatedFlag = false;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function reqTypeRouter() {
@@ -21,10 +23,11 @@ export function reqTypeRouter() {
 // ------------------------------------------------
 export function usrConnect(serverDir) {
   return (req, res, next) => {
+    console.log(req.body);
     if (req.body.reqType === "usrConnect") {
-      let id = usrID(req.ip);
-      if (id !== "-1") {
-        var reqDest = usrDirMgr(req, serverDir, id);
+      let ucid = createUCID(req.ip);
+      if (ucid !== "-1") {
+        var reqDest = usrDirMgr(req, serverDir, ucid);
         makeDir(reqDest.usrAbsDirPath);
       } else {
         reqDest = usrDirMgr(req, serverDir, "");
@@ -47,7 +50,7 @@ export function usrConnect(serverDir) {
       .catch((err) => console.log(`An error occurred while writing log file!\n ${err.toString()}`));
 
       const data = {
-        usrID: id,
+        uniqueClientID: ucid,
         usrConnectStatus: "UDIC",
         asyVersion: asyVersion
       }
@@ -61,7 +64,7 @@ export function usrConnect(serverDir) {
 export function reqAnalyzer(serverDir) {
   return (req, res, next) => {
     const reqDest = usrDirMgr(req, serverDir, req.body.id);
-    const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
+    const codeFilename = `${req.body.workspaceName}_${req.body.workspaceId}`;
     const codeFile = codeFilename + ".asy";
     req.body = {
       ...req.body,
@@ -104,7 +107,7 @@ export function delAnalyzer(serverDir) {
 export function writeAsyFile(serverDir) {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
-    const fileContent = req.body.codeText;
+    const fileContent = req.body.codeContent;
     writeFile(filePath, fileContent).then(() => {
       next();
     }).catch((err) => {
@@ -118,30 +121,28 @@ export function requestResolver() {
     const option = {
       cwd: req.body.usrAbsDirPath,
       codeFile: req.body.codeFile,
-      codeOption: req.body.codeOption,
-      outputOption: req.body.outputOption,
+      outformat: req.body.outformat,
     }
     switch (req.body.reqType) {
       case "ping":
         writePing(req.body.usrAbsDirPath);
         next();
+        break;
       case "run":
         option.outformat = "html"
         asyRunManager(req, res, next, option);
         break;
       case "download":
-        if (option.codeOption && !option.outputOption) {
+        if (req.body.outformat === "asy") {
           res.send({
             responseType: FLAGS.SUCCESS.ASY_FILE_CREATED,
             isUpdated: !req.body.isUpdated
           })
           break;
-        } else if (option.outputOption) {
-          option.outformat = req.body.requestedOutformat;
+        } else {
           asyRunManager(req, res, next, option);
           break;
         }
-        break;
       default:
         break;
     }
@@ -150,13 +151,12 @@ export function requestResolver() {
 // ------------------------------------------------
 export function downloadReq(dirname) {
   return function (req, res, next) {
-    if (req.body.codeOption) {
+    if (req.body.outformat === "prev") {
       if (existsSync(req.body.codeFilePath)) {
         res.download(req.body.codeFilePath);
       }
-    }
-    if (req.body.outputOption) {
-      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.requestedOutformat;
+    } else {
+      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.outformat;
       if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }

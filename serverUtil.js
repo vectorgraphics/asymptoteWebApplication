@@ -33,7 +33,7 @@ const uAlphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const lAlphabets = "abcdefghijklmnopqrstuvwxyz";
 const digits = "0123456789"
 const nanoid = customAlphabet(digits + lAlphabets + uAlphabets, 4);
-export function usrID(ip) {
+export function createUCID(ip) {
   let count = 0;
   const relativeIPBasedPath = SHA1(ip).toString();
   const clientsPath = __dirname + "/clients";

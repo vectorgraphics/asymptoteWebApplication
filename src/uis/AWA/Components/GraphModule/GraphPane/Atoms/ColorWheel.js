@@ -4,9 +4,7 @@ import { ClickAwayListener, TextField } from '@material-ui/core';
 import { ChromePicker } from "react-color";
 
 const useStyle = makeStyles((theme) => ({
-  cont: {
-
-  },
+  cont: {},
 }))
 
 export function ColorWheel({isOpen=false, startColor="#FFFFFF", passedHandler=() => {}, ...props}) {
