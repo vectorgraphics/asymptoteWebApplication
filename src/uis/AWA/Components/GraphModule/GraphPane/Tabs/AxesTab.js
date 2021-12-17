@@ -289,7 +289,6 @@ export function AxesTab(props) {
 
   const [axis, setAxis] = useState("Horizontal");
   const axisActionCreator = (axis === "Horizontal")? haActionCreator: vaActionCreator;
-
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Graph States
   const {width, height, aspectRatio} = geometries[id];
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Axes States
@@ -297,7 +296,7 @@ export function AxesTab(props) {
     label, relativePosition, min, max, align, axisLocation, scale, extend, axisPen, endArrow,
     ticks, ticksLabel, ticksLabelFormat, ticksExtend, omitTicks, omitTicksLabels,
     majorTicksDivision, minorTicksDivision, majorTicksSteps, minorTicksSteps, majorTicksSize,
-    minorTicksSize, minorTicksPen, majorTicksPen,
+    minorTicksSize, majorTicksPen, minorTicksPen,
   } = (axis === "Horizontal")? horizontalAxes[id]: verticalAxes[id];
 
   return (
@@ -323,15 +322,18 @@ export function AxesTab(props) {
         <div className={locClasses.axesElementsContainer}>
 
           <ComboBox className={locClasses.axisSelector}
-            label="select axis" dataArray={[{text:"Horizontal"}, {text:"Vertical"}]}
-            width="8rem" property="text" value={{text: `${axis}`}}
+            label="select axis" dataArray={[{text: "Horizontal"}, {text: "Vertical"}]}
+            width="8rem" property="text" value={{text: axis}}
             onChange={(event, value) => setAxis(value.text)}
           />
           <fieldset className={locClasses.axisMainProps}>
             <legend className={locClasses.legend}> Axis Main Properties </legend>
             <TextField
               className={locClasses.axisLabel} size="small" label="label" value={label}
-              onChange={(event) => dispatch(axisActionCreator.update(id, "label", event.target.value))}/>
+              onChange={(event) => {
+                console.log(event.target.value);
+                dispatch(axisActionCreator.update(id, "label", event.target.value))
+              }}/>
             <SliderInput
               className={locClasses.axisRelativePosition}
               passedHandler={(newValue) => dispatch(axisActionCreator.update(id, "relativePosition", newValue))}

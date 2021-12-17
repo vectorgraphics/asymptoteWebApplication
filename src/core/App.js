@@ -5,12 +5,13 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { asymptoteTheme } from "../uis/AWA/Theme/asymptoteTheme";
 import { AWAPlatform } from "../uis/AWA/Components/AWAPlatform/AWAPlatform";
 
-function App() {
+
+function App({UCID=0, asyVersion="unknown", ...props}) {
   return (
     <Provider store={store}>
       <div className="App">
         <ThemeProvider theme={asymptoteTheme}>
-          <AWAPlatform/>
+          <AWAPlatform UCID={UCID} asyVersion={asyVersion}/>
         </ThemeProvider>
       </div>
     </Provider>

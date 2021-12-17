@@ -1,4 +1,6 @@
 import { Fragment } from "react";
+import { useSelector } from "react-redux";
+import { asyVersionSelector } from "../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyle = makeStyles((theme) => ({
@@ -21,11 +23,12 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 export function LogoPane(props) {
-  const classes = useStyle();
+  const asyVersion = useSelector(asyVersionSelector);
+  const locClasses = useStyle();
   return (
     <Fragment>
-      <iframe className={classes.iframe} id="logo" title="logoFrame" src="./logo3d.html" frameBorder="0"/>
-      <div className={classes.versionBox}> {"2.8"} </div>
+      <iframe className={locClasses.iframe} id="logo" title="logoFrame" src="./logo3d.html" frameBorder="0"/>
+      <div className={locClasses.versionBox}> {asyVersion} </div>
     </Fragment>
   );
 }

@@ -1,6 +1,6 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    GLOBAL SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function clientIdSelector(state) {
+export function UCIDSelector(state) {
   return state.globals.uniqueClientId;
 }
 export function editorLineNumbersSelector(state) {
@@ -20,9 +20,6 @@ export function appResetSelector(store) {
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  WORKSPACES SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function UCISelector(store) {
-  return store.globals.uniqueClientId;
-}
 export function idSelector(store) {
   return store.workspaces.checkedoutWorkspaceId;
 }
@@ -33,6 +30,9 @@ export function wsNameSelector(store) {
 export function editorReRenderSelector(store) {
   const id = store.workspaces.checkedoutWorkspaceId;
   return store.workspaces.entities[id].editorReRender;
+}
+export function asyVersionSelector(store) {
+  return store.globals.asyVersion;
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  CODEMODULE SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,23 +51,18 @@ export function cmOutputSelector(store) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GRAPHMODULE SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function geometriesSelector(store) {
-  const id = store.workspaces.checkedoutWorkspaceId;
   return store.workspaces.graphModule.geometries;
 }
 export function horizontalAxesSelector(store) {
-  const id = store.workspaces.checkedoutWorkspaceId;
   return store.workspaces.graphModule.horizontalAxes;
 }
 export function verticalAxesSelector(store) {
-  const id = store.workspaces.checkedoutWorkspaceId;
   return store.workspaces.graphModule.verticalAxes;
 }
 export function legendsSelector(store) {
-  const id = store.workspaces.checkedoutWorkspaceId;
   return store.workspaces.graphModule.legends;
 }
 export function picturesSelector(store) {
-  const id = store.workspaces.checkedoutWorkspaceId;
   return store.workspaces.graphModule.pictures;
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  FUNCSUBMODULE SELECTORS

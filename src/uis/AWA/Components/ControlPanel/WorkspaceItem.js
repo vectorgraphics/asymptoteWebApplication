@@ -1,12 +1,20 @@
 import { useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { enActionCreator } from "../../../../store/workspaces";
+import { cmActionCreator, enActionCreator } from "../../../../store/workspaces";
 import { glActionCreator } from "../../../../store/globals";
-import { idSelector, wsNameSelector, splitBtnReRenderSelector } from "../../../../store/selectors";
-import { makeStyles } from "@material-ui/core/styles";
-import { SvgIcon } from "@material-ui/core";
+import {
+  idSelector,
+  wsNameSelector,
+  splitBtnReRenderSelector,
+  cmInputSelector,
+  cmOutputSelector,
+  codeContentSelector,
+  UCIDSelector
+} from "../../../../store/selectors";
+import { makeStyles, SvgIcon } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import { isValidName } from "../../../../utils/validators";
+import { codeFormatter, fetchOptionObj, toUrlEncoded } from "../../../../utils/generalTools";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -70,13 +78,17 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...props}) {
-  const classes = useStyle(props);
+  const locClasses = useStyle(props);
   const inputRef = useRef(null);
   const inputContRef = useRef(null);
+  const UCID = useSelector(UCIDSelector);
+  const id = useSelector(idSelector);
+  const name = useSelector(wsNameSelector);
+  const cmOutput = useSelector(cmOutputSelector);
+  const codeContent = useSelector(codeContentSelector);
   const lastAssignedName = useSelector(wsNameSelector);
   const splitBtnReRender = useSelector(splitBtnReRenderSelector);
   const [itemName, setItemName] = useState(lastAssignedName);
-  const id = useSelector(idSelector);
   const dispatch = useDispatch();
   let regFlag = false;
 
@@ -116,7 +128,7 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
 
   return (
     <div ref={inputContRef}
-      className={classes.itemCont}
+      className={locClasses.itemCont}
       onClick={(event) => {
         if (item !== wsId) {
           onClick();
@@ -136,7 +148,7 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
       <input
         ref={inputRef}
         disabled={true}
-        className={classes.input}
+        className={locClasses.input}
         style={(props.checkedOutId)? {color: "#F50057"}: {color: "whitesmoke"}}
         type="text"
         name="workspaceItem"
@@ -166,8 +178,33 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
         }}
         onBlur={(event) => deselectItem()}
       />
-      <GetAppIcon classes={{root: classes.downloadIcon}}/>
-      <SvgIcon classes={{root: classes.icons}} onClick={props.openDialog}>
+      <GetAppIcon
+        classes={{root: locClasses.downloadIcon}}
+        onClick={() => {
+          const data = {
+            reqType: "download",
+            UCID: UCID,
+            workspaceId: id,
+            workspaceName: name,
+            codeContent: codeFormatter(codeContent),
+            outformat: "asy",
+            isUpdated: cmOutput.isUpdated,
+          };
+          fetch('/', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+            // dispatch(cmActionCreator.updateOutput(id, {...cmOutput, ...responseContent}));
+            if (responseContent.responseType === "ASY_FILE_CREATED") {
+              delete (data.codeContent);
+              fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(responseContent);
+                link.setAttribute("download", name + ".asy");
+                link.click();
+              }).catch((err) => {});
+            }
+          }).catch((err) => {});
+        }}
+      />
+      <SvgIcon classes={{root: locClasses.icons}} onClick={props.openDialog}>
         <svg xmlns="http://www.w3.org/2000/svg" width="1rem" viewBox="0 0 448 512">
           <path d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16
             16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16

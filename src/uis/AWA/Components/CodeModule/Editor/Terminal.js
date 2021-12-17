@@ -49,18 +49,21 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-export function Terminal(props) {
+export function Terminal({errorContent="", closeTerminal=() => {}, ...props}) {
   const locClasses = useStyle();
 
   return (
     <div className={locClasses.terminalCont}>
       <div className={locClasses.header}>
         <div className={locClasses.resizer}/>
-        <IconButton classes={{root: locClasses.iconBtnRoot}} className={locClasses.iconBtn} size="small">
+        <IconButton
+          classes={{root: locClasses.iconBtnRoot}} className={locClasses.iconBtn}
+          size="small" onClick={(event) => closeTerminal()}
+        >
           <CancelOutlinedIcon fontSize="small"/>
         </IconButton>
       </div>
-      <div className={locClasses.terminal}> just to test</div>
+      <div className={locClasses.terminal}> {errorContent} </div>
     </div>
   );
 }

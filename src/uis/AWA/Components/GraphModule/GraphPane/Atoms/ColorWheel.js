@@ -4,11 +4,13 @@ import { ClickAwayListener, TextField } from '@material-ui/core';
 import { ChromePicker } from "react-color";
 
 const useStyle = makeStyles((theme) => ({
-  cont: {},
+  textField: {
+    minWidth: (styleObj) => styleObj.textFieldWidth,
+  },
 }))
 
-export function ColorWheel({isOpen=false, startColor="#FFFFFF", passedHandler=() => {}, ...props}) {
-  const locClasses = useStyle();
+export function ColorWheel({isOpen=false, startColor="#FFFFFF", clickAway=() => {}, textFieldWidth="11.25rem", ...props}) {
+  const locClasses = useStyle({textFieldWidth: textFieldWidth});
   const [open, setOpen] = useState(isOpen);
   const pickedColor = useRef("#FFFFFF");
   const colorWheelValue = useRef("#FFFFFF");
@@ -35,14 +37,14 @@ export function ColorWheel({isOpen=false, startColor="#FFFFFF", passedHandler=()
   }
   const handleClickAway = () => {
     setOpen(false);
-    passedHandler(colorWheelValue.current);
+    clickAway(colorWheelValue.current);
   };
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
       {
         (open)
           ? <ChromePicker width="12.5rem" color={startColor} onChange={handleChangeColor}/>
-          : <TextField size="small" label="picked color" value={pickedColor.current} onClick={() => setOpen(true)}/>
+          : <TextField classes={{root: locClasses.textField}} size="small" label="picked color" value={pickedColor.current} onClick={() => setOpen(true)}/>
       }
     </ClickAwayListener>
   );

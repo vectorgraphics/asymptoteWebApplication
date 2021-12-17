@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fsmActionCreator, feActionCreator, flActionCreator } from "../../../../../store/funcSubModule";
+import { cmActionCreator, fsmActionCreator, feActionCreator, flActionCreator } from "../../../../../store/funcSubModule";
 import {
-  idSelector, fIdSelector, geometriesSelector,
-  horizontalAxesSelector, verticalAxesSelector,
-  funcEntitiesSelector, funcListSelector,
+  idSelector,
+  fIdSelector,
+  funcEntitiesSelector,
+  UCIDSelector,
+  wsNameSelector,
+  cmInputSelector,
+  cmOutputSelector,
+  geometriesSelector, horizontalAxesSelector, verticalAxesSelector, funcListSelector
 } from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core";
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
@@ -14,7 +19,7 @@ import SelectAllIcon from "@material-ui/icons/SelectAll";
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import { Btn } from "../../../Atoms/Btn";
 import { FunctionItem } from "./FunctionItem";
-import { createUID } from "../../../../../utils/generalTools";
+import { codeFormatter, createUID, deepCopy, fetchOptionObj, toUrlEncoded } from "../../../../../utils/generalTools";
 import { generateAsyCode } from "../../../../../utils/asyTools";
 
 const useStyle = makeStyles((theme) => ({
@@ -108,24 +113,22 @@ export function FormulaPane({setDrawResult = () => {}, ...props}) {
   const [renderObj, setRenderObj] = useState({});
   const [reRenderCount, setReRenderCount] = useState(0);
 
+  const UCID = useSelector(UCIDSelector);
   const id = useSelector(idSelector);
+  const geometry = useSelector(geometriesSelector)[id];
+  const hAxis = useSelector(horizontalAxesSelector)[id];
+  const vAxis = useSelector(verticalAxesSelector)[id];
+  const funcEntity = useSelector(funcEntitiesSelector)[id];
+  const funcList = useSelector(funcListSelector)[id];
+  const funcListToRender = Object.keys(renderObj);
+
   const fId = useSelector(fIdSelector);
-  const geometries = useSelector(geometriesSelector);
-  const horizontalAxis = useSelector(horizontalAxesSelector);
-  const verticalAxis = useSelector(verticalAxesSelector);
+  const name = useSelector(wsNameSelector);
+  const cmInput = useSelector(cmInputSelector);
+  const cmOutput = useSelector(cmOutputSelector);
   const funcEntities = useSelector(funcEntitiesSelector);
-  const funcList = useSelector(funcListSelector);
   const functionsOrder = funcEntities[id].functionsOrder;
   const dispatch = useDispatch();
-
-  const geometry = geometries[id];
-  const hAxis = horizontalAxis[id];
-  const vAxis = verticalAxis[id];
-  const funcEntity = funcEntities[id];
-  const fList = funcList[id];
-  const funcListToRender = renderObj;
-  const dataObj = funcList[id];
-  const allCodeDataObject = {geometry, hAxis, vAxis, funcEntity, fList, renderObj}
 
   return (
     <div className={locClasses.formulaCont}>
@@ -193,7 +196,26 @@ export function FormulaPane({setDrawResult = () => {}, ...props}) {
         <Btn
           className={locClasses.displayBtn} classes={{root: locClasses.displayStyle}}
           disableElevation={true} minHeight="2rem" maxHeight="2rem"
-          onClick={(event) => console.log(generateAsyCode(allCodeDataObject))}
+          onClick={(event) => {
+            // const data = {
+            //   reqType: "run",
+            //   UCID: UCID,
+            //   workspaceId: id,
+            //   workspaceName: name,
+            //   codeContent: codeFormatter(generateAsyCode(renderObj)),
+            //   outformat: cmInput.outformat,
+            //   isUpdated: cmOutput.isUpdated,
+            // };
+            // fetch('/', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)})
+            //   .then((resObj) => resObj.json()).then((responseContent) => {
+                const dataObj = {geometry, hAxis, vAxis, funcEntity, funcList, funcListToRender};
+                // console.log(generateAsyCode(dataObj));
+                generateAsyCode(dataObj);
+                // setDrawResult(responseContent);
+            // }).catch(() => null);
+            // console.log(dataObj);
+          }
+        }
         > Draw </Btn>
        </div>
     </div>

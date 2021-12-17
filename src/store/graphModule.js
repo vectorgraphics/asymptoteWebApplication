@@ -94,7 +94,7 @@ export const vaActionCreator = {
         id: id,
         field: vaFieldValue,
       },
-      mate: vaFieldName,
+      meta: vaFieldName,
     }
   },
   resetVerticalAxes: (id) => {
@@ -131,12 +131,11 @@ export const geometries = (state = {}, action) => {
     case geActions.resetGeometry:
       newCopy[action.payload.id] = {...slices.geometries};
       return newCopy;
-    case geActions.update:
-      {
-        const locObj = {...state};
-        locObj[action.payload.id][action.meta] = action.payload.field;
-        return locObj;
-      }
+    case geActions.update: {
+      const locObj = {...state};
+      locObj[action.payload.id][action.meta] = action.payload.field;
+      return locObj;
+    }
     default:
       return state;
   }
@@ -157,11 +156,9 @@ export const horizontalAxes = (state = {}, action) => {
       newCopy[action.payload.id] = {...slices.horizontalAxes};
       return newCopy;
     case (haActions.update): {
-      {
-        const locObj = {...state};
-        locObj[action.payload.id][action.meta] = action.payload.field;
-        return locObj;
-      }
+      const locObj = {...state};
+      locObj[action.payload.id][action.meta] = action.payload.field;
+      return locObj;
     }
     default:
       return state;
@@ -183,11 +180,9 @@ export const verticalAxes = (state = {}, action) => {
       newCopy[action.payload.id] = {...slices.verticalAxes};
       return newCopy;
     case vaActions.update: {
-      {
-        const locObj = {...state};
-        locObj[action.payload.id][action.meta] = action.payload.field;
-        return locObj;
-      }
+      const locObj = {...state};
+      locObj[action.payload.id][action.meta] = action.payload.field;
+      return locObj;
     }
     default:
       return state;

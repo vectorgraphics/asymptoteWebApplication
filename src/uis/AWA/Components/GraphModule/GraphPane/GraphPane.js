@@ -2,6 +2,8 @@ import { useState } from "react";
 import { makeStyles, AppBar, Tab, Tabs } from '@material-ui/core';
 import { FunctionTab } from "./Tabs/FunctionTab";
 import { AxesTab } from "./Tabs/AxesTab";
+import { PensTab } from "./Tabs/PensTab";
+import { LabelsTab } from "./Tabs/LabelsTab";
 import { LegendTab } from "./Tabs/LegendTab";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 export function GraphPane(props) {
   const locClasses = useStyles();
   const [tabId, setTabId] = useState(0);
-  const items = ["Function", "Axes",] // "Legend"
+  const items = ["Function", "Axes", "Pens", "Labels", "Pictures", "Draw"] // "Legend"
 
   const handleChange = (event, id) => {
     setTabId(id);
@@ -65,9 +67,10 @@ export function GraphPane(props) {
           }}
           value={tabId} onChange={handleChange}
         >
-          <Tab classes={{root: locClasses.tab}} id={`simple-tabpanel-${0}`} label={items[0]}/>
-          <Tab classes={{root: locClasses.tab}} id={`simple-tabpanel-${1}`} label={items[1]}/>
-          {/*<Tab classes={{root: locClasses.tab}} id={`simple-tabpanel-${2}`} label={items[2]}/>*/}
+          <Tab classes={{root: locClasses.tab}} label={items[0]}/>
+          <Tab classes={{root: locClasses.tab}} label={items[1]}/>
+          <Tab classes={{root: locClasses.tab}} label={items[2]}/>
+          <Tab classes={{root: locClasses.tab}} label={items[3]}/>
         </Tabs>
       </AppBar>
       <TabRenderer tabId={tabId}/>
@@ -76,12 +79,18 @@ export function GraphPane(props) {
 }
 
 function TabRenderer({tabId, ...props}) {
-  if (tabId === 0) {
-    return <FunctionTab/>;
-  } else if (tabId === 1) {
-    return <AxesTab/>;
-  } else if (tabId === 2) {
-    return <LegendTab/>;
+  switch (tabId) {
+    case 0:
+      return <FunctionTab/>;
+    case 1:
+      return <AxesTab/>;
+    case 2:
+      return <PensTab/>;
+    case 3:
+      return <LabelsTab/>;
+    default:
+      return null;
   }
 }
 
+// return <LegendTab/>;

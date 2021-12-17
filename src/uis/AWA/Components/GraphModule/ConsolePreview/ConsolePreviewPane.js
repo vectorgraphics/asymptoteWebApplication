@@ -41,7 +41,7 @@ export function ConsolePreviewPane({drawResult = {} , ...props}) {
       <div className={locClasses.consPrevPane}>
         {
           (drawResult.responseType && drawResult.responseType === "ERROR")
-            ? <Errors/>
+            ? <Errors errorText={drawResult.errorText} stdErr={drawResult.stderr + drawResult.stdout}/>
             : <iframe className={locClasses.iframe} id="output" src={drawResult.path} width="100%" height="100%" title="outputFrame" frameBorder="0"/>
         }
       </div>

@@ -46,8 +46,8 @@ export function createUCID(ip) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  usrDirMgr
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function usrDirMgr(req, serverDir, id) {
-  const usrDirName = SHA1(req.ip).toString() + id;
+export function usrDirMgr(req, serverDir, UCID) {
+  const usrDirName = SHA1(req.ip).toString() + UCID;
    return {
     usrDirName: usrDirName,
     usrDirPath: "/" + usrDirName,
@@ -72,12 +72,6 @@ export function writePing(dir) {
 export function makeDir(dir) {
   fs.mkdirSync(dir);
   writePing(dir);
-}
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   hashCode
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function hashCode(codeContent) {
-  return SHA256(codeContent.trim());
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                   dateTime

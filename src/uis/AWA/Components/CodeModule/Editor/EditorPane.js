@@ -1,9 +1,10 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { idSelector, cmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
 import { EditorHeader } from "./EditorHeader";
 import { Editor } from "./Editor";
 import { Terminal } from "./Terminal";
+import {cmActionCreator} from "../../../../../store/workspaces";
 
 const useStyle = makeStyles((theme) => ({
   editorPane: {
@@ -19,9 +20,8 @@ export function EditorPane(props) {
   const locClasses = useStyle();
   const id = useSelector(idSelector);
   const cmOutput = useSelector(cmOutputSelector);
-  const editorPaneView = useSelector((store) => {
-    return (id)? store.workspaces.entities[id].editorPaneView: true;
-  });
+  const editorPaneView = useSelector((store) => (id)? store.workspaces.entities[id].editorPaneView: true);
+  const dispatch = useDispatch();
   const stdout = (id)? cmOutput.stdout: "";
   const stderr = (id)? cmOutput.stderr: "";
 
@@ -30,7 +30,13 @@ export function EditorPane(props) {
     <div className={locClasses.editorPane}>
       <EditorHeader/>
       <Editor/>
-      {(stdout !== "" || stderr !== "")? <Terminal/>: null}
+      {
+        (stdout !== "" || stderr !== "")
+        ? <Terminal
+            errorContent={stderr + stdout}
+            closeTerminal={() => {dispatch(cmActionCreator.updateOutput(id, {...cmOutput, stdout: "", stderr: ""}))}}/>
+        : null
+      }
     </div>:
     null
   );

@@ -135,9 +135,9 @@ export const cmActionCreator = {
       }
     };
   },
-  setOutformat: function (id, outformat) {
+  setOutFormat: function (id, outformat) {
     return {
-      type: cmActions.setOutformat,
+      type: cmActions.setOutFormat,
       payload: {
         id: id,
         outformat: outformat,
@@ -244,7 +244,7 @@ export const codeModule = (state = {}, action) => {
     case cmActions.setCodeContent:
       newCopy[action.payload.id].input.codeContent = action.payload.codeContent;
       return newCopy;
-    case cmActions.setOutformat:
+    case cmActions.setOutFormat:
       newCopy[action.payload.id].input.outformat = action.payload.outformat;
       return newCopy;
     case cmActions.setStdin:

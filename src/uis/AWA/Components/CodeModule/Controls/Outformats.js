@@ -1,4 +1,4 @@
-import { idSelector } from "../../../../../store/selectors";
+import { idSelector, cmInputSelector } from "../../../../../store/selectors";
 import { cmActionCreator } from "../../../../../store/workspaces";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
@@ -32,14 +32,14 @@ export function Outformats(props) {
   const colorSelected = useTheme().palette.radioAndCheckbox.selected;
   const locClasses = useStyle();
   const id = useSelector(idSelector)
-  const outformat = useSelector((store) => store.workspaces.codeModule[id].input.outformat);
+  const outformat = useSelector(cmInputSelector).outformat;
   const dispatch = useDispatch();
 
   return (
     <RadioGroup
       className={locClasses.radioGroup}
       name="outformats" value={outformat}
-      onChange={(event) => dispatch(cmActionCreator.setOutformat(id, event.target.value))}
+      onChange={(event) => dispatch(cmActionCreator.setOutFormat(id, event.target.value))}
     >
       <FormControlLabel classes={{label: locClasses.formLabel}}
         value="prev"

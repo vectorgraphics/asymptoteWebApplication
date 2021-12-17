@@ -15,16 +15,17 @@ const useStyle = makeStyles((theme) => ({
   p: {
     fontSize: "1rem",
     padding: "1rem",
-    color: "whitesmoke",
+    color: "black",
   },
 }))
 
-export function Errors({errorText="Default Error Text!", ...props}) {
+export function Errors({errorText="Default Error Text!", stdErr="", ...props}) {
   const locClasses = useStyle();
   return (
     <div className={locClasses.errorCont}>
       <h4 className={locClasses.h4}> {"Error:"} </h4>
       <p className={locClasses.p}> {errorText} </p>
+      <p className={locClasses.p}> {stdErr} </p>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import {useRef, useEffect, useState} from "react";
 import { useSelector } from "react-redux";
 import { idSelector, cmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
@@ -29,23 +30,25 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 export function PreviewPane(props) {
-  const classes = useStyle();
+  const locClasses = useStyle();
+  const iframeRef = useRef(null);
   const id = useSelector(idSelector);
   const cmOutput = useSelector(cmOutputSelector);
-  const previewPaneView = useSelector((store) => {
-    return (id)? store.workspaces.entities[id].previewPaneView: true;
-  });
-
+  const previewPaneView = useSelector((store) => (id)? store.workspaces.entities[id].previewPaneView: true);
 
   return (
     (previewPaneView)?
-    <div className={classes.container}>
-      <div className={classes.previewPane}>
+    <div className={locClasses.container}>
+      <div className={locClasses.previewPane}>
         <PreviewHeader/>
         {
-          (cmOutput.responseType === "ERROR")?
-            <Errors/>:
-            <iframe className={classes.iframe} id="output" src={(id)? cmOutput.path: ""} width="100%" height="100%" title="outputFrame" frameBorder="0"/>
+          (cmOutput.responseType === "ERROR")
+            ? <Errors errorText={cmOutput.errorText}/>
+            : <iframe
+                id="output" ref={iframeRef} className={locClasses.iframe}
+                src={(cmOutput.isUpdated)? cmOutput.path + " ": cmOutput.path + ""}
+                width="100%" height="100%" title="outputFrame" frameBorder="0"
+              />
         }
       </div>
     </div>:

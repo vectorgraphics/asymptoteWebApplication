@@ -87,31 +87,31 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function ControlPanel(props) {
+export function ControlPanel({isCPExapnded=true, ...props}) {
   const locClasses = useStyle(props);
   const dispatch = useDispatch();
 
   return (
-    <div className={(props.isCPExapnded)? locClasses.controlPanelShow: locClasses.controlPanelHide}>
+    <div className={(isCPExapnded)? locClasses.controlPanelShow: locClasses.controlPanelHide}>
       <div className={locClasses.controlMenuCont}>
-        {(props.isCPExapnded)? <ControlMenu/>: null}
+        {(isCPExapnded)? <ControlMenu/>: null}
       </div>
       <div className={locClasses.workspaceCont}>
         <div className={locClasses.header}>
           {
-            (props.isCPExapnded)?
-              <Fragment>
-                <Fab classes={{root: locClasses.fab}} size="small" disableFocusRipple={true}>
-                  <AddIcon onClick={() => dispatch(wsActionCreator.add(createUID()))}/>
-                </Fab> Workspaces
-              </Fragment>
-            : null
+            (isCPExapnded)
+              ? <Fragment>
+                  <Fab classes={{root: locClasses.fab}} size="small" disableFocusRipple={true}>
+                    <AddIcon onClick={() => dispatch(wsActionCreator.add(createUID()))}/>
+                  </Fab> Workspaces
+                </Fragment>
+              : null
           }
         </div>
-        {(props.isCPExapnded)? <WorkspaceBody/>: null}
+        {(isCPExapnded)? <WorkspaceBody/>: null}
       </div>
       <div className={locClasses.logoPaneCont}>
-        {(props.isCPExapnded)? <LogoPane/>: null}
+        {(isCPExapnded)? <LogoPane/>: null}
       </div>
     </div>
   );

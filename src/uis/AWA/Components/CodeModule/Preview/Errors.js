@@ -20,7 +20,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-export function Errors({errorText="Default Error Text!", ...props}) {
+export function Errors({errorText="Unknown Error!", ...props}) {
   const locClasses = useStyle();
   return (
     <div className={locClasses["errorCont"]}>

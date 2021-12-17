@@ -2,20 +2,18 @@ import { createRequire } from 'module'
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
-import { createUCID, usrDirMgr, makeDir, removeDir, dateTime, writePing, hashCode, FLAGS } from "./serverUtil.js";
+import { createUCID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
 import express from "express";
 const require = createRequire(import.meta.url);
 
 const serverTimeout = 60000;
-let codeContentSHA256 = "";
-let isUpdatedFlag = false;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function reqTypeRouter() {
   return (req, res, next) => {
     if (req.is("application/json") === "application/json") {
       return express.json()(req, res, next);
-    } else if (req.get('Content-Type').includes("application/x-www")) {
+    } else if (req.get('Content-Type').includes("application/x-www-form-urlencoded")) {
       return express.urlencoded({extended: true})(req, res, next);
     }
   }
@@ -23,7 +21,6 @@ export function reqTypeRouter() {
 // ------------------------------------------------
 export function usrConnect(serverDir) {
   return (req, res, next) => {
-    console.log(req.body);
     if (req.body.reqType === "usrConnect") {
       let ucid = createUCID(req.ip);
       if (ucid !== "-1") {
@@ -52,7 +49,7 @@ export function usrConnect(serverDir) {
       const data = {
         uniqueClientID: ucid,
         usrConnectStatus: "UDIC",
-        asyVersion: asyVersion
+        asyVersion: asyVersion,
       }
       res.send(data);
     } else {
@@ -63,7 +60,7 @@ export function usrConnect(serverDir) {
 // ------------------------------------------------
 export function reqAnalyzer(serverDir) {
   return (req, res, next) => {
-    const reqDest = usrDirMgr(req, serverDir, req.body.id);
+    const reqDest = usrDirMgr(req, serverDir, req.body.UCID);
     const codeFilename = `${req.body.workspaceName}_${req.body.workspaceId}`;
     const codeFile = codeFilename + ".asy";
     req.body = {
@@ -76,12 +73,6 @@ export function reqAnalyzer(serverDir) {
     }
     if (typeof req.body.isUpdated === "string") {
       req.body.isUpdated =  req.body.isUpdated.includes("true");
-    }
-    if (req.body.codeOption !== undefined && typeof req.body.codeOption === "string") {
-      req.body.codeOption =  req.body.codeOption.includes("true");
-    }
-    if (req.body.outputOption !== undefined && typeof req.body.outputOption === "string") {
-      req.body.outputOption =  req.body.outputOption.includes("true");
     }
     // console.log("modified req.body:\n", req.body);
     next();
@@ -104,7 +95,7 @@ export function delAnalyzer(serverDir) {
   }
 }
 // ------------------------------------------------
-export function writeAsyFile(serverDir) {
+export function writeAsyFile() {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
     const fileContent = req.body.codeContent;
@@ -121,7 +112,7 @@ export function requestResolver() {
     const option = {
       cwd: req.body.usrAbsDirPath,
       codeFile: req.body.codeFile,
-      outformat: req.body.outformat,
+      outformat: (req.body.outformat === "prev")? "html": req.body.outformat,
     }
     switch (req.body.reqType) {
       case "ping":
@@ -129,7 +120,6 @@ export function requestResolver() {
         next();
         break;
       case "run":
-        option.outformat = "html"
         asyRunManager(req, res, next, option);
         break;
       case "download":
@@ -151,7 +141,7 @@ export function requestResolver() {
 // ------------------------------------------------
 export function downloadReq(dirname) {
   return function (req, res, next) {
-    if (req.body.outformat === "prev") {
+    if (req.body.outformat === "asy") {
       if (existsSync(req.body.codeFilePath)) {
         res.download(req.body.codeFilePath);
       }
@@ -167,21 +157,22 @@ export function downloadReq(dirname) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function asyRunManager(req, res, next, option) {
-  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-once', '-f', option.outformat, option.codeFile];
+  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
   const chProcOption = {
     cwd: option.cwd,
   }
-  const htmlFileExists = existsSync(req.body.htmlFile);
-  if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
-    res.send({
-      responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
-      isUpdated: !req.body.isUpdated
-    });
-    return;
-  }
-  if (htmlFileExists) {
-    unlinkSync(req.body.htmlFile);
-  }
+  // const htmlFileExists = existsSync(req.body.htmlFile);
+  // if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
+  // if (req.body.reqType === "download") {
+  //   res.send({
+  //     responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
+  //     isUpdated: !req.body.isUpdated
+  //   });
+  //   return;
+  // }
+  // if (htmlFileExists) {
+  //   unlinkSync(req.body.htmlFile);
+  // }
   let stderrData = "", stdoutData = "";
   const chProcHandler = spawn('asy', asyArgs, chProcOption);
   setTimeout(() => {

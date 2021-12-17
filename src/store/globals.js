@@ -6,7 +6,8 @@ export const glActions = {
   setEditorFontsize:    "setEditorFontsize",
   setKeyBinding:       "setKeyBinding",
   reRenderSplitBtn:     "reRenderSplitBtn",
-  resetApplication:     "resetApplication"
+  resetApplication:     "resetApplication",
+  setAsyVersion:        "setAsyVersion",
 };
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GLOBAL ACTION CREATOR
@@ -58,6 +59,14 @@ export const glActionCreator = {
       payload: {
         appReset: value
       },
+    };
+  },
+  setAsyVersion: (version) => {
+    return {
+      type: glActions.setAsyVersion,
+      payload: {
+        asyVersion: version,
+      }
     };
   },
 }

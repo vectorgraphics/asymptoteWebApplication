@@ -20,12 +20,11 @@ const app = express();
 // -------------------------------------------------
 app.route("/")
 .get(express.static(__dirname + "/build"))
-.post(reqTypeRouter(), usrConnect(__dirname), reqAnalyzer(__dirname), writeAsyFile(__dirname), requestResolver())
+.post(reqTypeRouter(), usrConnect(__dirname), reqAnalyzer(__dirname), writeAsyFile(), requestResolver())
 .post(reqTypeRouter(), (req, res, next) => {
   console.log(req.body);
   next();
 })
-
 
 app.route("/delete")
 .post(express.text(), delAnalyzer(__dirname));

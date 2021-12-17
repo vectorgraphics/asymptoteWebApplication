@@ -69,7 +69,7 @@ export function deepCopy(obj) {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              codeFormatter
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function codeFormatter(codeText){
+export function codeFormatter(codeText) {
   if (codeText[codeText.length - 1] !== "\n"){
     codeText += "\n";
   }
