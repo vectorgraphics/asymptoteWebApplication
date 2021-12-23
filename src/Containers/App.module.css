@@ -7,7 +7,7 @@
 .header{
     flex: 0 1 auto;
     display: flex;
-    min-width: 1015px;
+    min-width: 1100px;
     justify-content: space-between;
     background-color: #21252b;
     border-bottom: 1px solid rgb(44, 44, 44);
@@ -76,7 +76,7 @@
 }
 .corePanes{
     display: flex;
-    min-width: 410px;
+    min-width: 452px;
     flex-direction: column;
     flex: 1 1 0;
     border: 1px solid rgb(53, 56, 56);

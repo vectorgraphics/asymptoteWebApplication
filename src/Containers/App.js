@@ -52,7 +52,7 @@ const App = ContainerConstructor(class extends Component {
               <div className={cssStyle.downloadPanel}>
                 <div className={cssStyle.subcomponentContainer}> <DownloadStopButton /> </div>
                 <div className={cssStyle.subcomponentContainer}> <Options /> </div>
-                <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "svg", "pdf", "eps", "png"]} /> </div>
+                <div className={cssStyle.subcomponentContainer}> <Outformats providedFormats={["html", "v3d", "svg", "pdf", "eps", "png"]} /> </div>
               </div>
               <ClearButton cssClass={cssStyle.controls} />
             </div>
