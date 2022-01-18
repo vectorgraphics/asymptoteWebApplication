@@ -43,7 +43,7 @@ const RunStopButton = ContainerConstructor(class extends Component {
               id: this.props.usrID,
               workspaceId: currentWorkspace.id,
               workspaceName: currentWorkspace.name.current,
-              codeText: codeFormatter(currentWorkspace.codeText),
+              codeText: codeFormatter((currentWorkspace.codeText + "\n" + currentWorkspace.codeToAppend)),
               isUpdated: currentWorkspace.output.isUpdated,
             };
             controller = new AbortController();

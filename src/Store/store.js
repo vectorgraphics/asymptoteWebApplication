@@ -8,8 +8,9 @@ export const actionTypes = {
   remove: "REMOVE",
   select: "SELECT",
   update: "UPDATE",
-  view:   "VIEW",
-  setID:  "SET_ID",
+  appendCode: "APPEND_CODE",
+  view: "VIEW",
+  setID: "SET_ID",
   setKeyBinding: "SET_KEY_BINDING"
 }
 
@@ -115,6 +116,13 @@ export const actionFact = {
       output: response
     }
   },
+  setAsyProjection: function (id, projectionCode) {
+    return {
+      type: actionTypes.appendCode,
+      id: id,
+      codeToAppend: projectionCode
+    }
+  },
   changeWorkspacePaneStatus: function (statusValue) {
     return {
       type: actionTypes.view,
@@ -177,6 +185,7 @@ export const workspaces = (state = [], action) => {
             entryExists: true,
             isUpdated: true,
             path: "",
+            codeToAppend: "",
           },
           corePanesDisplay: {
             codePane: true,
@@ -199,6 +208,19 @@ export const workspaces = (state = [], action) => {
           }
         })
       ]
+
+    case actionTypes.appendCode:
+      return [
+        ...state.map(function (workspace) {
+          if (workspace.id !== action.id) {
+            return workspace;
+          } else {
+            workspace.codeToAppend = action.codeToAppend;
+            return {...workspace};
+          }
+        })
+      ]
+
     default:
       return state
   }

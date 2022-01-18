@@ -51,7 +51,7 @@ const DownloadStopButton = ContainerConstructor(class extends Component {
                 workspaceName: currentWorkspace.name.current,
                 codeOption: currentWorkspace.codeOption.checked,
                 outputOption: currentWorkspace.outputOption.checked,
-                codeText: codeFormatter(currentWorkspace.codeText),
+                codeText: codeFormatter((currentWorkspace.codeText + "\n" + currentWorkspace.codeToAppend)),
                 requestedOutformat: currentWorkspace.outformat,
                 isUpdated: currentWorkspace.output.isUpdated,
               };

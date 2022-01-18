@@ -15,6 +15,7 @@ const initialState = {
         disabled: false,
       },
       codeText: "",
+      codeToAppend: "",
       uploaded: false,
       outformat: "html",
       output: {
@@ -28,7 +29,7 @@ const initialState = {
         stderr: "",
         entryExists: false,
         isUpdated: false,
-        path: ""
+        path: "",
       },
       corePanesDisplay: {
         codePane: true,

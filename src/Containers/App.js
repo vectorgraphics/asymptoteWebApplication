@@ -34,6 +34,7 @@ const ContainerConstructor = connect((store) => ({
 
 const App = ContainerConstructor(class extends Component {
 
+
   render() {
     // console.log(store.getState());
     const currentWorkspace = workspaceInspector(this.props);
@@ -43,7 +44,7 @@ const App = ContainerConstructor(class extends Component {
       return (
         <div id="AppCont" className={cssStyle.app}>
           <div className={cssStyle.header}>
-            <ToggleKey />
+            <ToggleKey/>
             <div className={cssStyle.menuBar}>
               <div className={cssStyle.uploadRunPanel}>
                 <UploadButton cssClass={cssStyle.controls} />

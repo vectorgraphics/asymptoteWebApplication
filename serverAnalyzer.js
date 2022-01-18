@@ -176,13 +176,13 @@ function asyRunManager(req, res, next, option) {
     cwd: option.cwd,
   }
   const htmlFileExists = existsSync(req.body.htmlFile);
-  if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
-    res.send({
-      responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
-      isUpdated: !req.body.isUpdated
-    });
-    return;
-  }
+  // if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
+  //   res.send({
+  //     responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
+  //     isUpdated: !req.body.isUpdated
+  //   });
+  //   return;
+  // }
   if (htmlFileExists) {
     unlinkSync(req.body.htmlFile);
   }

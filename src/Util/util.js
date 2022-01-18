@@ -22,6 +22,7 @@ export const workspaceInspector = function(props){
                 disabled: false
             },
             codeText: "",
+            condToAppend: "",
             output: {
                 responseType: null,
                 outformat: "",

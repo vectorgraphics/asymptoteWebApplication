@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import store from './Store/store';
+import store, { actionFact } from './Store/store';
 import App from './Containers/App';
 import { fetchOptionObj } from './Util/util'
 import './index.css';
@@ -11,6 +11,15 @@ import './index.css';
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 let pingMilliseconds = 600000;
 let timeIntervalID = ""
+
+window.asyWebApplication = {
+  setProjection: function (asyCode) {
+    const id = store.getState().selectedWorkspace.id;
+    store.dispatch(actionFact.setAsyProjection(id, asyCode));
+    // console.log(store.getState());
+  }
+}
+
 const connectionRequest = {
   reqType: "usrConnect"
 };
