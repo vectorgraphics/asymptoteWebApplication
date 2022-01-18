@@ -5,6 +5,7 @@ import { spawn, execSync } from "child_process";
 import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
 import express from "express";
 const require = createRequire(import.meta.url);
+const multer = require("multer");
 
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
@@ -127,6 +128,7 @@ export function requestResolver() {
       case "ping":
         writePing(req.body.usrAbsDirPath);
         next();
+        break;
       case "run":
         option.outformat = "html"
         asyRunManager(req, res, next, option);
