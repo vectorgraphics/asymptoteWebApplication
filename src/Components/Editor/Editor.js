@@ -17,6 +17,7 @@ const ContainerConstructor = connect((store) => ({
   editorKeyBinding: store.editorKeyBinding
 }), {
   updateTextareaContent: actionFact.updateTextareaContent,
+  setAsyProjection: actionFact.setAsyProjection,
 })
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     EDITOR COMPONENT
@@ -48,6 +49,7 @@ const Editor = ContainerConstructor((props) => {
   useEffect(() => {
     function txtToStore(cm) {
       props.updateTextareaContent(currentWorkspace.id, cm.getValue());
+      props.setAsyProjection(currentWorkspace.id, "");
     }
     if (currentWorkspace.id === null) {
       cmInstance.current.setOption('readOnly', 'nocursor');

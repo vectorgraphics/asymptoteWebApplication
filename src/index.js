@@ -16,7 +16,15 @@ window.asyWebApplication = {
   setProjection: function (asyCode) {
     const id = store.getState().selectedWorkspace.id;
     store.dispatch(actionFact.setAsyProjection(id, asyCode));
-    // console.log(store.getState());
+  },
+  getProjection: function () {
+    const id = store.getState().selectedWorkspace.id;
+    const workspaces = store.getState().workspaces;
+    for (const workspace of workspaces) {
+      if (workspace.id === id) {
+        return workspace.codeToAppend;
+      }
+    }
   }
 }
 
