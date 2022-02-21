@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { idSelector, cmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
+import { cmActionCreator } from "../../../../../store/codeModule";
 import { EditorHeader } from "./EditorHeader";
 import { Editor } from "./Editor";
 import { Terminal } from "./Terminal";
-import {cmActionCreator} from "../../../../../store/workspaces";
 
 const useStyle = makeStyles((theme) => ({
   editorPane: {
@@ -30,15 +30,44 @@ export function EditorPane(props) {
     <div className={locClasses.editorPane}>
       <EditorHeader/>
       <Editor/>
-      {
-        (stdout !== "" || stderr !== "")
-        ? <Terminal
-            errorContent={stderr + stdout}
-            closeTerminal={() => {dispatch(cmActionCreator.updateOutput(id, {...cmOutput, stdout: "", stderr: ""}))}}/>
-        : null
-      }
+      <Terminal
+        errorContent={stderr + stdout}
+        // closeTerminal={() => {dispatch(cmActionCreator.updateOutput(id, {...cmOutput, stdout: "", stderr: ""}))}}
+      />
     </div>:
     null
   );
 }
+
+
+
+// return (
+//   (editorPaneView)?
+//     <div className={locClasses.editorPane}>
+//       <EditorHeader/>
+//       <Editor/>
+//       {
+//         (stdout !== "" || stderr !== "")
+//           ? <Terminal
+//             errorContent={stderr + stdout}
+//             closeTerminal={() => {dispatch(cmActionCreator.updateOutput(id, {...cmOutput, stdout: "", stderr: ""}))}}/>
+//           : null
+//       }
+//     </div>:
+//     null
+// );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { idSelector, editorReRenderSelector } from "../../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
-import { enActionCreator, cmActionCreator } from "../../../../../../store/workspaces";
+import { enActionCreator } from "../../../../../../store/workspaces";
+import { cmActionCreator } from "../../../../../../store/codeModule";
 import { Btn } from "../../../../Atoms/Btn";
 import PublishIcon from "@material-ui/icons/Publish";
 
@@ -9,7 +10,14 @@ const useStyle = makeStyles((theme) => ({
   btn: {
     margin: "0 0.5rem",
   },
-  uploadBtnIcon: {
+  span: {
+    display: "flex",
+    flexFlow: "row nowrap",
+    alignItems: "center",
+  },
+  uploadIcon: {
+    marginLeft: "-0.5rem",
+    marginRight: "0.5rem",
     color: theme.palette.icon.Upload,
   },
 }))
@@ -21,12 +29,11 @@ export function Upload(props) {
   const dispatch = useDispatch();
 
   return (
-      <Btn minWidth="6rem" maxWidth="6rem"
-        className={locClasses.btn}
-        startIcon={<PublishIcon className={locClasses.uploadBtnIcon}/>}
+      <Btn
+        className={locClasses.btn} minWidth="6rem" maxWidth="6rem"
         onClick={(event) => uploadHandler(dispatch, id, editorReRender)}
       >
-        Upload
+        <span className={locClasses.span}> <PublishIcon className={locClasses.uploadIcon}/> Upload </span>
       </Btn>
   );
 }

@@ -35,6 +35,7 @@ const useStyle = makeStyles((theme) => ({
     display: "flex",
     flexFlow: "row nowrap",
     padding: "0 0.5rem",
+    marginLeft: "1.5rem",
     borderRight: "2px groove dimgray",
   },
   toggleButtonGroup: {

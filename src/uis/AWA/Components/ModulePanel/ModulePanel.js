@@ -2,17 +2,20 @@ import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { CodeModule } from "../CodeModule/CodeModule";
 import { GraphModule } from "../GraphModule/GraphModule";
-import { idSelector, resetRequestSelector } from "../../../../store/selectors";
+import { idSelector } from "../../../../store/selectors";
+import { scrollbarStyler } from "../../../../utils/appTools";
 
 
 const useStyle = makeStyles((theme) => ({
   modulePanel: {
     display: "block",
     flex: "2 1 auto",
-    height: "100%",
     minWidth: "37rem",
+    overflow: "auto",
+    ...scrollbarStyler(),
     backgroundColor: theme.palette.background.ModulePanel,
-  }
+    zIndex: 1000,
+  },
 }));
 
 export function ModulePanel(props) {

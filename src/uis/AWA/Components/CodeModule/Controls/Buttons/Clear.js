@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { idSelector, editorReRenderSelector } from "../../../../../../store/selectors";
-import { cmActionCreator, enActionCreator} from "../../../../../../store/workspaces";
+import { enActionCreator } from "../../../../../../store/workspaces";
+import { cmActionCreator } from "../../../../../../store/codeModule";
 import { makeStyles } from "@material-ui/core";
 import { ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList} from '@material-ui/core';
 import BackspaceOutlinedIcon from '@material-ui/icons/BackspaceOutlined';
@@ -13,7 +14,7 @@ const useStyle = makeStyles((theme) => ({
     margin: "0 0.5rem",
   },
   btnGroup: {
-    display: "block",
+    padding: 0,
     borderRadius: "1px",
     boxShadow: "none",
     "&:hover": {
@@ -21,8 +22,6 @@ const useStyle = makeStyles((theme) => ({
     },
   },
   btn: {
-    minWidth: "6rem",
-    maxWidth: "6rem",
     boxShadow: "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
   },
   popper: {
@@ -44,16 +43,23 @@ const useStyle = makeStyles((theme) => ({
     textAlign: "center",
     lineHeight: "1.5rem",
     "&:hover": {
-      backgroundColor: "darkGrey"
+      backgroundColor: "#EBEBEB"
     }
   },
   paper: {
     marginTop: "0.25rem",
     borderRadius: "1px",
   },
-  icon: {
+  span: {
+    display: "flex",
+    flexFlow: "row nowrap",
+    alignItems: "center",
+  },
+  clearIcon: {
+    fontSize: "1rem",
+    marginRight: "0.75rem",
     color: theme.palette.icon.Clear,
-  }
+  },
 }))
 
 export function Clear({children, className, classes, ...props}) {
@@ -104,12 +110,8 @@ export function Clear({children, className, classes, ...props}) {
   return (
     <div className={locClasses.cont}>
       <ButtonGroup classes={{root: locClasses.btnGroup}} variant="contained" ref={anchorRef}>
-        <Btn
-          className={locClasses.btn}
-          startIcon={<BackspaceOutlinedIcon className={locClasses.icon}/>}
-          onClick={handleToggle}
-        >
-          clear
+        <Btn className={locClasses.btn} onClick={handleToggle} minWidth="6rem" maxWidth="6rem">
+          <span className={locClasses.span}> <BackspaceOutlinedIcon className={locClasses.clearIcon}/> Clear </span>
         </Btn>
       </ButtonGroup>
       <Popper

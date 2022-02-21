@@ -3,14 +3,14 @@ import { makeStyles, Grid, Typography, Slider, Input } from '@material-ui/core';
 
 const useStyles = makeStyles({
   root: {
-    width: "8rem",
+    width: (styleObj) => styleObj.width || "8rem",
     marginTop: "0.5rem",
   },
   slider: {
     color: "dimgrey",
   },
   input: {
-    width: "3rem",
+    width: (styleObj) => styleObj.inputWwidth || "3rem",
   },
   underline: {
     "&::before": {
@@ -23,18 +23,18 @@ const useStyles = makeStyles({
   }
 });
 
-export function SliderInput({defaultValue=1, passedHandler=() => {}, ...props}) {
-  const locClasses = useStyles();
+export function SliderInput({defaultValue=1, styleObj={}, onSliderChange=() => {}, ...props}) {
+  const locClasses = useStyles(styleObj);
   const [value, setValue] = useState(defaultValue);
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue);
-    passedHandler.call(null, newValue);
+    onSliderChange(newValue);
   };
 
   const handleInputChange = (event) => {
-    setValue(event.target.value === "" ? "" : Number(event.target.value));
-    passedHandler.call(null, Number(event.target.value));
+    setValue((event.target.value === "") ? "" : Number(event.target.value));
+    onSliderChange(Number(event.target.value));
   };
 
   const handleBlur = () => {

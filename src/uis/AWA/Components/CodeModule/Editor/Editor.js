@@ -8,7 +8,8 @@ import {
   editorLineNumbersSelector,
   appResetSelector
 } from "../../../../../store/selectors";
-import { cmActionCreator, enActionCreator } from "../../../../../store/workspaces";
+import { enActionCreator } from "../../../../../store/workspaces";
+import { cmActionCreator } from "../../../../../store/codeModule";
 import { makeStyles } from "@material-ui/core/styles";
 import CodeMirror from "codemirror/src/codemirror";
 import "./codemirror/codemirror.css";
@@ -50,7 +51,7 @@ export function Editor(props) {
         name: "asymptote",
         styleDefs: true,
       },
-      theme: "asyDracula",
+      theme: "lightTheme",
       lineNumbers: editorLineNumber,
       lineWrapping: true,
     });
@@ -100,7 +101,7 @@ export function Editor(props) {
 
   return (
     <div className={locClasses.editor}>
-      <textarea id="tmpTextarea" className={locClasses.textarea} autoFocus={true}></textarea>
+      <textarea id="tmpTextarea" className={locClasses.textarea} autoFocus={true}/>
     </div>
   );
 }

@@ -5,28 +5,28 @@ import { Button, Box, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuI
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const useStyle = makeStyles((theme) => ({
-  rootGBtn: (props) => props.cssStyle.gBtn,
-  rootSBtn: (props) => props.cssStyle.sBtn,
-  rootBox:  (props) => props.cssStyle.box,
-  rootList: (props) => props.cssStyle.list,
-  rootItem: (props) => props.cssStyle.item,
-  paper:    (props) => props.cssStyle.paper,
+  groupBtn:  (props) => props.cssStyle.groupBtn,
+  selectBtn: (props) => props.cssStyle.selectBtn,
+  box:       (props) => props.cssStyle.box,
+  list:      (props) => props.cssStyle.list,
+  item:      (props) => props.cssStyle.item,
+  paper:     (props) => props.cssStyle.paper,
   popper: {
-    zIndex: 2000,
+    zIndex: 600,
   },
 }));
 
-export function SplitViewBtn({
-    children, items=["test1", "test2"], passedId=1, passedEntities={},
-    passedHandler=() => {}, dispatch=false, SplitBtnReRender=0, ...props
+export function SplitViewBtn(
+  {
+    children, items=["test1", "test2"], wsId=1, activeModule="Code Module", onSelect=() => {}, SplitBtnReRender=0, ...props
   }) {
   const locClasses = useStyle(props);
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  let selectedIndex = (passedEntities[passedId].activeModule === "Code Module")? 0: 1;
+  let selectedIndex = (activeModule === "Code Module")? 0: 1;
 
   const handleMenuItemClick = (event, index) => {
-    (dispatch)? dispatch(passedHandler.call(null, passedId, items[index])): passedHandler();
+    onSelect(items[index]);
     setOpen(false);
   };
   const handleToggle = () => setOpen((prevOpen) => !prevOpen);
@@ -39,12 +39,12 @@ export function SplitViewBtn({
 
   return (
     <div>
-      <ButtonGroup classes={{root: locClasses.rootGBtn}} variant="contained" ref={anchorRef}>
+      <ButtonGroup classes={{root: locClasses.groupBtn}} variant="contained" ref={anchorRef}>
         <PropsStrainer>
-          <Box className={locClasses.rootBox}>{items[selectedIndex]}</Box>
+          <Box className={locClasses.box}>{items[selectedIndex]}</Box>
         </PropsStrainer>
-          <Button classes={{root: locClasses.rootSBtn}} size="small" onClick={handleToggle}>
-            <ArrowDropDownIcon />
+          <Button classes={{root: locClasses.selectBtn}} size="small" onClick={handleToggle}>
+            <ArrowDropDownIcon/>
           </Button>
       </ButtonGroup>
       <Popper
@@ -57,10 +57,10 @@ export function SplitViewBtn({
           >
             <Paper classes={{root: locClasses.paper}}>
               <ClickAwayListener onClickAway={handleClose}>
-                <MenuList classes={{root: locClasses.rootList}}>
+                <MenuList classes={{root: locClasses.list}}>
                   {items.map((option, index) => (
                     <MenuItem
-                      classes={{root: locClasses.rootItem}}
+                      classes={{root: locClasses.item}}
                       key={option}
                       selected={index === selectedIndex}
                       onClick={(event) => handleMenuItemClick(event, index)}

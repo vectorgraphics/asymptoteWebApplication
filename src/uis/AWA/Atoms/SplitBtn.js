@@ -48,11 +48,11 @@ export function SplitBtn(
       <div>
         <ButtonGroup classes={{root: locClasses.rootGBtn}} variant="contained" ref={anchorRef} disableElevation={disableElevation}>
           <PropsStrainer>
-            <Box className={locClasses.rootBox}>{(btnIcon)? btnIcon: "icon"}</Box>
+            <Box className={locClasses.rootBox}> {(btnIcon)? btnIcon: "icon"} </Box>
           </PropsStrainer>
-            <Button classes={{root: locClasses.rootSBtn}} size="small" onClick={handleToggle}>
-              <ArrowDropDownIcon />
-            </Button>
+            {/*<Box className={locClasses.rootSBtn} size="small" onClick={handleToggle}>*/}
+            {/*  /!*<ArrowDropDownIcon/>*!/*/}
+            {/*</Box>*/}
         </ButtonGroup>
         <Popper
           className={locClasses.popper} open={open}

@@ -1,17 +1,16 @@
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      GLOBAL ACTIONS
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Global Actions, Action Creators & Reducers
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const glActions = {
   setClientId:          "setClientId",
   setEditorLineNumbers: "setEditorLineNumbers",
   setEditorFontsize:    "setEditorFontsize",
-  setKeyBinding:       "setKeyBinding",
+  setKeyBinding:        "setKeyBinding",
   reRenderSplitBtn:     "reRenderSplitBtn",
   resetApplication:     "resetApplication",
   setAsyVersion:        "setAsyVersion",
 };
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GLOBAL ACTION CREATOR
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const glActionCreator = {
   setClientId: (id) => {
     return {
@@ -71,9 +70,6 @@ export const glActionCreator = {
   },
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      GLOBAL REDUCER
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function globals(state = {}, action) {
   if (Object.keys(glActions).includes(action.type)) {
     return {...state, ...action.payload};

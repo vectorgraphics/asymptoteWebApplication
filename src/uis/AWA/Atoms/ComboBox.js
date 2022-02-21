@@ -1,5 +1,5 @@
-import { makeStyles } from "@material-ui/core/styles";
-import TextField from '@material-ui/core/TextField';
+import { useEffect, useRef } from "react";
+import { makeStyles, TextField } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyle = makeStyles((theme) => ({
@@ -13,13 +13,13 @@ const useStyle = makeStyles((theme) => ({
     },
     "& div > div": {
       paddingRight: "6px !important",
+    },
+    "& div > input": {
+      maxWidth: "65%"
     }
   },
   paper: {
     fontSize: "0.85rem",
-  },
-  inputRoot: {
-    padding: "6px",
   },
   clearIndicator: {
     display: "none",
@@ -28,6 +28,9 @@ const useStyle = makeStyles((theme) => ({
 
 export function ComboBox({label="Combo Box", className={}, dataArray=[], property="name", ...props}) {
   const locClasses = useStyle(props);
+  const inputRef = useRef(null);
+  // useEffect(() => inputRef.current.style.maxWidth = "65%");
+
   return (
     <div className={className}>
       <Autocomplete
@@ -37,7 +40,7 @@ export function ComboBox({label="Combo Box", className={}, dataArray=[], propert
         size="small" options={dataArray}
         getOptionLabel={(option) => option[property]}
         getOptionSelected={(option, value) => option[property] === value[property]}
-        renderInput={(params) => <TextField {...params} label={label} variant="outlined"/>}
+        renderInput={(params) => <TextField inputRef={inputRef} {...params} label={label} variant="outlined"/>}
       />
     </div>
   );

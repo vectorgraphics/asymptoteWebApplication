@@ -11,25 +11,25 @@ const useStyle = makeStyles({
     display: "flex",
     flexFlow: "row nowrap",
     minWidth: "64rem",
-    minHeight: "50rem",
-    height: "100vh",
+    minHeight: "100vh",
+    maxHeight: "100vh",
     justifyContent: "center",
     alignContent: "stretch",
-    overflow: "hidden",
+    alignItems: "stretch",
   },
 })
 
 export function AWAPlatform({UCID=0, asyVersion="unknown", ...props}) {
   const locClasses = useStyle(props);
-  const [isCPExpanded, setCPExpand] = useState(true);
+  const [isCPExpanded, setCPExpandState] = useState(true);
   const dispatch = useDispatch();
   dispatch(glActionCreator.setClientId(UCID));
   dispatch(glActionCreator.setAsyVersion(asyVersion));
 
   return (
     <div className={locClasses.awaPlatform} >
-      <SideBar isCPExapnded={isCPExpanded} setCPExpand={setCPExpand}/>
-      <ControlPanel isCPExapnded={isCPExpanded}/>
+      <SideBar isCPExpanded={isCPExpanded} setCPExpandState={setCPExpandState}/>
+      <ControlPanel isCPExpanded={isCPExpanded}/>
       <ModulePanel/>
     </div>
   );

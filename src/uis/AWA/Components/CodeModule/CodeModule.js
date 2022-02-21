@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { EditorPane } from "./Editor/EditorPane";
-import { Controls } from "./Controls/Controls";
+import { CtrlBar } from "./Controls/CtrlBar";
 import { PreviewPane } from "./Preview/PreviewPane";
 
 const useStyle = makeStyles((theme) => ({
@@ -22,7 +22,7 @@ export function CodeModule(props) {
 
   return (
     <div className={locClasses.codeModule}>
-      <Controls/>
+      <CtrlBar/>
       <div className={locClasses.workingPanes}>
         <EditorPane/>
         <PreviewPane/>

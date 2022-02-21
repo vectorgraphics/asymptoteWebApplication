@@ -20,6 +20,7 @@ const useStyle = makeStyles((theme) => ({
     minHeight: "100%",
     alignItems: "stretch",
     borderLeft: "1px solid grey",
+    backgroundColor: theme.palette.background.Preview,
   },
   iframe: {
     backgroundColor: "transparent",

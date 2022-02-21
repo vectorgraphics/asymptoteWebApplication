@@ -4,7 +4,7 @@ import { Run } from "./Buttons/Run";
 import { Clear } from "./Buttons/Clear";
 
 const useStyle = makeStyles((theme) => ({
-  buttonCont: {
+  btnCont: {
     display: "flex",
     flexFlow: "row nowrap",
     alignItems: "center",
@@ -18,7 +18,7 @@ export function MainButtons(props) {
   const locClasses = useStyle();
 
   return (
-    <div className={locClasses.buttonCont}>
+    <div className={locClasses.btnCont}>
       <Upload/>
       <Run/>
       <Clear/>

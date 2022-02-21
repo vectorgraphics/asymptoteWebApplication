@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { useSelector } from "react-redux";
 import { UCIDSelector } from "./store/selectors";
 import App from './core/App';
-import { fetchOptionObj } from "./utils/generalTools";
+import { fetchOptionObj } from "./utils/appTools";
 // import reportWebVitals from './core/reportWebVitals';
 
 let pingMilliseconds = 600000;
@@ -42,7 +42,7 @@ const pingData = {
 
 
 ReactDOM.render(
-  <App UCID="100" asyVersion="2.8"/>,
+  <App UCID="100" asyVersion="0.00"/>,
   document.getElementById('root')
 );
 

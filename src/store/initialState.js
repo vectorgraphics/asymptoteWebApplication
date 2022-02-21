@@ -1,4 +1,5 @@
-import { deepCopy } from "../utils/generalTools";
+import { cloneDeep } from "lodash-es";
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              initialState
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const initialState = {
@@ -12,10 +13,10 @@ export const initialState = {
     asyVersion: "",
   },
   workspaces: {
-    checkedoutWorkspaceId: "1",
-    workspacesIdOrder: ["1"],
+    checkedOutWorkspaceId: "ws-1",
+    workspacesIdOrder: ["ws-1"],
     entities: {
-      "1": {
+      "ws-1": {
         name: "workspace",
         // activeModule: "Code Module",
         activeModule: "Graph Module",
@@ -25,10 +26,10 @@ export const initialState = {
       },
     },
     codeModule: {
-      "1": {
+      "ws-1": {
         input: {
           codeContent: "",
-          outformat: "prev",
+          outFormat: "prev",
           stdin: "",
         },
         output: {
@@ -47,123 +48,13 @@ export const initialState = {
       },
     },
     graphModule: {
-      Labels: {
-
+      functions: {
+        "ws-1": {}
       },
-      pens: {
-
-      },
-      geometries: {
-        "1": {
-          width: "",
-          height: "",
-          aspectRatio: "Aspect",
-        },
-      },
-      horizontalAxes: {
-        "1": {
-          label: "",
-          relativePosition: 1,
-          omitLabels: "",
-          min: "",
-          max: "",
-          align: "NoAlign",
-          axisLocation: "bottom",
-          scale: "linear",
-          extend: true,
-          axisPen: "",
-          endArrow: "None",
-          ticks: "NoTicks",
-          ticksLabel: "",
-          ticksLabelFormat: "",
-          ticksExtend: true,
-          omitTicks: "",
-          omitTicksLabels: "",
-          majorTicksDivision: "",
-          minorTicksDivision: "",
-          majorTicksSteps: "",
-          minorTicksSteps: "",
-          majorTicksSize: "",
-          minorTicksSize: "",
-          majorTicksPen: "",
-          minorTicksPen: "",
-        }
-      },
-      verticalAxes: {
-        "1": {
-          label: "",
-          relativePosition: 1,
-          omitLabels: "",
-          min: "",
-          max: "",
-          align: "NoAlign",
-          axisLocation: "left",
-          scale: "linear",
-          extend: true,
-          axisPen: "",
-          endArrow: "None",
-          ticks: "NoTicks",
-          ticksLabel: "",
-          ticksLabelFormat: "",
-          ticksExtend: true,
-          omitTicks: "",
-          omitTicksLabels: "",
-          majorTicksDivision: "",
-          minorTicksDivision: "",
-          majorTicksSteps: "",
-          minorTicksSteps: "",
-          majorTicksSize: "",
-          minorTicksSize: "",
-          majorTicksPen: "",
-          minorTicksPen: "",
-        }
-      },
-      legends: {
-        "1": {
-
-        },
-      },
-      pictures: {
-        "1": {
-
-        },
-      },
-      funcSubModule: {
-        funcEntities: {
-          "1": {
-            checkedOutFuncId: "f1",
-            functionsOrder: ["f1"],
-            variableName: "",
-          },
-        },
-        funcList: {
-          "1": {
-            "f1": {
-              funcName: "",
-              funcLabel: "",
-              funcLabelPos: "",
-              funcLabelAlign: "NoAlign",
-              funcLabelPen: "",
-              funcLabelFill: "UnFill",
-              funcFormula: "",
-              lBound : "",
-              uBound: "",
-              parName: "",
-              parLabel: "",
-              parValues: "",
-              conditionFunc: "return true;",
-              joinOp: "straight",
-              joinOpFunc: "",
-              markerType: "circle",
-              markerSize: "",
-              markerFill: "fill",
-              markerColor: "White",
-              curvePen: "",
-              isDrawn: true,
-            }
-          }
-        }
-      },
+      axes: {},
+      pens: {},
+      Labels: {},
+      // pictures: {},
     },
   },
   ui: {},
@@ -172,19 +63,16 @@ export const initialState = {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         data model slices
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const initialStateCopy = deepCopy(initialState);
+const initialStateCopy = cloneDeep(initialState);
 export const slices = {
-  globals:        initialStateCopy.globals,
-  workspaces:     initialStateCopy.workspaces,
-  entities:       initialStateCopy.workspaces.entities["1"],
-  codeModule:     initialStateCopy.workspaces.codeModule["1"],
-  geometries:     initialStateCopy.workspaces.graphModule.geometries["1"],
-  horizontalAxes: initialStateCopy.workspaces.graphModule.horizontalAxes["1"],
-  verticalAxes:   initialStateCopy.workspaces.graphModule.verticalAxes["1"],
-  legends:        initialStateCopy.workspaces.graphModule.legends["1"],
-  pictures:       initialStateCopy.workspaces.graphModule.pictures["1"],
-  funcSubModule:  initialStateCopy.workspaces.graphModule.funcSubModule,
-  funcEntities:   initialStateCopy.workspaces.graphModule.funcSubModule.funcEntities,
-  funcList:       initialStateCopy.workspaces.graphModule.funcSubModule.funcList,
+  globals:     initialStateCopy.globals,
+  workspaces:  initialStateCopy.workspaces,
+  entities:    initialStateCopy.workspaces.entities["ws-1"],
+  codeModule:  initialStateCopy.workspaces.codeModule["ws-1"],
+  functions:   initialStateCopy.workspaces.graphModule.functions["ws-1"],
+  axes:        initialStateCopy.workspaces.graphModule.axes,
+  pens:        initialStateCopy.workspaces.graphModule.pens,
+  Labels:      initialStateCopy.workspaces.graphModule.Labels,
+  pictures:    initialStateCopy.workspaces.graphModule.pictures,
 }
 

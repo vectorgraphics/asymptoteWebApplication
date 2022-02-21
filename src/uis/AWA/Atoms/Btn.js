@@ -3,11 +3,10 @@ import { Button } from "@material-ui/core";
 
 const useStyle = makeStyles((theme) => ({
   button: {
-    position: "relative",
-    minWidth: (passedProps) => passedProps.minWidth || "5.5rem",
-    maxWidth: (passedProps) => passedProps.maxWidth || "5.5rem",
-    minHeight: (passedProps) => passedProps.minHeight || "1.5rem",
-    maxHeight: (passedProps) => passedProps.minHeight || "1.5rem",
+    minWidth: (props) => props.minWidth || "5.5rem",
+    maxWidth: (props) => props.maxWidth || "5.5rem",
+    minHeight: (props) => props.minHeight || "1.5rem",
+    maxHeight: (props) => props.maxHeight || "1.5rem",
     fontSize: "0.875rem",
     borderRadius: "1px",
     "&:active": {
@@ -16,14 +15,15 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function Btn({children, className, classes, minWidth="5.5rem", maxWidth="5.5rem", minHeight="1.5rem", maxHeight="1.5rem", ...props}) {
-  const locClasses = useStyle({minWidth:minWidth, maxWidth:maxWidth, minHeight:minHeight, maxHeight: maxHeight, ...props});
+export function Btn({children, className="", classes, onClick=() => {}, disabled=false, ...props}) {
+
+  const locClasses = useStyle(props);
+
   return (
     <Button
-      {...props}
-      className={className}
-      classes={(classes)? classes: {root:  locClasses.button}}
-      variant="contained"
+      variant="contained" className={className} disabled={disabled}
+      classes={(classes)? classes: {root: locClasses.button}}
+      onClick={onClick}
     >
       { children }
     </Button>

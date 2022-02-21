@@ -1,20 +1,19 @@
 import { useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { cmActionCreator, enActionCreator } from "../../../../store/workspaces";
+import { enActionCreator } from "../../../../store/workspaces";
 import { glActionCreator } from "../../../../store/globals";
 import {
   idSelector,
   wsNameSelector,
   splitBtnReRenderSelector,
-  cmInputSelector,
   cmOutputSelector,
   codeContentSelector,
   UCIDSelector
 } from "../../../../store/selectors";
-import { makeStyles, SvgIcon } from "@material-ui/core";
-import GetAppIcon from "@material-ui/icons/GetApp";
+import { useTheme, makeStyles, SvgIcon} from "@material-ui/core";
 import { isValidName } from "../../../../utils/validators";
-import { codeFormatter, fetchOptionObj, toUrlEncoded } from "../../../../utils/generalTools";
+import { codeFormatter, fetchOptionObj, toUrlEncoded } from "../../../../utils/appTools";
+import GetAppIcon from "@material-ui/icons/GetApp";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -41,6 +40,7 @@ const useStyle = makeStyles((theme) => ({
     maxWidth: "calc(100% - 4rem)",
     minHeight: "1.95rem",
     maxHeight: "1.95rem",
+    fontFamily: "Roboto",
     fontSize: "1rem",
     color: "white",
     outline: "none",
@@ -50,7 +50,7 @@ const useStyle = makeStyles((theme) => ({
       backgroundColor: "transparent",
     },
     "&::placeholder": {
-      color: (props) => (props.checkedOutId)? theme.palette.text.textActivated: "whitesmoke",
+      color: (props) => (props.checkedOutId)? theme.palette.text.WorkspaceItem: "whitesmoke",
     },
   },
   icons: {
@@ -72,15 +72,18 @@ const useStyle = makeStyles((theme) => ({
     color: theme.palette.background.WorkspaceCont,
     cursor: "pointer",
     "&:hover": {
-      color: theme.palette.icon.Donwload,
+      color: theme.palette.icon.Download,
     },
   }
 }));
 
 export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...props}) {
   const locClasses = useStyle(props);
+
   const inputRef = useRef(null);
   const inputContRef = useRef(null);
+  const theme = useTheme();
+
   const UCID = useSelector(UCIDSelector);
   const id = useSelector(idSelector);
   const name = useSelector(wsNameSelector);
@@ -88,8 +91,11 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
   const codeContent = useSelector(codeContentSelector);
   const lastAssignedName = useSelector(wsNameSelector);
   const splitBtnReRender = useSelector(splitBtnReRenderSelector);
-  const [itemName, setItemName] = useState(lastAssignedName);
   const dispatch = useDispatch();
+
+  const [itemName, setItemName] = useState(lastAssignedName);
+
+
   let regFlag = false;
 
   useEffect(() => {
@@ -149,7 +155,7 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
         ref={inputRef}
         disabled={true}
         className={locClasses.input}
-        style={(props.checkedOutId)? {color: "#F50057"}: {color: "whitesmoke"}}
+        style={(props.checkedOutId)? {color: theme.palette.text.WorkspaceSelectedItem}: {color: theme.palette.text.WorkspaceItem}}
         type="text"
         name="workspaceItem"
         maxLength="28"

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UCIDSelector, idSelector, wsNameSelector, cmInputSelector, cmOutputSelector } from "../../../../../../store/selectors";
-import { fetchOptionObj, codeFormatter, toUrlEncoded } from '../../../../../../utils/generalTools';
-import { cmActionCreator } from "../../../../../../store/workspaces";
+import { fetchOptionObj, codeFormatter, toUrlEncoded } from '../../../../../../utils/appTools';
+import { cmActionCreator } from "../../../../../../store/codeModule";
 import { Btn } from "../../../../Atoms/Btn";
 import { makeStyles } from "@material-ui/core/styles";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
@@ -14,13 +14,20 @@ const useStyle = makeStyles((theme) => ({
   btn: {
     margin: "0 0.5rem",
   },
-  runBtnIcon: {
+  span: {
+    display: "flex",
+    flexFlow: "row nowrap",
+    alignItems: "center",
+  },
+  runIcon: {
+    marginLeft: "-0.5rem",
+    marginRight: "0.25rem",
     color: theme.palette.icon.Run,
   },
-  stopBtnIcon: {
+  stopIcon: {
     color: theme.palette.icon.Stop,
   },
-  progress: {
+  progressIcon: {
     minWidth: "1.25rem",
     maxWidth: "1.25rem",
     minHeight: "1.25rem",
@@ -45,10 +52,7 @@ export function Run(props) {
   return (
     (runStatus)?
     <Btn
-      className={locClasses.btn}
-      minWidth="6rem"
-      maxWidth="6rem"
-      startIcon={<PlayArrowIcon className={locClasses.runBtnIcon}/>}
+      className={locClasses.btn} minWidth="6rem" maxWidth="6rem"
       onClick={(event) => {
         setRunStatus(false);
         const data = {
@@ -86,20 +90,20 @@ export function Run(props) {
         }
       }}
     >
-      Run
+      <span className={locClasses.span}> <PlayArrowIcon className={locClasses.runIcon}/> Run </span>
     </Btn>:
     <Btn
-      className={locClasses.btn}
-      minWidth="6rem"
-      maxWidth="6rem"
-      startIcon={<StopIcon className={locClasses.stopBtnIcon}/>}
+      className={locClasses.btn} minWidth="6rem" maxWidth="6rem"
       onClick={(event) => {
         controller.abort();
         setRunStatus(true);
       }}
     >
-      Stop
-      <CircularProgress className={locClasses.progress}/>
+      <span className={locClasses.span}>
+        <StopIcon className={locClasses.stopIcon}/>
+        Stop
+        <CircularProgress className={locClasses.progressIcon}/>
+      </span>
     </Btn>
   );
 }

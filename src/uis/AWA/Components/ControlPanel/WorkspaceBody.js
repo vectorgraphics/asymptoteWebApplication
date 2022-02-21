@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { idSelector, appResetSelector } from "../../../../store/selectors";
 import { wsActionCreator } from "../../../../store/workspaces";
@@ -6,24 +6,23 @@ import { makeStyles } from "@material-ui/core";
 import { AlertDialog } from "../../Atoms/AlertDialog";
 import { WorkspaceItem } from "./WorkspaceItem";
 import { glActionCreator } from "../../../../store/globals";
+import { scrollbarStyler } from "../../../../utils/appTools";
 
 const useStyle = makeStyles((theme) => ({
-  itemCont: {
-    display: "block",
+  bodyCont: {
+    gridRow: "3/4",
     paddingTop: "0.5rem",
-    minHeight: "532px",
-    overflow: "auto",
-    "&::-webkit-scrollbar": {
-      width: "0.25rem",
-    },
-    "&::-webkit-scrollbar-track": {
-      boxShadow: "inset 0 0 0.25rem rgba(0,0,0,0.5)",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "darkgrey",
-      outline: "1px solid slategrey",
-    },
+    minHeight: "38.25rem",
+    maxHeight: "38.25rem",
+    overflowY: "auto",
+    overflowX: "hidden",
+    ...scrollbarStyler(),
+    backgroundColor: theme.palette.background.WorkspaceBody,
+    // border: "1px solid red",
   },
+  alert: {
+    position: "absolute",
+  }
 }))
 
 export function WorkspaceBody(props) {
@@ -38,10 +37,8 @@ export function WorkspaceBody(props) {
   useEffect(() => {
     contRef.current.scrollTop = contRef.current.scrollHeight;
   });
-  const openDialog = () => setOpenState(true);
-  const closeDialog = () => setOpenState(false);
 
-  const mediaryHandler = () => {
+  const OkAction = () => {
     const length = listOfItems.length;
     const index = listOfItems.indexOf(id);
     if (length === 1) {
@@ -57,27 +54,27 @@ export function WorkspaceBody(props) {
   }
 
   return (
-    <Fragment>
-      <div ref={contRef} className={locClasses.itemCont}>
+    <div>
+      <div ref={contRef} className={locClasses.bodyCont}>
         {listOfItems.map((item) => {
           if (item) {
             return <WorkspaceItem
               key={item} item={item} wsId={id} appReset={appReset}
               onClick={() => dispatch(wsActionCreator.checkout(item))}
-              checkedOutId={item === id} openDialog={openDialog}/>
+              checkedOutId={item === id} openDialog={() => setOpenState(true)}/>
           } else {
             return null;
           }
         })}
       </div>
-        <AlertDialog
-          OKAction={mediaryHandler} isOpen={isOpen} closeDialog={closeDialog}
+        <AlertDialog className={locClasses.alert}
+          onAccept={OkAction} isOpen={isOpen} onClose={() => setOpenState(false)}
           dialogText={
             (listOfItems.length === 1)
             ? "Clicking OK will reset the application to its default state."
             : "Deleting this workspace is irreversible!"
           }
         />
-    </Fragment>
+    </div>
   );
 }

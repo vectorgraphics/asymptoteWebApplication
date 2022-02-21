@@ -2,9 +2,9 @@ import { createStore, combineReducers } from 'redux';
 import { devToolsEnhancer } from "redux-devtools-extension";
 import { initialState } from "./initialState";
 import { globals } from "./globals";
-import { geometries, horizontalAxes, verticalAxes, legends, pictures } from "./graphModule";
-import { funcEntities, funcList } from "./funcSubModule";
-import { checkedoutWorkspaceId, workspacesIdOrder, entities, codeModule } from "./workspaces";
+import { codeModule } from "./codeModule";
+import { checkedOutWorkspaceId, workspacesIdOrder, entities } from "./workspaces";
+import { functions, axes, pens, Labels, pictures } from "./graphModule";
 import { themes } from "./themes";
 import { ui } from "./ui";
 
@@ -13,20 +13,16 @@ import { ui } from "./ui";
 export const store = createStore(combineReducers({
   globals,
   workspaces: combineReducers({
-    checkedoutWorkspaceId,
+    checkedOutWorkspaceId,
     workspacesIdOrder,
     entities,
     codeModule,
     graphModule: combineReducers({
-      geometries,
-      horizontalAxes,
-      verticalAxes,
-      legends,
-      pictures,
-      funcSubModule: combineReducers({
-        funcEntities,
-        funcList,
-      }),
+      functions,
+      axes,
+      pens,
+      Labels,
+      // pictures,
     }),
   }),
   ui,

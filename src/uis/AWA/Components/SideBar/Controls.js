@@ -1,45 +1,48 @@
-import {makeStyles} from "@material-ui/core/styles";
+import { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { SettingsPanel } from "../Settings/SettingsPanel";
+
 import SettingsIcon from "@material-ui/icons/Settings";
 import HomeIcon from "@material-ui/icons/Home";
 
 const useStyle = makeStyles((theme) => ({
-  controlCont: {
-    display: "block",
-    height: "6rem",
-    gridRow: "3/4",
-  },
-  control: {
-    display: "flex",
-    flexFlow: "column nowrap",
-    justifyContent: "center",
-    minHeight: "3rem",
-    color: "white",
-    "&:hover": {
-      color: theme.palette.icon.SideBarControlsHover,
-    }
-  },
-  icon: {
+  controlTabsCont: {
     display: "block",
     margin: "0 auto",
+    marginBottom: "100%",
+    // border: "1px solid white",
   },
-  anchor: {
-    color: "white",
+  controlBtn: {
+    display: "block",
+    minHeight: "4rem",
+    color: theme.palette.icon.SideBarControls,
+    "&:hover": {
+      color: theme.palette.icon.SideBarControlsHover,
+    },
+  },
+  link: {
+    color: theme.palette.icon.SideBarControls,
     "&:hover": {
       color: "inherit",
     }
   }
-}))
+}));
 
 export function Controls(props) {
-  const classes = useStyle();
+  const locClasses = useStyle();
+  const [panelState, setPanelState] = useState(false);
+
   return (
-    <div className={classes.controlCont}>
-      <div className={classes.control}> <SettingsIcon className={classes.icon}/> </div>
-      <div className={classes.control}>
-        <a className={classes.anchor} href={"https://asymptote.sourceforge.io/"} target={"_blank"} rel="noreferrer">
-          <HomeIcon className={classes.icon}/>
+    <div className={locClasses.controlTabsCont}>
+      <div className={locClasses.controlBtn} onClick={() => setPanelState(!panelState)}>
+        <SettingsIcon/>
+      </div>
+      <div className={locClasses.controlBtn}>
+        <a className={locClasses.link} href={"https://asymptote.sourceforge.io/"} target="_blank" rel="noreferrer">
+          <HomeIcon />
         </a>
       </div>
+      <SettingsPanel isOpen={panelState} onClose={() => setPanelState(!panelState)}/>
     </div>
   );
 }

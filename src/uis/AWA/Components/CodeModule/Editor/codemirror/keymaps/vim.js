@@ -2825,7 +2825,7 @@ import CodeMirror from 'codemirror/src/codemirror';
           //replace all characters in range by selected, but keep linebreaks
           replaceWithStr = replaceWithStr.replace(/[^\n]/g, replaceWith);
           if (vim.visualBlock) {
-            // Tabs are split in visua block before replacing
+            // WsStateTabs are split in visua block before replacing
             var spaces = new Array(cm.getOption("tabSize")+1).join(' ');
             replaceWithStr = cm.getSelection();
             replaceWithStr = replaceWithStr.replace(/\t/g, spaces).replace(/[^\n]/g, replaceWith).split('\n');

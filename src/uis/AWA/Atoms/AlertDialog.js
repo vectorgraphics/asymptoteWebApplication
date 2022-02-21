@@ -7,33 +7,37 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyle = makeStyles((theme) => ({
-  dialogRoot: {
+  dialog: {
     boxShadow: theme.shadows[5],
+    backgroundColor: theme.palette.background.DialogContent,
   },
-  dialogTitleRoot: {
-    color: theme.palette.text.textActivated,
+  dialogTitle: {
+    color: theme.palette.text.Activated,
   },
-  dialogContentTextRoot: {
-    color: "black",
+  dialogContentText: {
+    color: theme.palette.text.DialogContent,
+  },
+  btn: {
+    color: theme.palette.text.Buttons
   }
 }))
 
-export function AlertDialog({isOpen, closeDialog, OKAction, dialogText="", ...props}) {
+export function AlertDialog({className={}, isOpen, onClose=() => {}, onAccept=() => {}, dialogText="", ...props}) {
   const locClasses = useStyle();
   return (
-    <div>
-      <Dialog classes={{paper: locClasses.dialogRoot}} open={isOpen} onClose={closeDialog}>
-        <DialogTitle classes={{root: locClasses.dialogTitleRoot}}>{"Warning"}</DialogTitle>
+    <div className={className}>
+      <Dialog classes={{paper: locClasses.dialog}} open={isOpen} onClose={(event, reason) => (reason !== 'backdropClick')? onClose(): null}>
+        <DialogTitle classes={{root: locClasses.dialogTitle}}>{"Warning"}</DialogTitle>
         <DialogContent>
-          <DialogContentText classes={{root: locClasses.dialogContentTextRoot}}>
+          <DialogContentText classes={{root: locClasses.dialogContentText}}>
             {dialogText}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={closeDialog}> Cancel </Button>
-          <Button color="primary" autoFocus onClick={() => {
-            closeDialog();
-            setTimeout(() => OKAction(), 200);
+          <Button className={locClasses.btn} onClick={onClose}> Cancel </Button>
+          <Button className={locClasses.btn} autoFocus onClick={() => {
+            onClose();
+            setTimeout(() => onAccept(), 200);
           }}> Ok </Button>
         </DialogActions>
       </Dialog>
