@@ -1,15 +1,33 @@
 import { cloneDeep } from "lodash-es";
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Globally Used Data Models
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const previewOutput = {
+  serverRes: {
+    resType: "",
+    resText: "",
+    resUrl: ""
+  },
+  error: {
+    errType: null,
+    errText: null,
+    errCode: null,
+    errContent: null,
+  },
+  stdout: "",
+  stderr: "",
+}
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              initialState
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const initialState = {
   globals: {
     uniqueClientId: "-1",
     editorLineNumbers: true,
-    editorFontsize: "default",
-    editorKeyBinding: "default",
+    editorFontsize: "default",     // Must be in lowercase for compatibility with Codemirror
+    editorKeyBinding: "default",   // Must be in lowercase for compatibility with Codemirror
     splitBtnReRender: 0,
-    appReset: 0,
+    appReset: true,
     asyVersion: "",
   },
   workspaces: {
@@ -18,8 +36,9 @@ export const initialState = {
     entities: {
       "ws-1": {
         name: "workspace",
-        // activeModule: "Code Module",
-        activeModule: "Graph Module",
+        activeModule: "Code Module",
+        // activeModule: "Revolution Module",
+        // activeModule: "Graph Module",
         editorReRender: 0,
         editorPaneView: true,
         previewPaneView: true,
@@ -27,24 +46,14 @@ export const initialState = {
     },
     codeModule: {
       "ws-1": {
-        input: {
-          codeContent: "",
-          outFormat: "prev",
-          stdin: "",
+        code: {
+          lastSuccessful: "",
+          lastFailed: "",
+          currentContent: "",
         },
-        output: {
-          responseType: null,
-          responseText: null,
-          path: "",
-          errorType: null,
-          errorText: null,
-          errorCode: null,
-          errorContent: null,
-          stdout: "",
-          stderr: "",
-          entryExists: false,
-          isUpdated: false,
-        },
+        outFormat: "prev",
+        output: previewOutput,
+        shouldUpdate: false,
       },
     },
     graphModule: {
@@ -56,9 +65,25 @@ export const initialState = {
       Labels: {},
       // pictures: {},
     },
+    revolutionModule: {
+      "ws-1": {
+        fFormula: "",
+        gFormula: "",
+        xMin: "0",
+        xMax: "0",
+        rotAxisType: "Vertical",
+        rotAxisPos: "0",
+        output: {
+          ...previewOutput,
+          parentModule: "revolutionModule",
+        },
+      }
+    }
   },
   ui: {},
-  themes: {},
+  themes: {
+    appTheme: "darkTheme",
+  },
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%         data model slices
@@ -74,5 +99,6 @@ export const slices = {
   pens:        initialStateCopy.workspaces.graphModule.pens,
   Labels:      initialStateCopy.workspaces.graphModule.Labels,
   pictures:    initialStateCopy.workspaces.graphModule.pictures,
+  revolution:  initialStateCopy.workspaces.revolutionModule["ws-1"],
 }
 

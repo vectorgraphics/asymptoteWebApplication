@@ -75,7 +75,7 @@ export const functions = (state = {}, action) => {
       delete newCopy[action.payload.id];
       return newCopy;
     case glActions.resetApplication:
-      return slices.workspaces.graphModule.localFunctions;
+      return slices.functions;
     case fuActions.addFunction:
       newCopy[action.payload.id][action.payload.funcId] = action.payload.funcObj;
       return newCopy;
@@ -242,7 +242,7 @@ export const Labels = (state = {}, action) => {
   const newCopy = cloneDeep(state);
   switch (action.type) {
     case glActions.resetApplication:
-      return slices.workspaces.graphModule.labels;
+      return slices.Labels;
     case lbActions.addLabel:
       newCopy[action.payload.labelId] = action.payload.labelObj;
       return newCopy;
