@@ -5,6 +5,8 @@ import { globals } from "./globals";
 import { codeModule } from "./codeModule";
 import { checkedOutWorkspaceId, workspacesIdOrder, entities } from "./workspaces";
 import { functions, axes, pens, Labels, pictures } from "./graphModule";
+import { revolutionModule } from "./revolutionModule.js";
+
 import { themes } from "./themes";
 import { ui } from "./ui";
 
@@ -24,6 +26,7 @@ export const store = createStore(combineReducers({
       Labels,
       // pictures,
     }),
+    revolutionModule,
   }),
   ui,
   themes,
