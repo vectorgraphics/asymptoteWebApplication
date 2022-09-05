@@ -1,24 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
-import { idSelector, editorReRenderSelector } from "../../../../../../store/selectors";
-import { makeStyles } from "@material-ui/core/styles";
-import { enActionCreator } from "../../../../../../store/workspaces";
-import { cmActionCreator } from "../../../../../../store/codeModule";
-import { Btn } from "../../../../Atoms/Btn";
-import PublishIcon from "@material-ui/icons/Publish";
+import { idSelector, editorReRenderSelector } from "../../../../../store/selectors.js";
+import { makeStyles, Button } from "@material-ui/core";
+import { enActionCreator } from "../../../../../store/workspaces.js";
+import { cmActionCreator } from "../../../../../store/codeModule.js";
+import { Publish as UploadIcon} from "@material-ui/icons";
 
 const useStyle = makeStyles((theme) => ({
-  btn: {
-    margin: "0 0.5rem",
-  },
-  span: {
-    display: "flex",
-    flexFlow: "row nowrap",
-    alignItems: "center",
+  root: {
+    minWidth: "4rem",
+    maxWidth: "4rem",
+    minHeight: "1.5rem",
+    padding: "0",
+    fontSize: "0.875rem",
+    borderRadius: "1px",
+    "& span": {},
   },
   uploadIcon: {
-    marginLeft: "-0.5rem",
-    marginRight: "0.5rem",
-    color: theme.palette.icon.Upload,
+    color: theme.palette.icon.upload,
   },
 }))
 
@@ -29,12 +27,12 @@ export function Upload(props) {
   const dispatch = useDispatch();
 
   return (
-      <Btn
-        className={locClasses.btn} minWidth="6rem" maxWidth="6rem"
+      <Button
+        classes={{root: locClasses.root}} variant={"contained"} disableElevation={true}
         onClick={(event) => uploadHandler(dispatch, id, editorReRender)}
       >
-        <span className={locClasses.span}> <PublishIcon className={locClasses.uploadIcon}/> Upload </span>
-      </Btn>
+        <UploadIcon className={locClasses.uploadIcon}/>
+      </Button>
   );
 }
 

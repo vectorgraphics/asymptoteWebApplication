@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { cmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { WindowMenuBar } from "../../../Atoms/WindowMenuBar";
+import { PanelCtrlBar } from "../../../Atoms/PanelCtrlBar.js";
 
 import IconButton from '@material-ui/core/IconButton';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
@@ -26,9 +26,9 @@ const useStyle = makeStyles((theme) => ({
 
 export function Terminal({errorContent="", cmOutPut={}, closeTerminal=() => {}, ...props}) {
   const locClasses = useStyle();
-  const theme = useTheme();
   const [bodyState, setBodyState] = useState(false);
   const outPut = useSelector(cmOutputSelector);
+  const theme = useTheme();
 
   // useEffect(() => {
   //   if (cmOutPut !== outPut) {
@@ -39,8 +39,8 @@ export function Terminal({errorContent="", cmOutPut={}, closeTerminal=() => {}, 
   return (
     (bodyState && (errorContent !== ""))?
     <div className={locClasses.terminalCont}>
-      <WindowMenuBar
-        backgroundColor={theme.palette.background.Header2}
+      <PanelCtrlBar
+        backgroundColor={theme.palette.background.headerType2}
         // titleBarComponent={<div style={{marginLeft: "0.5rem"}}> Terminal </div>}
         // onMin={}
         // onMax={}
@@ -48,7 +48,7 @@ export function Terminal({errorContent="", cmOutPut={}, closeTerminal=() => {}, 
       />
       <div className={locClasses.terminalBody}> {errorContent} </div>
     </div>:
-      null
+    null
   );
 }
 
