@@ -1,77 +1,96 @@
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import { Switch } from '@material-ui/core';
+import { merge } from "lodash";
 
-const useStyle = makeStyles((theme) => ({
-  root: {
-    width: 42,
+const basicStyle = (theme) => ({
+  switchCont: {
+    display: "flex",
+    flexFlow: "row nowrap",
+    margin: "2rem",
+    alignItems: "center",
+    alignContent: "center",
+    // border: "1px solid green",
+  },
+  switchRoot: {
+    width: "3.5rem",
     height: 26,
     padding: 0,
-    margin: "2rem",
+    // border: '1px solid blue',
   },
   switchBase: {
     padding: 1,
-    '&$checked': {
-      transform: 'translateX(16px)',
-      color: theme.palette.common.white,
-      '& + $track': {
-        backgroundColor: '#52d869',
+    '&$switchChecked': {
+      transform: 'translateX(30px)',
+      color: "red",
+      '& + $switchTrack': {
+        backgroundColor: "grey",
         opacity: 1,
-        border: 'none',
+        border: `1px solid black`,
       },
     },
-    '&$focusVisible $thumb': {
-      color: '#52d869',
-      border: '6px solid #fff',
-    },
+    // '&$focusVisible $thumb': {
+    //   color: theme.palette.background.ModulePanel,
+    //   border: '6px solid #fff',
+    // },
   },
-  thumb: {
+  switchThumb: {
     width: 24,
     height: 24,
   },
-  track: {
-    borderRadius: 26 / 2,
-    border: `1px solid ${theme.palette.grey[400]}`,
-    backgroundColor: theme.palette.grey[50],
+  switchTrack: {
     opacity: 1,
-    transition: theme.transitions.create(['background-color', 'border']),
+    backgroundColor: "grey",
+    border: "1px solid black",
+    borderRadius: 26 / 2,
+    transition: theme.transitions.create(['background-color']),
   },
-  checked: {},
-  focusVisible: {},
+  switchChecked: {},
+  switchLabels: {
+    flex: "1 1 auto",
+    height: "26px",
+    textAlign: "center",
+    color: theme.palette.text.awaPrimaryContrast,
+  },
+});
+
+const useStyle = makeStyles((theme) => ({
+  switchCont:    (finalStyle) => merge(basicStyle(theme), finalStyle).switchCont,
+  switchRoot:    (finalStyle) => merge(basicStyle(theme), finalStyle).switchRoot,
+  switchBase:    (finalStyle) => merge(basicStyle(theme), finalStyle).switchBase,
+  switchThumb:   (finalStyle) => merge(basicStyle(theme), finalStyle).switchThumb,
+  switchTrack:   (finalStyle) => merge(basicStyle(theme), finalStyle).switchTrack,
+  switchChecked: (finalStyle) => merge(basicStyle(theme), finalStyle).switchChecked,
+  switchLabels:  (finalStyle) => merge(basicStyle(theme), finalStyle).switchLabels,
 }));
 
 
-function BaseSwitch(props) {
-  const locClasses = useStyle()
-  return (
-    <Switch
-      focusVisibleClassName={locClasses.focusVisible}
-      disableRipple
-      classes={{
-        root: locClasses.root,
-        switchBase: locClasses.switchBase,
-        thumb: locClasses.thumb,
-        track: locClasses.track,
-        checked: locClasses.checked,
-      }}
-      {...props}
-    />
-  );
-}
-
-export function BinarySwitch({checked=true, ...props}) {
-  const [state, setState] = useState(true);
+export function BinarySwitch({finalStyle={}, Labels=["left", "right"], switchInitialValue="right", onChange=()=>{}, ...props}) {
+  const locClasses = useStyle(finalStyle)
+  const [state, setState] = useState(() => {
+    return !!Labels.indexOf(switchInitialValue);
+  });
 
   return (
-    <FormGroup>
-      <FormControlLabel
-        label="switch value"
-        control={
-          <BaseSwitch checked={checked} name="on&off" onChange={(event) => setState(!state)}/>
-        }
-      />
-    </FormGroup>
+    <div className={locClasses.switchCont}>
+      <p className={locClasses.switchLabels}> {Labels[0]} </p>
+        <Switch
+          // focusVisibleClassName={locClasses.focusVisible} disableRipple
+          classes={{
+            root: locClasses.switchRoot,
+            switchBase: locClasses.switchBase,
+            thumb: locClasses.switchThumb,
+            track: locClasses.switchTrack,
+            checked: locClasses.switchChecked,
+          }}
+          name="Binary-Switch"
+          checked={state}
+          onChange={(event) => {
+            setState(!state);
+            onChange(!state);
+          }}
+        />
+      <p className={locClasses.switchLabels}> {Labels[1]} </p>
+    </div>
   );
 }
