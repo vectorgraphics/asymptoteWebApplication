@@ -1,20 +1,25 @@
-import './App.css';
-import { store } from "../store/store";
-import { Provider } from "react-redux";
-import { ThemeProvider } from "@material-ui/core/styles";
-import { darkTheme, lightTheme } from "../uis/AWA/Themes/awaThemes";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { themeSelector } from "../store/selectors.js";
+import { StylesProvider, jssPreset, ThemeProvider } from "@material-ui/core/styles";
 import { AWAPlatform } from "../uis/AWA/Components/AWAPlatform/AWAPlatform";
+import { darkTheme, lightTheme } from "../uis/AWA/Themes/awaThemes";
+import { create } from 'jss';
+import jssPluginSyntaxExtend from "jss-plugin-extend";
 
-function App({UCID=0, asyVersion="unknown", ...props}) {
+const jssExtended = create({
+  plugins: [...jssPreset().plugins, jssPluginSyntaxExtend()],
+});
+
+export const App = ({UCID=0, asyVersion="unknown", ...props}) => {
+  const appliedTheme = useSelector(themeSelector);
+  useEffect(() => {}, [appliedTheme]);
+
   return (
-    <Provider store={store}>
-      <div className="App">
-        <ThemeProvider theme={lightTheme}>
+    <StylesProvider jss={jssExtended}>
+      <ThemeProvider theme={(appliedTheme === "darkTheme")? darkTheme: lightTheme}>
           <AWAPlatform UCID={UCID} asyVersion={asyVersion}/>
-        </ThemeProvider>
-      </div>
-    </Provider>
+      </ThemeProvider>
+    </StylesProvider>
   );
 }
-
-export default App;
