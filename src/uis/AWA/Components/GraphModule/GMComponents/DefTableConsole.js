@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { makeStyles } from "@material-ui/core";
-import { WindowMenuBar } from "../../../Atoms/WindowMenuBar";
+import { PanelCtrlBar } from "../../../Atoms/PanelCtrlBar.js";
 import { TableContainer,  Table, TableBody, TableHead, TableRow, TableCell } from "../Atoms/DefTable";
 import CancelIcon from '@material-ui/icons/Cancel';
 import MinimizeIcon from '@material-ui/icons/Minimize';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import { CheckBoxOutlineBlank as MaximizeIcon } from '@material-ui/icons';
 import { scrollbarStyler } from "../../../../../utils/appTools";
-
-const MaximizeIcon = CheckBoxOutlineBlankIcon;
 
 const useStyle = makeStyles((theme) => ({
   panelCont: {
@@ -172,9 +170,10 @@ export function DefTableConsole(
         </TableContainer>
       </fieldset>
       {
-        (showConsole) ?
+        (showConsole)?
           <div ref={consoleRef} className={locClasses.consoleCont}>
-              <WindowMenuBar borderBottom = "1px solid black"
+              <PanelCtrlBar
+                borderBottom = "1px solid black"
                 titleBarComponent={<div className={locClasses.errHeading}> Error(s) </div>}
                 onMin={(event) => {
                   consoleRef.current.classList.add(locClasses.bodyHide);
@@ -194,7 +193,7 @@ export function DefTableConsole(
             <div className={locClasses.body}>
               <ul className={locClasses.ul}> {consoleContent.map((text, index) => <li key={index}> {text} </li>)} </ul>
             </div>
-          </div> : null
+          </div>: null
       }
     </div>
   );

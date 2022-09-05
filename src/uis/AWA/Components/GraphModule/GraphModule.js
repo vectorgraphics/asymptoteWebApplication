@@ -8,7 +8,7 @@ import { PicturesTab } from "./Tabs/PicturesTab";
 import { DrawTab } from "./Tabs/DrawTab";
 
 const useStyle = makeStyles((theme) => ({
-  base: {
+  graphModule: {
     display: "flex",
     flexFlow: "column nowrap",
     minHeight: "100%",
@@ -19,13 +19,14 @@ const useStyle = makeStyles((theme) => ({
     minHeight: "calc(100% -2rem)",
     margin: "1rem",
     alignSelf: "stretch",
-    backgroundColor: theme.palette.background.GraphModule,
+    backgroundColor: theme.palette.background.moduleContrast,
     borderRadius: "3px 3px 2px 2px",
   },
   appBar: {
     maxHeight: "2rem",
     minHeight: "2rem",
-    backgroundColor: theme.palette.background.GMAppBar,
+    // backgroundColor: theme.palette.common.blue[500],
+    backgroundColor: theme.palette.common.dimgrey,
     borderRadius: "2px 2px 0 0",
   },
   tabs: {
@@ -48,11 +49,11 @@ const useStyle = makeStyles((theme) => ({
 export function GraphModule(props) {
   const locClasses = useStyle();
   const [tabId, setTabId] = useState(0);
-  // const tabItems = ["Functions", "Axes", "Pens", "Labels", "Pictures", "Draw"]; // With Pictures Tab
   const tabItems = ["Functions", "Axes", "Pens", "Labels", "Draw"];
+  // const tabItems = ["Functions", "Axes", "Pens", "Labels", "Pictures", "Draw"]; // With Pictures Tab
 
   return (
-    <div className={locClasses.base}>
+    <div className={locClasses.graphModule}>
       <div className={locClasses.tabsCont}>
         <AppBar classes={{root: locClasses.appBar}} position="static">
           <Tabs

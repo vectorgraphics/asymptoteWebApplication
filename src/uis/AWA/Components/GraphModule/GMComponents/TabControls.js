@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useRef } from "react";
 import { makeStyles, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from "@material-ui/core";
-import { Btn } from "../../../Atoms/Btn";
+import { EraserSVG } from "../../../../../assets/svgs/appwideSvgs.js";
 
 const useStyle = makeStyles((theme) => ({
   leftSection: {
@@ -23,20 +23,20 @@ const useStyle = makeStyles((theme) => ({
     justifyContent: "end",
     gridTemplateRows: "1fr",
   },
-  btns: {
+  btn: {
+    gridRow: "1/2",
     marginLeft: "1.5rem",
     minWidth: "6rem",
     maxWidth: "6rem",
     minHeight: "2rem",
     maxHeight: "2rem",
-    gridRow: "1/2",
     borderRadius: "2px",
   },
 }));
 
 export function TabControls(
   {
-    className={}, selectionList=[], assignedNames=[], editState=false, onAdd=() => {}, onSave=() => {},
+    className="", selectionList=[], assignedNames=[], editState=false, onAdd=() => {}, onSave=() => {},
     onDiscard=() => {}, onRemove=() => {}, onCopy=() => {}, onErase=() => {}, ...props
   }) {
   const locClasses = useStyle();
@@ -45,19 +45,19 @@ export function TabControls(
   return (
     <div className={className}>
       <div className={locClasses.leftSection}>
-        <IconButton classes={{sizeSmall: locClasses.iconBtn}} size="small" onClick={onErase}> <EraseBtn/> </IconButton>
+        <IconButton classes={{sizeSmall: locClasses.iconBtn}} size="small" onClick={onErase}> <EraserSVG/> </IconButton>
       </div>
       <div className={locClasses.rightSection}>
         {
           (editState)
             ? <Fragment>
-                <Btn className={locClasses.btns} onClick={onSave}> save </Btn>
-                <Btn className={locClasses.btns} onClick={onDiscard}> discard </Btn>
+                <Button classes={{root: locClasses.btn}}> Save onClick={onSave} </Button>
+                <Button classes={{root: locClasses.btn}}> Discard onClick={onDiscard} </Button>
               </Fragment>
             : <Fragment>
-                <Btn className={locClasses.btns} disabled={selectionList.length > 0} onClick={onAdd}> add </Btn>
-                <Btn className={locClasses.btns} disabled={selectionList.length === 0} onClick={onRemove}> remove </Btn>
-                <Btn className={locClasses.btns} disabled={!(selectionList.length === 1)} onClick={() => setOpenDialogState(true)}> copy </Btn>
+                <Button className={locClasses.btn} disabled={selectionList.length > 0} onClick={onAdd}> add </Button>
+                <Button className={locClasses.btn} disabled={selectionList.length === 0} onClick={onRemove}> remove </Button>
+                <Button className={locClasses.btn} disabled={!(selectionList.length === 1)} onClick={() => setOpenDialogState(true)}> copy </Button>
               </Fragment>
         }
       </div>
@@ -177,15 +177,3 @@ export function CopyDialog({open=false, onClose=() => {}, onSave=() => {}, selec
   );
 }
 
-
-function EraseBtn({className={}, ...props}) {
-  return (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="#606164" width="1.5rem" height="1.5rem" viewBox="0 0 512 512">
-        <path d="M497.941 273.941c18.745-18.745 18.745-49.137 0-67.882l-160-160c-18.745-18.745-49.136-18.746-67.883
-         0l-256 256c-18.745 18.745-18.745 49.137 0 67.882l96 96A48.004 48.004 0 0 0 144 480h356c6.627 0 12-5.373
-         12-12v-40c0-6.627-5.373-12-12-12H355.883l142.058-142.059zm-302.627-62.627l137.373 137.373L265.373
-         416H150.628l-80-80 124.686-124.686z"
-        />
-      </svg>
-  );
-}

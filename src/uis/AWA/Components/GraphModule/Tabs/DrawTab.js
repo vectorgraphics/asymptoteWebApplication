@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { idSelector, functionsSelector, axesSelector, pensSelector, LabelsSelector } from "../../../../../store/selectors";
-import { makeStyles, useTheme, TextField } from "@material-ui/core";
-import { Preview } from "../GMComponents/Preview";
+import { makeStyles, Button, TextField } from "@material-ui/core";
+import { PreviewPane } from "../GMComponents/PreviewPane.js";
 import { ComboBox } from "../../../Atoms/ComboBox";
 import { MultipleSelect } from "../../../Atoms/MultipleSelect";
 import { legendStyler, dataArrayGen } from "../../../../../utils/appTools";
-import { Btn } from "../../../Atoms/Btn";
 import { generateAsyCode } from "../../../../../utils/AsyTools/asyCodeGen";
 import { asyPicData as picInitState } from "../../../../../utils/AsyTools/asyData";
 
@@ -103,9 +102,13 @@ const useStyle = makeStyles((theme) => ({
   },
   draw: {
     gridColumn: "1/2",
+    minWidth: "8rem",
+    minHeight: "2.25rem",
   },
   mapToCode: {
     gridColumn: "2/3",
+    minWidth: "8rem",
+    minHeight: "2.25rem",
   },
   lowerPanel: {
     flex: "1 1 auto",
@@ -200,8 +203,7 @@ export function DrawTab(props) {
 
         <fieldset className={locClasses.ctrlFieldSet}>
           <legend className={locClasses.legend}> Draw & Map </legend>
-          <Btn
-            className={locClasses.draw} minWidth="8rem" minHeight="2.25rem"
+          <Button classes={{root: locClasses.draw}}
             onClick={() => {
               const dataObject = {
                 indVar: selectedVar,
@@ -224,14 +226,14 @@ export function DrawTab(props) {
               const code = generateAsyCode(dataObject);
               console.log(code);
             }}
-          > draw </Btn>
-          <Btn className={locClasses.mapToCode} minWidth="8rem" minHeight="2.25rem"> map to code </Btn>
+          > draw </Button>
+          <Button classes={{root: locClasses.mapToCode}}> map to code </Button>
         </fieldset>
 
       </div>
 
       <div className={locClasses.lowerPanel}>
-        <div className={locClasses.preview}> <Preview/> </div>
+        <div className={locClasses.preview}> <PreviewPane/> </div>
         {/*<div className={locClasses.sidePanel}> </div>*/}
       </div>
     </div>

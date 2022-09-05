@@ -12,7 +12,7 @@ import { ComboBox } from "../../../Atoms/ComboBox";
 import { ColorInput } from "../Atoms/ColorInput";
 import { ColorBox } from "../Atoms/ColorBox";
 import { FillNoFill } from "../Atoms/FillNoFill";
-import { Colon, LatexBox, LetterA, LetterB, Mapsto } from "../../../../../assets/icons/FunctionDefSVGs";
+import { DomainTarget, Colon, LetterA, LetterB, Mapsto } from "../../../../../assets/svgs/graphModuleSvgs/functionDef.js";
 import { isUniqueName, isValidName } from "../../../../../utils/validators";
 import { addSaveActions, dataArrayGen, legendStyler } from "../../../../../utils/appTools";
 import { asyFuncData as funcInitState } from "../../../../../utils/AsyTools/asyData";
@@ -370,7 +370,7 @@ export function FunctionsTab(props) {
                     error={funcNameErr}
                   />
                   <div className={locClasses.colonSVG}> <Colon/> </div>
-                  <LatexBox classes={locClasses.latexBoxSVG}/>
+                  <DomainTarget classes={locClasses.latexBoxSVG}/>
                   <div className={locClasses.letterA}> <LetterA/> </div>
                   <TextField
                     className={locClasses.letterATextField} size="small" variant="outlined" value={funcData.lBound}
