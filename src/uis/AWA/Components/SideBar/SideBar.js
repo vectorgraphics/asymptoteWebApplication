@@ -13,7 +13,7 @@ const useStyle = makeStyles((theme) => ({
     minWidth: "2rem",
     maxWidth: "2rem",
     fontWeight: "300",
-    backgroundColor: theme.palette.background.SideBar,
+    backgroundColor: theme.palette.background.sideBar,
     borderRight: "1px solid black",
     zIndex: 1000,
   },

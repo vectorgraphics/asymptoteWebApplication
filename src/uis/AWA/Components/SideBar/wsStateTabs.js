@@ -1,7 +1,7 @@
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Tooltip } from "@material-ui/core";
 import { useSelector } from "react-redux";
-import { idSelector } from "../../../../store/selectors";
+import { idSelector, wsNameSelector } from "../../../../store/selectors";
 
 const useStyle = makeStyles((theme) => ({
   WsStateTabsCont: {
@@ -11,8 +11,20 @@ const useStyle = makeStyles((theme) => ({
     maxWidth: "2rem",
     backgroundColor: theme.palette.background.SideBarTabs,
   },
+  commonTabsStyle: {
+    display: "grid",
+    "min-width": "2rem",
+    "min-height": "6rem",
+    "max-height": "6rem",
+    "justify-content": "center",
+    "justify-items": "center",
+    color: theme.palette.text.awaSecondaryContrast,
+    border: "none",
+    cursor: "default",
+    "border-bottom": "1px solid black",
+  },
   stateTab: {
-    ...commonTabsStyle,
+    extend: "commonTabsStyle",
     cursor: "pointer",
     "&:hover": {
       backgroundColor: theme.palette.background.SideBarTabsHover,
@@ -20,13 +32,13 @@ const useStyle = makeStyles((theme) => ({
     borderRight: "1px solid black",
   },
   wsNameTab: {
-    ...commonTabsStyle,
+    extend: "commonTabsStyle",
     padding: "0.125rem 0",
     transition: "min-height 0.25s linear, max-height 0.25s linear",
     borderRight: "1px solid black",
   },
   hideWsNameTab: {
-    ...commonTabsStyle,
+    extend: "commonTabsStyle",
     minHeight: 0,
     maxHeight: 0,
     borderBottom: "none",
@@ -48,14 +60,16 @@ export function WsStateTabs({isCPExpanded=false, setCPExpandState=() => {}, ...p
   const theme = useTheme();
 
   const id = useSelector(idSelector);
-  const wsName = useSelector((store) => store.workspaces.entities[id].name);
+  const wsName = useSelector(wsNameSelector);
 
   return (
     <div className={locClasses.WsStateTabsCont}>
       <div
         className={locClasses.stateTab}
         onClick={(event) => setCPExpandState(!isCPExpanded)}>
-          <p className={locClasses.tabsText} style={(isCPExpanded)? {}: {color: theme.palette.text.SideBarTabsClicked}}> {"Expand"} </p>
+          <p className={locClasses.tabsText} style={(isCPExpanded)? {}: {color: theme.palette.text.active}}>
+            {(isCPExpanded)? "Collapse": "Expand"}
+          </p>
       </div>
       <div className={(isCPExpanded)? locClasses.hideWsNameTab: locClasses.wsNameTab}>
         <Tooltip title={wsName} placement="right">
@@ -64,18 +78,4 @@ export function WsStateTabs({isCPExpanded=false, setCPExpandState=() => {}, ...p
       </div>
     </div>
   );
-}
-
-
-const commonTabsStyle = {
-  display: "grid",
-  minWidth: "2rem",
-  minHeight: "6rem",
-  maxHeight: "6rem",
-  justifyContent: "center",
-  justifyItems: "center",
-  color: "white",
-  border: "none",
-  cursor: "default",
-  borderBottom: "1px solid black",
 }
