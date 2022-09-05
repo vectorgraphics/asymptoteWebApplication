@@ -7,12 +7,12 @@ const useStyle = makeStyles((theme) => ({
     display: "block",
   },
   arrows:{
-    color: "grey",
+    color: theme.palette.icon.headerArrow,
     fontSize: "2rem",
     verticalAlign: "middle",
     cursor: "pointer",
     "&:hover": {
-      color: "red",
+      color: theme.palette.icon.headerArrowHover,
     }
   },
 }));
@@ -20,21 +20,29 @@ const useStyle = makeStyles((theme) => ({
 export function ArrowControllers({pane="editor", status=true, onClick=() => {}, ...props}) {
   const locClasses = useStyle();
 
-  return (
-    (pane === "editor")?
-      <div className={locClasses.arrowBox} onClick={onClick}>
-        {
-          (status)?
-            <ChevronRightOutlinedIcon className={locClasses.arrows}/>:
-            <ChevronLeftOutlinedIcon className={locClasses.arrows}/>
-        }
-      </div>:
-      <div className={locClasses.arrowBox} onClick={onClick}>
-        {
-          (status)?
-            <ChevronLeftOutlinedIcon className={locClasses.arrows}/>:
-            <ChevronRightOutlinedIcon className={locClasses.arrows}/>
-        }
-      </div>
-  );
+  switch (pane) {
+    case "editor":
+      return(
+        <div className={locClasses.arrowBox} onClick={onClick}>
+          {
+            (status)?
+              <ChevronRightOutlinedIcon className={locClasses.arrows}/>:
+              <ChevronLeftOutlinedIcon className={locClasses.arrows}/>
+          }
+        </div>
+      );
+    case "preview":
+      return (
+        <div className={locClasses.arrowBox} onClick={onClick}>
+          {
+            (status)?
+              <ChevronLeftOutlinedIcon className={locClasses.arrows}/>:
+              <ChevronRightOutlinedIcon className={locClasses.arrows}/>
+          }
+        </div>
+      );
+
+
+  }
+
 }

@@ -1,19 +1,18 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { EditorPane } from "./Editor/EditorPane";
-import { CtrlBar } from "./Controls/CtrlBar";
-import { PreviewPane } from "./Preview/PreviewPane";
+import { EditorPane } from "./EditorPane/EditorPane";
+import { PreviewPane } from "./PreviewPane/PreviewPane";
+import { scrollbarStyler } from "../../../../utils/appTools";
 
 const useStyle = makeStyles((theme) => ({
   codeModule: {
-    display: "grid",
-    minHeight: "minmax(500px, 1fr)",
-    gridTemplateRows: "2.5rem minmax(500px, 1fr)",
-  },
-  workingPanes: {
-    gridRow: "2/3",
     display: "flex",
     flexFlow: "row nowrap",
-    minHeight: "calc(100vh - 2.5rem)",
+    marginTop: "0.25rem",
+    minHeight: "calc(100% - 0.25rem)",
+    maxHeight: "calc(100% - 0.25rem)",
+    justifyContent: "stretch",
+    overflow: "auto",
+    ...scrollbarStyler(),
   },
 }));
 
@@ -22,11 +21,19 @@ export function CodeModule(props) {
 
   return (
     <div className={locClasses.codeModule}>
-      <CtrlBar/>
-      <div className={locClasses.workingPanes}>
-        <EditorPane/>
-        <PreviewPane/>
-      </div>
+        <EditorPane finalStyle={editorFinalStyle}/>
+        <PreviewPane finalStyle={previewFinalStyle}/>
     </div>
   )
+}
+
+const editorFinalStyle = {
+  editorPane: {
+    flex: "1 1 0",
+  }
+}
+const previewFinalStyle = {
+  previewPane: {
+    flex: "1 1 0",
+  }
 }
