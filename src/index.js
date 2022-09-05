@@ -1,11 +1,8 @@
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { useSelector } from "react-redux";
-import { UCIDSelector } from "./store/selectors";
-import App from './core/App';
-import { fetchOptionObj } from "./utils/appTools";
-// import reportWebVitals from './core/reportWebVitals';
+import { AppContainer } from "./core/AppContainer.js";
+
 
 let pingMilliseconds = 600000;
 const data = {
@@ -41,10 +38,7 @@ const pingData = {
 // reportWebVitals();
 
 
-ReactDOM.render(
-  <App UCID="100" asyVersion="0.00"/>,
-  document.getElementById('root')
-);
+ReactDOM.render(<AppContainer UCID="100" asyVersion="0.00"/>, document.getElementById('root'));
 
 
 
