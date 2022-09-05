@@ -1,28 +1,27 @@
 import { createTheme } from "@material-ui/core/styles";
+import { grey, red, pink, orange, deepOrange, blue, green, blueGrey } from "@material-ui/core/colors";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Common Data
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-const colors = {
-  white: "#FFFFFF",
-  whitesmoke: "#F5F5F5",
-  vividgrey: "#E0E0E0",
-  lightgrey: "#D3D3D3",
-  semidarkgrey: "#aba8b7",
-  darkgrey: "#A9A9A9",
-  dimgrey: "#5d6980",
-  deepgrey: "#424242",
-  greyedblue: "#282C34",
-  semigreyedblue: "#323844",
-  lightgreyedblue: "#717e91",
-  dimorange: "#ef6c00",
-  semired: "#F44336",
-  red: "#FF0000",
-  dimgreen: "#2E7D32",
-  lightblue: "#B9D6E0",
-  deepblue: "#283593",
-  black: "#000000",
-}
+const white = "#FFFFFF";
+const whitesmoke = "#F5F5F5";
+const vividgrey = "#E0E0E0";
+const lightgrey = "#D3D3D3";
+const semidarkgrey = "#aba8b7";
+const darkgrey = "#A9A9A9";
+const dimgrey = "#5d6980";
+const deepgrey = "#424242";
+const greyedblue = "#282C34";
+const semigreyedblue = "#323844";
+const lightgreyedblue = "#717e91";
+const dimorange = "#ef6c00";
+const semired = "#F44336";
+const pureRed = "#FF0000";
+const dimgreen = "#2E7D32";
+const lightblue = "#B9D6E0";
+const deepblue = "#283593";
+const black = "#000000";
 
 const overrides = {
   MuiButton: {
@@ -52,6 +51,80 @@ const props = {
   }
 }
 
+const common = {
+  black, white, whitesmoke, grey, red, pink, orange, deepOrange, blue, green, blueGrey,
+  vividgrey, lightgrey, semidarkgrey, darkgrey, dimgrey, deepgrey, greyedblue, semigreyedblue,
+  lightgreyedblue, dimorange, semired, pureRed, dimgreen, lightblue, deepblue,
+};
+const awaPrimary = {
+  awaLight: whitesmoke,
+  awaMain: lightgrey,
+  awaDark: darkgrey,
+  awaContrastText: black,
+};
+const hover = {
+  buttonHover: vividgrey,
+  tabHover: darkgrey,
+  wsItemHover: semidarkgrey,
+  menuItemHover: grey[500],
+};
+const outline = {
+  panelBorder: grey[700],
+  radio: white,
+  radioChecked: pureRed,
+  input: deepblue,
+  inputError: pureRed,
+};
+const error = {
+  light: red[300],
+  main: red[500],
+  dark: red[900],
+  contrastText: black,
+};
+const text = {
+  commonLight: whitesmoke,
+  commonDark: black,
+  primaryHighlight: pureRed,
+  secondaryHighlight: blue[500],
+  active: pureRed,
+  disabled: lightgrey,
+  hint: blue[500],
+};
+const icon = {
+  home: white,
+  settings: white,
+  wiki: orange[700],
+  add: whitesmoke,
+  upload: blue[500],
+  download: blue[500],
+  run: green[500],
+  stop: red[500],
+  progress: pureRed,
+  erase: pureRed,
+  delete: pureRed,
+  reset: pureRed,
+  headerArrow: grey[700],
+
+  homeHover: pureRed,
+  settingsHover: pureRed,
+  wikiHover: orange[700],
+  addHover: blue[100],
+  uploadHover: blue[500],
+  downloadHover: blue[500],
+  runHover: green[500],
+  stopHover: red[500],
+  eraseHover: pureRed,
+  deleteHover: pureRed,
+  resetHover: pureRed,
+  headerArrowHover: red[500],
+};
+const divider = {
+  primaryDark: "rgba(0, 0, 0, 0.75)",
+  secondaryDark: "rgba(0, 0, 0, 0.25)",
+  primaryLight: "rgba(255, 255, 255, 0.75)",
+  secondaryLight: "rgba(255, 255, 255, 0.25)",
+};
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Light Theme
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,73 +132,45 @@ export const lightTheme = createTheme({
   overrides: {...overrides},
   props: {...props},
   palette: {
+    common,
+    awaPrimary,
     background: {
-      SideBar: colors.darkgrey,
-      SideBarTabs: colors.darkgrey,
-      SideBarTabsHover: colors.darkgrey,
-      ControlMenu: colors.darkgrey,
-      ControlPanel: colors.whitesmoke,
-      WorkspaceHeader: colors.lightgrey,
-      WorkspaceBody: colors.whitesmoke,
-      WorkspaceCont: colors.whitesmoke,
-      LogoPane: colors.whitesmoke,
-      CtrlBar: colors.darkgrey,
-      ModulePanel: colors.lightgrey,
-      GraphModule: colors.lightgrey,
-      GMAppBar: colors.deepgrey,
-      Editor: colors.darkgrey,
-      Preview: colors.whitesmoke,
-      Buttons: colors.vividgrey,
-      ButtonsHover: colors.vividgrey,
-      WorkspaceItemsHover: colors.semidarkgrey,
-      Dialog: colors.darkgrey,
-      Header1: colors.dimgrey,
-      Header2: colors.lightgrey,
-      Header3: colors.semidarkgrey,
-      // Header2: "#bcaaa4",
+      module: darkgrey,
+      moduleContrast: grey[200],
+      panel: whitesmoke,
+      panelContrast: darkgrey,
+      sideBar: darkgrey,
+      dialog: darkgrey,
+      tab: darkgrey,
+      menu: darkgrey,
+      headerType1: whitesmoke,
+      headerType2: grey[500],
+      headerType3: semidarkgrey,
+      headerType4: darkgrey,
+      console: darkgrey,
+      popUpPanel: darkgrey,
+      buttons: vividgrey,
+      workspaceItemsHover: semidarkgrey,
     },
-    outline: {
-      RadioCircle: colors.white,
-      RadioCircleChecked: colors.red,
-      InputBorder: colors.deepblue,
-      InputErrorBorder: colors.red,
+    hover: {
+      ...hover,
+      wsItemHover: grey[400],
     },
+    outline,
+    error,
     text: {
-      PrimaryLight: colors.white,
-      PrimaryDark: colors.black,
-      SideBarTabs: colors.white,
-      SideBarTabsClicked: colors.red,
-      HeaderTitles: colors.white,
-      WorkspaceHeader: colors.whitesmoke,
-      WorkspaceItem: colors.black,
-      WorkspaceSelectedItem: colors.red,
-      DialogTitle: colors.black,
-      DialogContent: colors.black,
-      InputLabel: colors.deepblue,
-      InputContent: colors.black,
-      InputError: colors.red,
-      ErrorLabel: colors.red,
-      Buttons: colors.black,
-      RadioBtn: colors.black,
-      Activated: colors.red,
-      AsyVersion: colors.black,
+      amaPrimary: white,
+      amaSecondary: whitesmoke,
+      amaPrimaryContrast: black,
+      amaSecondaryContrast: grey[900],
+      ...text,
     },
-    icon: {
-      SideBarControls: colors.white,
-      SideBarControlsHover: colors.red,
-      Wiki: colors.dimorange,
-      Upload: colors.deepblue,
-      Download: colors.deepblue,
-      Run: colors.dimgreen,
-      Stop: colors.semired,
-      Clear: colors.red,
-      Add: colors.whitesmoke,
-      AddHover: colors.red,
-    },
+    icon,
+    divider: {
+      ...divider,
+    }
   }
 });
-
-
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Dark Theme
@@ -134,63 +179,42 @@ export const darkTheme = createTheme({
   overrides: {...overrides},
   props: {...props},
   palette: {
+    common,
+    awaPrimary: {
+      ...awaPrimary,
+      awaContrastText: whitesmoke,
+    },
     background: {
-      SideBar: colors.greyedblue,
-      SideBarTabs: colors.semigreyedblue,
-      SideBarTabsHover: colors.lightgreyedblue,
-      ControlMenu: colors.greyedblue,
-      ControlPanel: colors.greyedblue,
-      WorkspaceCont: colors.semigreyedblue,
-      WorkspaceBody: colors.semigreyedblue,
-      WorkspaceHeader: colors.lightgrey,
-      WorkspaceItemsHover: colors.semidarkgrey,
-      LogoPane: colors.semigreyedblue,
-      CtrlBar: colors.darkgrey,
-      ModulePanel: colors.greyedblue,
-      GraphModule: colors.lightgrey,
-      GMAppBar: colors.deepgrey,
-      Editor: colors.darkgrey,
-      Preview: colors.whitesmoke,
-      Buttons: colors.vividgrey,
-      ButtonsHover: colors.vividgrey,
-      Dialog: colors.greyedblue,
-      Header1: colors.dimgrey,
-      Header2: colors.lightgrey,
-      Header3: colors.semidarkgrey,
+      module: greyedblue,
+      moduleContrast: grey[200],
+      panel: semigreyedblue,
+      panelContrast: lightgrey,
+      sideBar: greyedblue,
+      dialog: semigreyedblue,
+      tab: semigreyedblue,
+      menu: greyedblue,
+      headerType1: whitesmoke,
+      headerType2: dimgrey,
+      headerType3: semigreyedblue,
+      headerType4: semidarkgrey,
+      console: darkgrey,
+      popUpPanel: darkgrey,
+      buttons: vividgrey,
     },
+    hover,
+    outline,
+    error,
     text: {
-      PrimaryLight: colors.white,
-      PrimaryDark: colors.black,
-      SideBarTabs: colors.white,
-      SideBarTabsClicked: colors.red,
-      HeaderTitles: colors.white,
-      WorkspaceHeader: colors.whitesmoke,
-      WorkspaceItem: colors.white,
-      WorkspaceSelectedItem: colors.red,
-      DialogTitle: colors.white,
-      DialogContent: colors.white,
-      InputLabel: colors.lightblue,
-      InputContent: colors.white,
-      InputError: colors.red,
-      ErrorLabel: colors.red,
-      Buttons: colors.black,
-      RadioBtn: colors.white,
-      Activated: colors.red,
-      AsyVersion: colors.whitesmoke,
+      awaPrimary: black,
+      awaSecondary: grey[900],
+      awaPrimaryContrast: white,
+      awaSecondaryContrast: whitesmoke,
+      ...text,
     },
-    icon: {
-      SideBarControls: colors.white,
-      SideBarControlsHover: colors.red,
-      Wiki: colors.dimorange,
-      Upload: colors.deepblue,
-      Download: colors.deepblue,
-      Run: colors.dimgreen,
-      Stop: colors.semired,
-      Clear: colors.red,
-      Add: colors.whitesmoke,
-      AddHover: colors.red,
-    },
-  }
+    icon,
+    divider: {
+      ...divider,
+    }
+  },
 });
-
 
