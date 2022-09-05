@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { wsActionCreator } from "../../../../store/workspaces";
 import { makeStyles } from "@material-ui/core/styles";
-import { ControlPanelMenu } from "./ControlPanelMenu";
+import { GlobalControls } from "./GlobalControls.js";
 import { WorkspaceBody } from "./WorkspaceBody";
 import { LogoPane } from "./LogoPane";
 import { createUID } from "../../../../utils/appTools";
@@ -12,13 +12,13 @@ import AddIcon from "@material-ui/icons/Add";
 const useStyle = makeStyles((theme) => ({
   ctrlPanel: {
     display: "grid",
-    justifyContent: "stretch",
+    gridTemplateRows: "2.5rem 3rem 1fr 15rem",
+    alignContent: "stretch",
     minWidth: "18.5rem",
     maxWidth: "calc(18.5rem + 1px)",
-    gridTemplateRows: "2.5rem 3rem 1fr 15rem",
-    borderRight: "1px solid black",
+    minHeight: "100%",
     transition: "min-width 0.25s linear, max-width 0.25s linear",
-    backgroundColor: theme.palette.background.ControlPanel,
+    backgroundColor: theme.palette.background.panel,
   },
   hideCtrlPanel: {
     display: "grid",
@@ -34,7 +34,7 @@ export function ControlPanel({isCPExpanded=true, ...props}) {
 
   return (
     <div className={(isCPExpanded)? locClasses.ctrlPanel: locClasses.hideCtrlPanel}>
-      <ControlPanelMenu/>
+      <GlobalControls/>
       <WorkspaceHeader/>
       <WorkspaceBody/>
       <LogoPane/>
@@ -54,7 +54,8 @@ const intUseStyle = makeStyles((theme) => ({
     maxWidth: "18.5rem",
     fontFamily: "Roboto",
     alignItems: "center",
-    backgroundColor: theme.palette.background.WorkspaceHeader,
+
+    backgroundColor: theme.palette.background.headerType2,
     boxShadow: theme.shadows[2],
     textShadow: "-2px 2px 3px black",
   },
@@ -72,10 +73,10 @@ const intUseStyle = makeStyles((theme) => ({
     minHeight: "2rem",
     maxHeight: "2rem",
     boxShadow: "none",
-    color: theme.palette.icon.Add,
+    color: theme.palette.icon.add,
     backgroundColor: "transparent",
     "&:hover": {
-      color: theme.palette.icon.AddHover,
+      color: theme.palette.icon.addHover,
       backgroundColor: "transparent",
     },
     // border: "1px solid blue",
@@ -86,7 +87,7 @@ const intUseStyle = makeStyles((theme) => ({
     maxWidth: "18.5rem",
     fontSize: "1.5rem",
     fontWeight: "800",
-    color: theme.palette.text.WorkspaceHeader,
+    color: theme.palette.text.commonLight,
     textAlign: "center",
     // border: "1px solid green",
   }

@@ -5,12 +5,11 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyle = makeStyles((theme) => ({
   logoPaneCont: {
-    // flex: "1 1 auto",
     gridRow: "4/5",
     minWidth: "18rem",
     minHeight: "15rem",
     maxHeight: "15rem",
-    backgroundColor: theme.palette.background.LogoPane,
+    backgroundColor: theme.palette.background.panel,
   },
   iframe: {
     display: "block",
@@ -24,7 +23,7 @@ const useStyle = makeStyles((theme) => ({
     fontSize: "1rem",
     fontWeight: "medium",
     textAlign: "center",
-    color: theme.palette.text.AsyVersion,
+    color: theme.palette.text.awaPrimaryContrast,
     animationName: "fadeInVersion",
     animationIterationCount: 1,
     webkitAnimationTimingFunction: "ease-in",

@@ -12,12 +12,11 @@ const useStyle = makeStyles((theme) => ({
   bodyCont: {
     gridRow: "3/4",
     paddingTop: "0.5rem",
-    minHeight: "38.25rem",
     maxHeight: "38.25rem",
     overflowY: "auto",
     overflowX: "hidden",
+    backgroundColor: theme.palette.background.panel,
     ...scrollbarStyler(),
-    backgroundColor: theme.palette.background.WorkspaceBody,
     // border: "1px solid red",
   },
   alert: {
@@ -42,7 +41,7 @@ export function WorkspaceBody(props) {
     const length = listOfItems.length;
     const index = listOfItems.indexOf(id);
     if (length === 1) {
-      dispatch(glActionCreator.resetApplication(appReset + 1));
+      dispatch(glActionCreator.resetApplication(!appReset));
     } else if (length > 1) {
       if (index < length - 1) {
         dispatch(wsActionCreator.checkout(listOfItems[index + 1]));
@@ -66,7 +65,6 @@ export function WorkspaceBody(props) {
             return null;
           }
         })}
-      </div>
         <AlertDialog className={locClasses.alert}
           onAccept={OkAction} isOpen={isOpen} onClose={() => setOpenState(false)}
           dialogText={
@@ -75,6 +73,7 @@ export function WorkspaceBody(props) {
             : "Deleting this workspace is irreversible!"
           }
         />
+      </div>
     </div>
   );
 }
