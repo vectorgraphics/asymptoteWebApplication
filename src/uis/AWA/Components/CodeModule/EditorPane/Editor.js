@@ -1,12 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import {
-  idSelector,
-  codeContentSelector,
-  editorKeyBindingSelector,
-  editorReRenderSelector,
-  editorLineNumbersSelector,
-  appResetSelector
+  idSelector, appResetSelector, themeSelector, cmCodeSelector,
+  editorKeyBindingSelector, editorReRenderSelector,
+  editorLineNumbersSelector, editorFontsizeSelector,
 } from "../../../../../store/selectors";
 import { enActionCreator } from "../../../../../store/workspaces";
 import { cmActionCreator } from "../../../../../store/codeModule";
@@ -21,28 +18,28 @@ import "./codemirror/keymaps/vim";
 
 const useStyle = makeStyles((theme) => ({
   editor: {
-    display: "block",
-    flex: "10 1 auto",
+    gridRow: "2/3",
+    alignSelf: "stretch",
     overflowY: "auto",
   },
   textarea: {
     display: "none",
+    border: "none",
   }
 }));
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     EDITOR COMPONENT
-const instructionText = "TO START CODING, FIRST CREATE A NEW WORKSPACE!";
-
 export function Editor(props) {
   const locClasses = useStyle();
   const cmInstance = useRef(null);
   const id = useSelector(idSelector);
-  const codeContent = useSelector(codeContentSelector);
+  const code = useSelector(cmCodeSelector);
   const editorLineNumber = useSelector(editorLineNumbersSelector);
   const editorReRender = useSelector(editorReRenderSelector);
   const editorKeyBinding = useSelector(editorKeyBindingSelector);
-  const editorFontSize = useSelector((store) => store.globals.editorFontsize);
+  const editorFontSize = useSelector(editorFontsizeSelector);
   const appRequest  = useSelector(appResetSelector);
+  const selectedTheme = useSelector(themeSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -51,7 +48,7 @@ export function Editor(props) {
         name: "asymptote",
         styleDefs: true,
       },
-      theme: "lightTheme",
+      theme: selectedTheme,
       lineNumbers: editorLineNumber,
       lineWrapping: true,
     });
@@ -63,7 +60,7 @@ export function Editor(props) {
 
     return () => cmInstance.current.toTextArea();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorKeyBinding, editorLineNumber]);
+  }, [editorKeyBinding, editorLineNumber, selectedTheme]);
 
   useEffect(() => {
     let fontSize = "";
@@ -87,7 +84,7 @@ export function Editor(props) {
 
   useEffect(() => {
     function txtToStore(cm) {
-      dispatch(cmActionCreator.setCodeContent(id, cm.getValue()));
+      dispatch(cmActionCreator.setCode(id, cm.getValue()));
     }
     cmInstance.current.on('change', txtToStore);
     return () => cmInstance.current.off('change', txtToStore);
@@ -95,7 +92,7 @@ export function Editor(props) {
   }, [id]);
 
   useEffect(() => {
-    cmInstance.current.setValue(codeContent);
+    cmInstance.current.setValue(code.currentContent);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appRequest, editorReRender]);
 
