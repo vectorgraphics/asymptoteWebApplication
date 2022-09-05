@@ -6,18 +6,20 @@ import { ControlPanel } from "../ControlPanel/ControlPanel";
 import { ModulePanel } from "../ModulePanel/ModulePanel";
 import { SideBar } from "../SideBar/SideBar";
 
-const useStyle = makeStyles({
+const useStyle = makeStyles((theme) => ({
   awaPlatform: {
     display: "flex",
     flexFlow: "row nowrap",
     minWidth: "64rem",
-    minHeight: "100vh",
+    height: "100vh",
+    minHeight: "38.5rem",
     maxHeight: "100vh",
     justifyContent: "center",
-    alignContent: "stretch",
     alignItems: "stretch",
+    alignContent: "stretch",
+    backgroundColor: theme.palette.background.panel,
   },
-})
+}));
 
 export function AWAPlatform({UCID=0, asyVersion="unknown", ...props}) {
   const locClasses = useStyle(props);
