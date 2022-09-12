@@ -1,59 +1,57 @@
+import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { UCIDSelector, idSelector, wsNameSelector, cmCodeSelector, cmOutFormatSelector, cmOutputSelector} from "../../../../../store/selectors.js";
-import { useTheme } from "@material-ui/core/styles";
+import { UCIDSelector, idSelector, wsNameSelector, cmCurrentInputSelector, cmOutputSelector } from "../../../../../store/selectors.js";
 import { fetchOptionObj, codeFormatter, toUrlEncoded } from '../../../../../utils/appTools.js';
 import { cmActionCreator } from "../../../../../store/codeModule.js";
 import { RunStopShell } from "../../../Atoms/RunStopShell.js";
+import { isEqual } from "lodash";
 
-const basicStyle = (theme) => ({
-  root: {},
-});
-
-export function RunStop(props) {
+export const RunStop = ({setPreviewState=()=>{}, ...props}) => {
+  const previousInput = useRef({currentCode: "", outFormat: ""});
   const UCID = useSelector(UCIDSelector);
-  const id = useSelector(idSelector);
-  const wsName = useSelector(wsNameSelector);
-  const code = useSelector(cmCodeSelector);
-  const outFormat = useSelector(cmOutFormatSelector);
-  const cmOutput = useSelector(cmOutputSelector);
+  const id = useSelector(idSelector, isEqual);
+  const wsName = useSelector(wsNameSelector, isEqual);
+  const currentInput = useSelector(cmCurrentInputSelector);
+  const cmOutput = useSelector(cmOutputSelector, isEqual);
   const dispatch = useDispatch();
-  const theme = useTheme();
+  let data = {};
 
-  const data = {
-    reqType: (outFormat === "prev")? "run": "download",
-    UCID: UCID,
-    workspaceId: id,
-    workspaceName: wsName,
-    parentModule: "Code Module",
-    code: {
-      lastSuccessful: code.lastSuccessful,
-      lastFailed: code.lastFailed,
-      currentContent: codeFormatter(code.currentContent),
-    },
-    commands: [""],
-    outFormat: outFormat,
-  };
+  // console.log("runStop is rendered.");
+  const disabled = (currentInput.currentCode.trim() === "")? true: false;
 
   return (
     <RunStopShell
-      finalStyle={basicStyle(theme)} disableElevation={true}
+      disableElevation={true} disabled={disabled}
       onRun={(event, setRunStatus, controller) => {
+        if (!isEqual(currentInput, previousInput.current)) {
+          previousInput.current = currentInput;
+          setRunStatus(false);
+          data = {
+          reqType: (currentInput.outFormat === "prev")? "run": "download",
+          UCID: UCID,
+          workspaceId: id,
+          workspaceName: wsName,
+          parentModule: "CM",
+          currentCode: codeFormatter(currentInput.currentCode),
+          outFormat: currentInput.outFormat,
+        };
         if (data.reqType === "run") {
-          fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)})
-            .then((resObj) => resObj.json()).then((responseContent) => {
+          fetch("/", {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)})
+            .then((resObj) => resObj.json()).then((response) => {
+            dispatch(cmActionCreator.updateOutput(id, {...cmOutput, ...response}));
             setRunStatus(true);
-            dispatch(cmActionCreator.updateOutput(id, {...cmOutput, ...responseContent}));
-          }).catch(() => null);
+            setPreviewState(true);
+          }).catch(() => console.log("error happened"));
         } else if (data.reqType === "download") {
-          fetch('/', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)})
-            .then((resObj) => resObj.json()).then((responseContent) => {
-              if (responseContent.responseType === "ASY_OUTPUT_CREATED") {
-                delete (data.codeContent);
-                fetch('/clients', {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)})
-                  .then((resObj) => resObj.blob()).then((responseContent) => {
+          fetch("/", {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)})
+            .then((resObj) => resObj.json()).then((response) => {
+              if (response.serverRes.resStatus === "SUCCESS" && response.serverRes.resType === "ASY_OUTPUT_CREATED") {
+                delete(data.codeCode);
+                fetch("/clients", {...fetchOptionObj.postUrlEncode, signal: controller.signal, body: toUrlEncoded(data)})
+                  .then((resObj) => resObj.blob()).then((fileContent) => {
                   setRunStatus(true);
                   const link = document.createElement("a");
-                  link.href = window.URL.createObjectURL(responseContent);
+                  link.href = window.URL.createObjectURL(fileContent);
                   link.setAttribute("download", wsName.toString());
                   link.click();
                 }).catch((err) => {});
@@ -61,7 +59,13 @@ export function RunStop(props) {
             }
           ).catch((err) => {});
         }
+        } else {
+          setPreviewState(true);
+        }
+      }}
+      onStop={(event, setRunStatus, controller) => {
+        setRunStatus(true);
       }}
     />
   );
-}
+};

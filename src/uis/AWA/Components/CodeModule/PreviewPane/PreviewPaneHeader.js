@@ -4,8 +4,8 @@ import { enActionCreator } from "../../../../../store/workspaces";
 import { makeStyles } from "@material-ui/core/styles";
 import { OutFormats } from "./OutFormats.js";
 import { ArrowControllers } from "../ArrowControllers";
-import { EraserSVG } from "../../../../../assets/svgs/appwideSvgs.js";
-
+import { EraserSVG } from "../../../../../assets/svgs/appWideSvgs.js";
+import { isEqual } from "lodash";
 
 const useStyle = makeStyles((theme) => ({
   headerCont: {
@@ -18,7 +18,8 @@ const useStyle = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.headerType1,
     "&::selection": {
       backgroundColor: "transparent",
-    }
+    },
+    borderBottom: `1px solid ${theme.palette.common.black}`,
   },
   headerBody: {
     display: "flex",
@@ -42,10 +43,10 @@ const useStyle = makeStyles((theme) => ({
   }
 }));
 
-export function PreviewPaneHeader(props) {
+export const PreviewPaneHeader = ({setPreviewState=()=>{}, ...props}) => {
   const locClasses = useStyle();
   const id = useSelector(idSelector);
-  const editorPaneView = useSelector(editorPaneViewSelector);
+  const editorPaneView = useSelector(editorPaneViewSelector, isEqual);
   const dispatch = useDispatch();
 
   return (
@@ -55,8 +56,12 @@ export function PreviewPaneHeader(props) {
         onClick={(event) => dispatch(enActionCreator.setEditorPaneView(id, !editorPaneView))}/>
       <div className={locClasses.headerBody}>
         <OutFormats/>
-        <div className={locClasses.eraserIcon}> <EraserSVG/> </div>
+        <div
+          className={locClasses.eraserIcon}
+          onClick={() => setPreviewState(false)}>
+          <EraserSVG/>
+          </div>
       </div>
     </div>
   );
-}
+};

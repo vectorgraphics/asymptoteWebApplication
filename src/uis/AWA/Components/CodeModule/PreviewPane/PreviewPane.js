@@ -1,9 +1,10 @@
+import { useRef } from "react";
 import { useSelector } from "react-redux";
-import { idSelector, previewPaneViewSelector, cmOutputSelector } from "../../../../../store/selectors";
+import { previewPaneViewSelector, cmOutputSelector } from "../../../../../store/selectors";
 import { PreviewPaneHeader } from "./PreviewPaneHeader.js";
 import { makeStyles } from "@material-ui/core/styles";
 import { Preview } from "../../../Molecules/Preview/Preview.js";
-import { merge } from "lodash";
+import { merge, isEqual } from "lodash";
 
 
 const basicStyle = (theme) => ({
@@ -21,18 +22,21 @@ const useStyle = makeStyles((theme) => ({
   previewPane: (finalStyle) => merge(basicStyle(theme), finalStyle).previewPane,
 }));
 
-export function PreviewPane({finalStyle={}, ...props}) {
+export const PreviewPane = ({finalStyle={}, previewState=true, setPreviewState=()=>{},...props}) => {
   const locClasses = useStyle(finalStyle);
-  const id = useSelector(idSelector);
-  const cmOutput = useSelector(cmOutputSelector);
-  const previewPaneView = useSelector(previewPaneViewSelector);
+  const previewIframeRef = useRef(null);
+  const cmOutput = useSelector(cmOutputSelector, isEqual);
+  const previewPaneView = useSelector(previewPaneViewSelector, isEqual);
+
+  // console.log("previewPane rendered");
+
 
   return (
     (previewPaneView)?
     <div className={locClasses.previewPane}>
-      <PreviewPaneHeader/>
-      <Preview outputObj={cmOutput}/>
+      <PreviewPaneHeader onErase={() => previewIframeRef.current.src = ""} setPreviewState={setPreviewState}/>
+      <Preview parentModule="cm" outputObj={cmOutput} iframeRef={previewIframeRef} previewState={previewState}/>
     </div>:
     null
-  );
-}
+    );
+  };

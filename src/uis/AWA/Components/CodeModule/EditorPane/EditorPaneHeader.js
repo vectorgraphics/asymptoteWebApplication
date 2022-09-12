@@ -10,12 +10,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import { ArrowControllers } from "../ArrowControllers";
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import { FormatListNumbered as FormatListNumberedIcon } from '@material-ui/icons';
-import { FontIcon, KeyboardIcon } from "../../../../../assets/svgs/appwideSvgs.js";
+import { FontIcon, KeyboardIcon } from "../../../../../assets/svgs/appWideSvgs.js";
 import { SplitBtn } from "../../../Atoms/SplitBtn.js";
 import { Upload } from "./Upload.js";
 import { RunStop } from "./RunStop.js";
 import { Download } from "./Download.js";
 import { Erase } from "./Erase.js";
+import { isEqual } from "lodash";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -29,13 +30,15 @@ const useStyle = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.headerType1,
     "&::selection": {
       backgroundColor: "transparent",
-    }
+    },
+    borderBottom: `1px solid ${theme.palette.common.black}`,
   },
   actionButtons: {
     display: "flex",
     flexFlow: "row nowrap",
     justifyContent: "flex-start",
     alignItems: "center",
+    // border: "1px solid blue",
   },
   lineNumbering: {
     display: "flex",
@@ -59,16 +62,15 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function EditorPaneHeader(props) {
+export const EditorPaneHeader = ({setPreviewState=()=>{}, ...props}) => {
   const locClasses = useStyle();
-  const id = useSelector(idSelector);
+  const id = useSelector(idSelector, isEqual);
   const previewPaneView = useSelector(previewPaneViewSelector);
   let editorKeybinding = useSelector(editorKeyBindingSelector);
   let editorFontsize = useSelector(editorFontsizeSelector);
   const dispatch = useDispatch();
 
-  editorKeybinding = (editorKeybinding === "default")? "Default": editorKeybinding;
-  editorFontsize = (editorFontsize === "default")? "Default": editorFontsize;
+  // console.log("editorPaneHeader rendered");
 
   return (
     <div className={locClasses.headerCont}>
@@ -78,7 +80,7 @@ export function EditorPaneHeader(props) {
         </div>
         <div className={locClasses.otherButtons}>
           <SplitBtn
-            splitType="splitStatic" items={["Default", "Small", "Medium", "Large"]}
+            splitType="splitStatic" items={["default", "small", "medium", "large"]}
             finalStyle={fontSplitBtn} currentItem={editorFontsize} disableElevation={true}
             onSelect={(selectedFontSize) => dispatch(glActionCreator.setEditorFontsize(selectedFontSize))}
           >
@@ -87,15 +89,19 @@ export function EditorPaneHeader(props) {
         </div>
         <div className={locClasses.otherButtons}>
           <SplitBtn
-            splitType="splitStatic" items={["Default", "Vim", "Emacs", "Sublime"]}
+            splitType="splitStatic" items={["default", "vim", "emacs", "sublime"]}
             finalStyle={keyboardSplitBtn} currentItem={editorKeybinding} disableElevation={true}
-            onSelect={(selectedKeyBinding) => dispatch(glActionCreator.setKeyBinding(selectedKeyBinding))}
+            onSelect={
+              (selectedKeyBinding) => {
+                console.log(selectedKeyBinding);
+                dispatch(glActionCreator.setEditorKeyBinding(selectedKeyBinding));
+                }}
           >
             <KeyboardIcon className={locClasses.keyboardIcon}/>
           </SplitBtn>
         </div>
         <div className={locClasses.otherButtons}> <Upload/> </div>
-        <div className={locClasses.otherButtons}> <RunStop/> </div>
+        <div className={locClasses.otherButtons}> <RunStop setPreviewState={setPreviewState}/> </div>
         <div className={locClasses.otherButtons}> <Download/> </div>
         <div className={locClasses.otherButtons}> <Erase/> </div>
       </div>
@@ -104,7 +110,7 @@ export function EditorPaneHeader(props) {
         onClick={(event) => dispatch(enActionCreator.setPreviewPaneView(id, !previewPaneView))}/>
     </div>
   );
-}
+};
 
 
 const useInternalStyle = makeStyles((theme) => ({

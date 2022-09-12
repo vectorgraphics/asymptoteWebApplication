@@ -1,11 +1,10 @@
-import { useSelector, useDispatch } from "react-redux";
-import { idSelector, editorPaneViewSelector, cmOutputSelector } from "../../../../../store/selectors";
+import { useSelector } from "react-redux";
+import { editorPaneViewSelector, cmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
-import { cmActionCreator } from "../../../../../store/codeModule";
 import { EditorPaneHeader } from "./EditorPaneHeader.js";
 import { Editor } from "./Editor";
 import { Terminal } from "./Terminal";
-import { merge } from "lodash";
+import { merge, isEqual } from "lodash";
 
 
 const basicStyle = (theme) => ({
@@ -14,7 +13,7 @@ const basicStyle = (theme) => ({
     gridTemplateRows: "2rem 1fr",
     alignItems: "stretch",
     borderRight: `1px solid ${theme.palette.outline.panelBorder}`,
-    backgroundColor: theme.palette.background.module,
+    backgroundColor: theme.palette.background.panel,
   },
 });
 
@@ -22,29 +21,26 @@ const useStyle = makeStyles((theme) => ({
   editorPane: (finalStyle) => merge(basicStyle(theme), finalStyle).editorPane,
 }));
 
-export function EditorPane({finalStyle={}, ...props}) {
+export const EditorPane = ({finalStyle={}, setPreviewState=()=>{}, ...props}) => {
   const locClasses = useStyle(finalStyle);
-  const id = useSelector(idSelector);
-  const cmOutput = useSelector(cmOutputSelector);
-  const editorPaneView = useSelector(editorPaneViewSelector);
-  const dispatch = useDispatch();
+  const cmOutput = useSelector(cmOutputSelector, isEqual);
+  const editorPaneView = useSelector(editorPaneViewSelector, isEqual);
 
-  const stdout = (id)? cmOutput.stdout: "";
-  const stderr = (id)? cmOutput.stderr: "";
+  // console.log("editorPane rendered");
+  const {stdout="", stderr=""} = cmOutput;
 
   return (
     (editorPaneView)?
     <div className={locClasses.editorPane}>
-      <EditorPaneHeader/>
+      <EditorPaneHeader setPreviewState={setPreviewState}/>
       <Editor/>
-      <Terminal
-        errorContent={stderr + stdout}
-        // closeTerminal={() => {dispatch(cmActionCreator.updateOutput(id, {...cmOutput, stdout: "", stderr: ""}))}}
+      <Terminal content={stderr + stdout}
       />
     </div>:
     null
-  );
-}
+    );
+  };
+  // closeTerminal={() => {dispatch(cmActionCreator.updateOutput(id, {...cmOutput, stdout: "", stderr: ""}))}}
 
 
 
