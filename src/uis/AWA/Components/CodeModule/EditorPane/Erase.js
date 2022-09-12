@@ -3,9 +3,7 @@ import { idSelector, editorReRenderSelector } from "../../../../../store/selecto
 import { enActionCreator } from "../../../../../store/workspaces.js";
 import { cmActionCreator } from "../../../../../store/codeModule.js";
 import { makeStyles, Button} from "@material-ui/core";
-import { EraserSVG } from "../../../../../assets/svgs/appwideSvgs.js";
-import BackspaceOutlinedIcon from '@material-ui/icons/BackspaceOutlined';
-
+import { EraserSVG } from "../../../../../assets/svgs/appWideSvgs.js";
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -18,17 +16,19 @@ const useStyle = makeStyles((theme) => ({
     fontSize: "0.875rem",
     borderRadius: "1px",
     "& span": {},
+    "&:hover": {
+      color: theme.palette.icon.erase,
+    }
   },
   eraser: {
     minWidth: "1.25rem",
     maxWidth: "1.25rem",
     minHeight: "1.25rem",
     maxHeight: "1.25rem",
-    color: theme.palette.icon.erase,
   }
 }))
 
-export function Erase({children, className="", classes={}, ...props}) {
+export const Erase = ({children, className="", classes={}, ...props}) => {
   const locClasses = useStyle();
   const id = useSelector(idSelector);
   const editorReRender = useSelector(editorReRenderSelector);
@@ -40,11 +40,11 @@ export function Erase({children, className="", classes={}, ...props}) {
     <Button
       classes={{root: locClasses.root}} variant={"contained"} disableElevation={true}
       onClick={() => {
-        dispatch(cmActionCreator.setCode(id, ""));
+        dispatch(cmActionCreator.setCurrentCode(id, ""));
         dispatch(enActionCreator.reRenderEditor(id, editorReRender + 1));
       }}
     >
       <EraserSVG className={locClasses.eraser}/>
     </Button>
   );
-}
+};
