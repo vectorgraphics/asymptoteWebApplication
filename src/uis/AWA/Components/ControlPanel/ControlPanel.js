@@ -1,12 +1,11 @@
 import { useDispatch } from "react-redux";
 import { wsActionCreator } from "../../../../store/workspaces";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Fab } from "@material-ui/core";
 import { GlobalControls } from "./GlobalControls.js";
 import { WorkspaceBody } from "./WorkspaceBody";
 import { LogoPane } from "./LogoPane";
 import { createUID } from "../../../../utils/appTools";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
+import { Add as AddIcon } from "@material-ui/icons";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -29,7 +28,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function ControlPanel({isCPExpanded=true, ...props}) {
+export const ControlPanel = ({isCPExpanded=true, ...props}) => {
   const locClasses = useStyle(props);
 
   return (
@@ -40,7 +39,7 @@ export function ControlPanel({isCPExpanded=true, ...props}) {
       <LogoPane/>
     </div>
   );
-}
+};
 
 const intUseStyle = makeStyles((theme) => ({
   header: {

@@ -1,9 +1,8 @@
-import { idSelector, cmInputSelector } from "../../../../../store/selectors.js";
-import { cmActionCreator } from "../../../../../store/codeModule.js";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
+import { idSelector, cmOutFormatSelector } from "../../../../../store/selectors.js";
+import { cmActionCreator } from "../../../../../store/codeModule.js";
 import { RadioGroup, Radio, FormControlLabel } from '@material-ui/core';
-import { cmOutFormatSelector } from "../../../../../store/selectors.js";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -24,7 +23,7 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 
-export function OutFormats(props) {
+export const OutFormats = (props) => {
   const locClasses = useStyle();
   const id = useSelector(idSelector)
   const outFormat = useSelector(cmOutFormatSelector);
@@ -59,4 +58,4 @@ export function OutFormats(props) {
       />
     </RadioGroup>
   );
-}
+};

@@ -13,7 +13,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-export function ThemeTab() {
+export const ThemeTab = (props) => {
   const locClasses = useStyle();
   const dispatch = useDispatch();
   const currentTheme = useSelector(themeSelector);
@@ -25,9 +25,10 @@ export function ThemeTab() {
   return (
     <div className={locClasses.tabCont}>
       <BinarySwitch
-        finalStyle={{}} Labels={["Light Theme", "Dark Theme"]}
-        switchInitialValue={startCase(currentTheme)} onChange={selectTheme}
+        Labels={["Light Theme", "Dark Theme"]}
+        switchInitialValue={startCase(currentTheme)}
+        onChange={selectTheme}
       />
     </div>
   );
-}
+};

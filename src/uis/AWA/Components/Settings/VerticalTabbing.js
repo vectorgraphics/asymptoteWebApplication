@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export function VerticalTabbing({tabLabels=[], tabComponents=[], ...props}) {
+export const VerticalTabbing = ({tabLabels=[], tabComponents=[], ...props}) => {
   const locClasses = useStyles();
   const [value, setValue] = useState(0);
 
@@ -56,14 +56,14 @@ export function VerticalTabbing({tabLabels=[], tabComponents=[], ...props}) {
       )}
     </div>
   );
-}
+};
 
-function TabPreview({children, value, index, ...props}) {
+const TabPreview = ({children, value, index, ...props}) => {
   const locClasses = useStyles();
 
   return (
-    <div className={locClasses.tabPreview} role="tabPreview" hidden={value !== index} {...props}>
+    <div className={locClasses.tabPreview} hidden={value !== index} {...props}>
       {value === index && children}
     </div>
   );
-}
+};

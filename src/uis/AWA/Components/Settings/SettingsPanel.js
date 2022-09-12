@@ -1,4 +1,4 @@
-import {makeStyles, Button, Dialog, DialogContent, DialogActions, IconButton} from '@material-ui/core';
+import {makeStyles, Dialog, DialogContent, Button, DialogActions, IconButton} from '@material-ui/core';
 import { VerticalTabbing } from "./VerticalTabbing";
 import { ThemeTab } from "./Tabs/ThemeTab";
 import { AboutTab } from "./Tabs/AboutTab";
@@ -33,6 +33,7 @@ const usePanelStyle = makeStyles((theme) => ({
     margin: "0 auto",
     marginBottom: "2rem",
     textAlign: "center",
+    lineHeight: "1.75rem",
     color: theme.palette.text.awaPrimaryContrast,          // must be adjusted upon use
     backgroundColor: "grey",                               // must be adjusted upon use
   },
@@ -47,7 +48,7 @@ const usePanelStyle = makeStyles((theme) => ({
   },
   closeIcon: {
     fontSize: "1.5rem",
-    color: "lightgray",
+    color: theme.palette.common.lightgrey,
     "&:hover": {
       color: "red",
     }
@@ -57,7 +58,7 @@ const usePanelStyle = makeStyles((theme) => ({
   }
 }))
 
-export function SettingsPanel({isOpen, onClose=() => {}, onApply=() => {}, ...props}) {
+export const SettingsPanel = ({isOpen, onClose=() => {}, onApply=() => {}, ...props}) => {
   const locClasses = usePanelStyle();
   return (
     <Dialog
@@ -79,4 +80,4 @@ export function SettingsPanel({isOpen, onClose=() => {}, onApply=() => {}, ...pr
       {/*</DialogActions>*/}
     </Dialog>
   );
-}
+};

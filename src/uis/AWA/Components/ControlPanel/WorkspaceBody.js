@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { idSelector, appResetSelector } from "../../../../store/selectors";
 import { wsActionCreator } from "../../../../store/workspaces";
+import { glActionCreator } from "../../../../store/globals";
 import { makeStyles } from "@material-ui/core";
 import { AlertDialog } from "../../Atoms/AlertDialog";
 import { WorkspaceItem } from "./WorkspaceItem";
-import { glActionCreator } from "../../../../store/globals";
 import { scrollbarStyler } from "../../../../utils/appTools";
 
 const useStyle = makeStyles((theme) => ({
@@ -24,7 +24,7 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-export function WorkspaceBody(props) {
+export const WorkspaceBody = (props) => {
   const locClasses = useStyle();
   const contRef = useRef(null);
   const [isOpen, setOpenState] = useState(false);

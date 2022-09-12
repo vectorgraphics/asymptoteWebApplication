@@ -20,7 +20,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }))
 
-export function Upload(props) {
+export const Upload = (props) => {
   const locClasses = useStyle();
   const id = useSelector(idSelector);
   const editorReRender = useSelector(editorReRenderSelector);
@@ -34,7 +34,7 @@ export function Upload(props) {
         <UploadIcon className={locClasses.uploadIcon}/>
       </Button>
   );
-}
+};
 
 function uploadHandler(dispatch, id, editorReRender) {
   const inputElement = document.createElement("input");
@@ -43,7 +43,7 @@ function uploadHandler(dispatch, id, editorReRender) {
   inputElement.addEventListener("change", function (event) {
     let reader = new FileReader();
     reader.addEventListener("load",  (event) => {
-      dispatch(cmActionCreator.setCodeContent(id, event.target.result.toString()));
+      dispatch(cmActionCreator.setCurrentCode(id, event.target.result.toString()));
       dispatch(enActionCreator.reRenderEditor(id, editorReRender + 1));
     }, false);
     reader.readAsText(this.files[0]);

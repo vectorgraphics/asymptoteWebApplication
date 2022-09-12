@@ -51,7 +51,7 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 
-export function AboutTab() {
+export const AboutTab = (props) => {
   const locClasses = useStyle();
 
   return (
@@ -60,7 +60,7 @@ export function AboutTab() {
         <div className={locClasses.appIcon}/>
       </div>
       <div>
-        <p className={locClasses.description}> Asymptote Web Application powered by Asymptote Graphics Language. </p>
+        <p className={locClasses.description}> Asymptote Web Application Powered by the Asymptote Graphics Language. </p>
         <p className={locClasses.version}> Version 2.0.0 </p>
         <p className={locClasses.design}>
           <span className={locClasses.textTitle}>Design Team:</span> Pedram Emami & John C. Bowman
@@ -71,4 +71,4 @@ export function AboutTab() {
       </div>
     </div>
   );
-}
+};

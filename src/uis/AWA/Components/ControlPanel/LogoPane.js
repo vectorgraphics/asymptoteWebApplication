@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { asyVersionSelector } from "../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
@@ -30,7 +29,7 @@ const useStyle = makeStyles((theme) => ({
     animationDuration: "1s",
   }
 }))
-export function LogoPane(props) {
+export const LogoPane = (props) => {
   const asyVersion = useSelector(asyVersionSelector);
   const locClasses = useStyle();
   return (
@@ -39,4 +38,4 @@ export function LogoPane(props) {
       <div className={locClasses.versionBox}> {asyVersion} </div>
     </div>
   );
-}
+};

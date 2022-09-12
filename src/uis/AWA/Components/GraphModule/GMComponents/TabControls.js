@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useRef } from "react";
 import { makeStyles, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from "@material-ui/core";
-import { EraserSVG } from "../../../../../assets/svgs/appwideSvgs.js";
+import { EraserSVG } from "../../../../../assets/svgs/appWideSvgs.js";
 
 const useStyle = makeStyles((theme) => ({
   leftSection: {
@@ -34,11 +34,10 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function TabControls(
-  {
-    className="", selectionList=[], assignedNames=[], editState=false, onAdd=() => {}, onSave=() => {},
-    onDiscard=() => {}, onRemove=() => {}, onCopy=() => {}, onErase=() => {}, ...props
-  }) {
+export const TabControls = ({
+  className="", selectionList=[], assignedNames=[], editState=false, onAdd=() => {}, onSave=() => {},
+  onDiscard=() => {}, onRemove=() => {}, onCopy=() => {}, onErase=() => {}, ...props
+}) => {
   const locClasses = useStyle();
   const [openDialogState, setOpenDialogState] = useState(false);
 
@@ -67,7 +66,7 @@ export function TabControls(
       />
     </div>
   );
-}
+};
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +126,9 @@ const useDialogStyle = makeStyles((theme) => ({
 }));
 
 
-export function CopyDialog({open=false, onClose=() => {}, onSave=() => {}, selectionList=[], assignedNames=[], ...props}) {
+export const CopyDialog = ({
+  open=false, onClose=() => {}, onSave=() => {}, selectionList=[], assignedNames=[], ...props
+}) => {
   const locClasses = useDialogStyle();
   const [newName, setNewName] = useState("");
   const [newNameErr, setNewNameErr] = useState(false);
@@ -175,5 +176,5 @@ export function CopyDialog({open=false, onClose=() => {}, onSave=() => {}, selec
       </Dialog>
     </div>
   );
-}
+};
 
