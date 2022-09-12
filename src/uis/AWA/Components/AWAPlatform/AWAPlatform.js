@@ -21,7 +21,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-console.log("awaPlatform is rendered");
+// console.log("awaPlatform is rendered");
 
 export const AWAPlatform = ({UCID=0, asyVersion="unknown", ...props}) => {
   const locClasses = useStyle(props);
