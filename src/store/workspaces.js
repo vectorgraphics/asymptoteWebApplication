@@ -17,42 +17,34 @@ export const wsActions = {
 };
 
 export const wsActionCreator = {
-  checkout: (id) => {
-    return {
-      type: wsActions.checkout,
-      payload: {
-        id: id,
-      }
-    };
-  },
-  add: (id) => {
-    return {
-      type: wsActions.add,
-      payload: {
-        id: id,
-      }
-    };
-  },
-  remove: (id) => {
-    return {
-      type: wsActions.remove,
-      payload: {
-        id: id
-      },
-    };
-  },
-  changeOrder: (grabbedId, targetId) => {
-    return {
-      type: wsActions.changeOrder,
-      payload: {
-        grabbedId: grabbedId,
-        targetId: targetId,
-      },
-    };
-  },
+  checkout: (id) => ({
+    type: wsActions.checkout,
+    payload: {
+      id: id,
+    }
+  }),
+  add: (id) => ({
+    type: wsActions.add,
+    payload: {
+      id: id,
+    }
+  }),
+  remove: (id) => ({
+    type: wsActions.remove,
+    payload: {
+      id: id
+    },
+  }),
+  changeOrder: (grabbedId, targetId) => ({
+    type: wsActions.changeOrder,
+    payload: {
+      grabbedId: grabbedId,
+      targetId: targetId,
+    },
+  }),
 }
 
-export function checkedOutWorkspaceId(state = "", action) {
+export const checkedOutWorkspaceId = (state = "", action) => {
   switch (action.type) {
     case wsActions.add:
       return action.payload.id;
@@ -63,9 +55,9 @@ export function checkedOutWorkspaceId(state = "", action) {
     default:
       return state;
   }
-}
+};
 
-export function workspacesIdOrder(state = [], action) {
+export const workspacesIdOrder = (state = [], action) => {
   switch (action.type) {
     case wsActions.add:
       return [...state, action.payload.id];
@@ -83,7 +75,7 @@ export function workspacesIdOrder(state = [], action) {
     default:
       return state;
   }
-}
+};
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Entities Actions, Action Creators & Reducers
@@ -98,54 +90,44 @@ const enActions = {
 };
 
 export const enActionCreator = {
-  rename: function (id, newName) {
-    return {
-      type: enActions.rename,
-      payload: {
-        id: id,
-        name: newName,
-      },
-    };
-  },
-  setActiveModule: function (id, moduleName) {
-    return {
-      type: enActions.setActiveModule,
-      payload: {
-        id: id,
-        activeModule: moduleName,
-      },
-    };
-  },
-  reRenderEditor: function (id, value) {
-    return {
-      type: enActions.reRenderEditor,
-      payload: {
-        id: id,
-        editorReRender: value
-      },
-    };
-  },
-  setEditorPaneView: function (id, viewStatus) {
-    return {
-      type: enActions.setEditorPaneView,
-      payload: {
-        id: id,
-        editorPaneView: viewStatus,
-      },
-    };
-  },
-  setPreviewPaneView: function (id, viewStatus) {
-    return {
-      type: enActions.setPreviewPaneView,
-      payload: {
-        id: id,
-        previewPaneView: viewStatus,
-      },
-    };
-  },
+  rename: (id, newName) => ({
+    type: enActions.rename,
+    payload: {
+      id: id,
+      name: newName,
+    },
+  }),
+  setActiveModule: (id, moduleName) => ({
+    type: enActions.setActiveModule,
+    payload: {
+      id: id,
+      activeModule: moduleName,
+    },
+  }),
+  reRenderEditor: (id, value) => ({
+    type: enActions.reRenderEditor,
+    payload: {
+      id: id,
+      editorReRender: value
+    },
+  }),
+  setEditorPaneView: (id, viewStatus) => ({
+    type: enActions.setEditorPaneView,
+    payload: {
+      id: id,
+      editorPaneView: viewStatus,
+    },
+  }),
+  setPreviewPaneView: (id, viewStatus) => ({
+    type: enActions.setPreviewPaneView,
+    payload: {
+      id: id,
+      previewPaneView: viewStatus,
+    },
+  }),
 };
 
-export function entities(state = {}, action) {
+export const entities = (state = {}, action) => {
   const newCopy = cloneDeep(state);
   switch (action.type) {
     case wsActions.add:
@@ -174,5 +156,5 @@ export function entities(state = {}, action) {
     default:
       return state;
   }
-}
+};
 
