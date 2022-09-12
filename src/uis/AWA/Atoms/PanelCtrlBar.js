@@ -1,77 +1,90 @@
 import { makeStyles, IconButton } from "@material-ui/core";
-import MinimizeIcon from "@material-ui/icons/Minimize";
-import CancelIcon from "@material-ui/icons/Cancel";
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-const MaximizeIcon = CheckBoxOutlineBlankIcon
+import { Minimize, Cancel as Close, CheckBoxOutlineBlank as Maximize } from "@material-ui/icons";
+import { merge } from "lodash";
 
-const useStyle = makeStyles((theme) => ({
-  menuBarCont: (props) => {
-    return  {
+const basicStyle = (theme) => ({
+  panelBarCont: {
     display: "grid",
-    gridAutoFlow: "column",
+    gridTemplateColumns: "1fr max-content",
     justifyContent: "stretch",
     alignItems: "center",
     minWidth: "100%",
     minHeight: "2rem",
     maxHeight: "2rem",
-    marginBottom: "0.5rem",
-    borderBottom: (props.borderBottom)? props.borderBottom: "none",
-    backgroundColor: props.backgroundColor || "transparent",
-  }},
-  titleBar: (props) => props.titleBar || {
-    display: "grid",
-    minWidth: "100%",
-    gridAutoFlow: "column",
-    justifyContent: "start",
-    alignItems: "center",
-    // border: "1px solid blue",
+    backgroundColor: theme.palette.background.headerType2,
   },
-  ctrlBar: (props) => props.ctrlBar || {
+  title: {
+    display: "grid",
+    justifyContent: "center",
+    marginLeft: "3.05rem",
+    minWidth: "100%",
+    color: theme.palette.text.awaPrimaryContrast,
+  },
+  controls: {
     display: "grid",
     gridAutoFlow: "column",
     justifyContent: "end",
   },
   btnCont: {
-    marginRight: "0.25rem",
     width: "max-content",
   },
-  iconBtn: {
+  iconBtnStyle: {
     maxWidth: "1.75rem",
     maxHeight: "1.75rem",
   },
   minIcon: {
     fontSize: "1.15rem",
-    color: "whitesmoke",
+    color: theme.palette.text.awaPrimaryContrast,
+    "&:hover": {
+      color: "orange",
+    }
   },
   maxIcon: {
     fontSize: "1.15rem",
-    color: "orange",
+    color: theme.palette.text.awaPrimaryContrast,
+    "&:hover": {
+      color: "orange",
+    }
   },
   closeIcon: {
     fontSize: "1.15rem",
-    color: "red",
+    color: theme.palette.text.awaPrimaryContrast,
+    "&:hover": {
+      color: "red",
+    }
   },
+});
+
+const useStyle = makeStyles((theme) => ({
+  panelBarCont: (finalStyle) => merge(basicStyle(theme), finalStyle).panelBarCont,
+  title:        (finalStyle) => merge(basicStyle(theme), finalStyle).title,
+  controls:     (finalStyle) => merge(basicStyle(theme), finalStyle).controls,
+  btnCont:      (finalStyle) => merge(basicStyle(theme), finalStyle).btnCont,
+  iconBtnStyle: (finalStyle) => merge(basicStyle(theme), finalStyle).iconBtnStyle,
+  minIcon:      (finalStyle) => merge(basicStyle(theme), finalStyle).minIcon,
+  maxIcon:      (finalStyle) => merge(basicStyle(theme), finalStyle).maxIcon,
+  closeIcon:    (finalStyle) => merge(basicStyle(theme), finalStyle).closeIcon,
 }));
 
-export function PanelCtrlBar({titleBarComponent=null, onMin=() => {}, onMax=() => {}, onClose=() => {}, ...props}) {
-  const locClasses = useStyle(props);
+export const PanelCtrlBar = ({finalStyle={}, onMin=()=>{}, onMax=()=>{}, onClose=()=>{}, ...props}) => {
+  const locClasses = useStyle(finalStyle);
 
   return (
-    <div className={locClasses.menuBarCont}>
-      <div className={locClasses.titleBar}> {titleBarComponent} </div>
-      <div className={locClasses.ctrlBar}>
+    <div className={locClasses.panelBarCont}>
+      <div className={locClasses.title}> Terminal </div>
+      <div className={locClasses.controls}>
         <div className={locClasses.btnCont}>
-          <IconButton className={locClasses.iconBtn} onClick={(event) => onMin(event)}>
-            <MinimizeIcon className={locClasses.minIcon}/>
+          <IconButton className={locClasses.iconBtnStyle} onClick={onMin}>
+            <Minimize className={locClasses.minIcon}/>
           </IconButton>
-          <IconButton className={locClasses.iconBtn} onClick={(event) => onMax(event)}>
-            <MaximizeIcon className={locClasses.maxIcon}/>
+          <IconButton className={locClasses.iconBtnStyle} onClick={onMax}>
+            <Maximize className={locClasses.maxIcon}/>
           </IconButton>
-          <IconButton className={locClasses.iconBtn} onClick={(event) => onClose(event)}>
-            <CancelIcon className={locClasses.closeIcon}/>
+          <IconButton className={locClasses.iconBtnStyle} onClick={onClose}>
+            <Close className={locClasses.closeIcon}/>
           </IconButton>
         </div>
       </div>
     </div>
   );
-}
+};
