@@ -6,9 +6,7 @@ import { codeModule } from "./codeModule";
 import { checkedOutWorkspaceId, workspacesIdOrder, entities } from "./workspaces";
 import { functions, axes, pens, Labels, pictures } from "./graphModule";
 import { revolutionModule } from "./revolutionModule.js";
-
 import { themes } from "./themes";
-import { ui } from "./ui";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                     store
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,7 +26,6 @@ export const store = createStore(combineReducers({
     }),
     revolutionModule,
   }),
-  ui,
   themes,
 }), initialState, devToolsEnhancer());
 
