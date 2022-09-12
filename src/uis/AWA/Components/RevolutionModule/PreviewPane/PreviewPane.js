@@ -1,9 +1,10 @@
+import { useRef } from "react";
 import { useSelector } from "react-redux";
-import { idSelector } from "../../../../../store/selectors";
+import { rmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
 import { PreviewPaneHeader } from "./PreviewPaneHeader.js";
 import { Preview } from "../../../Molecules/Preview/Preview.js";
-import { merge } from "lodash";
+import { isEqual, merge } from "lodash";
 
 const basicStyle = (theme) => ({
   previewPane: {
@@ -20,15 +21,25 @@ const useStyle = makeStyles((theme) => ({
   previewPane: (finalStyle) => merge(basicStyle(theme), finalStyle).previewPane,
 }));
 
-export function PreviewPane({finalStyle={}, ...props}) {
+export const PreviewPane = ({finalStyle={}, previewState=true, setPreviewState=()=>{}, ...props}) => {
   const locClasses = useStyle(finalStyle);
-  const id = useSelector(idSelector);
-  // const cmOutput = useSelector(cmOutputSelector);
+  const previewIframeRef = useRef(null);
+  const rmOutput = useSelector(rmOutputSelector, isEqual);
 
   return (
     <div className={locClasses.previewPane}>
-      <PreviewPaneHeader/>
-      <Preview outputObj={{}}/>
+      <PreviewPaneHeader onErase={() => setPreviewState(false)}/>
+      <Preview
+        finalStyle={iframeFinalStyle} parentModule="rm"
+        outputObj={rmOutput} iframeRef={previewIframeRef}
+        previewState={previewState}
+        />
     </div>
   );
+};
+
+const iframeFinalStyle = {
+  iframe: {
+    minHeight: "100%",
+  }
 }

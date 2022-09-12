@@ -1,11 +1,13 @@
-import {makeStyles} from "@material-ui/core/styles";
+import { memo, useRef } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import { Error } from "./Error.js";
 import { merge } from "lodash";
+import { srcAlternator } from "../../../../utils/appTools";
 
 const basicStyle = (theme) => ({
   previewCont: {},
   iframe: {
-    minHeight: "calc(100% - 0.25rem)",
+    minHeight: "calc(100% - 4px)",
     backgroundColor: "transparent",
     "&::selection": {
       backgroundColor: "transparent",
@@ -19,23 +21,44 @@ const useStyle = makeStyles((theme) => ({
   iframe: (finalStyle) => merge(basicStyle(theme), finalStyle).iframe,
 }));
 
-export function Preview({finalStyle={}, parentModule="", outputObj={}, errorObj={}, ...props}) {
+export const Preview = memo(({finalStyle={}, parentModule="cm", outputObj={}, iframeRef=null, previewState=true, ...props}) => {
+
   const locClasses = useStyle(finalStyle);
-  return (
-    <div className={locClasses.previewCont}>
-      {
-        (outputObj.responseType === "ERROR")?
-          <Error finalStyle={errorFinalStyle} errorObj={outputObj}/>:
-          <iframe id="cm-preview-iframe" title="output-iframe" src="" className={locClasses.iframe}
-            // src={(Object.keys(outputObj).length !== 0 )? ((outputObj.isUpdated)? outputObj.path + " ": outputObj.path + ""): {}}
+  const recentSrc = useRef("");
+  const {serverRes={resUrl: ""}, stderr="", shouldUpdate} = outputObj;
+
+  // console.log("preview rendered");
+  if (previewState) {
+    return (
+      <div className={locClasses.previewCont}>
+        {
+          (serverRes.resStatus === "FAILURE")?
+          <Error
+            finalStyle={errorFinalStyle}
+            errObj={{
+              resType:    serverRes.resType,
+              resText:    serverRes.resText,
+              errCode:    serverRes.errCode,
+              errContent: serverRes.errContent,
+              stderr:     stderr,
+            }}
+          />:
+          <iframe
+            id={`${parentModule}-preview-iframe`} ref={iframeRef} title="output-iframe" className={locClasses.iframe} width="100%"
+            src={(shouldUpdate)? srcAlternator(recentSrc, serverRes.resUrl): ""}
           />
-      }
-    </div>
-  );
-}
+        }
+      </div>
+    );
+  } else {
+      return null;
+  }
+})
 
 const errorFinalStyle = {
   errorCont: {
     flex: "10 1 auto",
   }
 }
+
+// src={(Object.keys(outputObj).length !== 0 )? ((outputObj.isUpdated)? outputObj.path + " ": outputObj.path + ""): {}}

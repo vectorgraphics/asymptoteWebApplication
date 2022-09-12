@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
-import { idSelector } from "../../../../../store/selectors";
+import { useSelector } from "react-redux";
+import { UCIDSelector, idSelector, wsNameSelector, rmOutputSelector} from "../../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
-import { enActionCreator } from "../../../../../store/workspaces";
-import { EraserSVG } from "../../../../../assets/svgs/appwideSvgs.js";
+import { EraserSVG } from "../../../../../assets/svgs/appWideSvgs.js";
 import { GetApp as DownloadIcon } from "@material-ui/icons";
+import { fetchOptionObj, toUrlEncoded } from '../../../../../utils/appTools.js';
 
 
 const useStyle = makeStyles((theme) => ({
@@ -55,16 +55,41 @@ const useStyle = makeStyles((theme) => ({
   }
 }));
 
-export function PreviewPaneHeader(props) {
+export const PreviewPaneHeader = ({onErase=()=>{}, ...props}) => {
   const locClasses = useStyle();
+  const UCID = useSelector(UCIDSelector);
   const id = useSelector(idSelector);
-  const dispatch = useDispatch();
+  const wsName = useSelector(wsNameSelector);
+  const rmOutput = useSelector(rmOutputSelector);
 
   return (
     <div className={locClasses.headerCont}>
       <div className={locClasses.headerBody}></div>
-        <DownloadIcon className={locClasses.downloadBtn}/>
-        <EraserSVG className={locClasses.eraserBtn} classes={{root: locClasses.eraserIcon}}/>
+        <DownloadIcon
+          className={locClasses.downloadBtn}
+          onClick={() => {
+                if (rmOutput.serverRes.resStatus === "SUCCESS" && rmOutput.serverRes.resType === "ASY_OUTPUT_CREATED") {
+                  const data = {
+                    reqType: "download",
+                    UCID: UCID,
+                    workspaceId: id,
+                    workspaceName: wsName,
+                    parentModule: "RM",
+                    currentCode: "",
+                    outFormat: "html",
+                  };
+                  fetch("/clients", {...fetchOptionObj.postUrlEncode,  body: toUrlEncoded(data)})
+                    .then((resObj) => resObj.blob()).then((fileContent) => {
+                    const link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(fileContent);
+                    link.setAttribute("download", wsName.toString());
+                    link.click();
+                  }).catch((err) => {});
+                }
+              }
+          }/>
+        <EraserSVG className={locClasses.eraserBtn} classes={{root: locClasses.eraserIcon}} onClick={() => onErase()}/>
     </div>
   );
-}
+};
+
