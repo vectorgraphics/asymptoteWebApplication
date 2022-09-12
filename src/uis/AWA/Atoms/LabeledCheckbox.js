@@ -22,7 +22,7 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-export function LabeledCheckbox({labelText="Legend", className={}, ...props}) {
+export const LabeledCheckbox = ({labelText="Legend", className={}, ...props}) => {
   const locClasses = useStyle();
   const [checked, setChecked] = useState(false);
   const handleChange = (event) => {
@@ -42,4 +42,4 @@ export function LabeledCheckbox({labelText="Legend", className={}, ...props}) {
       </div>
     </div>
   );
-}
+};
