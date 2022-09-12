@@ -9,8 +9,8 @@ import { reqTypeRouter, reqAnalyzer, delAnalyzer, usrConnect, requestResolver, w
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// const defaultPort = 80;
-// const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
+const defaultPort = 80;
+const port = (process.env.ASYMPTOTE_PORT == undefined)? defaultPort: parseInt(process.env.ASYMPTOTE_PORT);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Express Application
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,7 +24,7 @@ app.route("/")
 .post(reqTypeRouter(), (req, res, next) => {
   console.log(req.body);
   next();
-})
+});
 
 app.route("/delete")
 .post(express.text(), delAnalyzer(__dirname));
@@ -38,12 +38,12 @@ app.route("/logo3d.html")
 // ----------------------------------------
 app.use("/static/", function(req, res, next) {
   if (/\/(?:css|js|media)\//.test(req.originalUrl)) {
-    let urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg)$)/g.exec(req.originalUrl);
+    let urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg|png)$)/g.exec(req.originalUrl);
     if (urlMatched !== null && urlMatched[1] !== undefined) {
       res.sendFile(__dirname + "/build" + urlMatched[0]);
     }
   }
-})
+});
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,11 +60,10 @@ app.use("/clients", (req, res, next) => {
 
 app.route("/clients")
 .post(express.urlencoded({extended: true}), reqAnalyzer(__dirname) , downloadReq(__dirname))
-// app.listen(port);
-app.listen(3000);
+app.listen(port);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Drop Root Permissions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// dropRootPermission(port);
+dropRootPermission(port);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Error Handling
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
