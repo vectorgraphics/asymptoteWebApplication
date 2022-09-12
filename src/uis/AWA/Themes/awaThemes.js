@@ -52,9 +52,10 @@ const props = {
 }
 
 const common = {
-  black, white, whitesmoke, grey, red, pink, orange, deepOrange, blue, green, blueGrey,
-  vividgrey, lightgrey, semidarkgrey, darkgrey, dimgrey, deepgrey, greyedblue, semigreyedblue,
-  lightgreyedblue, dimorange, semired, pureRed, dimgreen, lightblue, deepblue,
+  black, white, whitesmoke, grey, red, pink, orange, deepOrange, blue, green,
+  blueGrey, vividgrey, lightgrey, semidarkgrey, darkgrey, dimgrey, deepgrey,
+  greyedblue, semigreyedblue, lightgreyedblue, dimorange, semired, pureRed,
+  dimgreen, lightblue, deepblue,
 };
 const awaPrimary = {
   awaLight: whitesmoke,
@@ -135,9 +136,9 @@ export const lightTheme = createTheme({
     common,
     awaPrimary,
     background: {
-      module: darkgrey,
+      module: whitesmoke,
       moduleContrast: grey[200],
-      panel: whitesmoke,
+      panel: grey[300],
       panelContrast: darkgrey,
       sideBar: darkgrey,
       dialog: darkgrey,
