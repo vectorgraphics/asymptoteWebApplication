@@ -50,11 +50,11 @@ export const codeFormatter = (codeText) => {
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               toURLEncoder
 export const toUrlEncoded = (dataObj) => {
-  const str = [];
+  const encodedValues = [];
   for (const member in dataObj) {
-    str.push(encodeURIComponent(member) + "=" + encodeURIComponent(dataObj[member]));
+    encodedValues.push(encodeURIComponent(member) + "=" + encodeURIComponent(dataObj[member]));
   }
-  return str.join("&");
+  return encodedValues.join("&");
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                arraysToMap
@@ -115,6 +115,22 @@ export const dataArrayGen = (listOfItems=[], elementToPrepend={text: "none"}) =>
     dataArray.push(newObj);
   }
   return dataArray;
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              srcAlternator
+export const srcAlternator = (recentSrc, actualSrc) => {
+  if (actualSrc === "") {
+    recentSrc.current = "";
+  } else {
+    if (recentSrc.current.length > actualSrc.length) {
+      recentSrc.current = actualSrc;
+    } else if (recentSrc.current.length === actualSrc.length) {
+      recentSrc.current = actualSrc + " ";
+    } else {
+      recentSrc.current = actualSrc;
+    }
+    return recentSrc.current;
+  }
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
