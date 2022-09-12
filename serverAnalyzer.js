@@ -1,10 +1,8 @@
-import { createRequire } from 'module'
 import { writeFile, appendFile } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { spawn, execSync } from "child_process";
-import { createUCID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
 import express from "express";
-const require = createRequire(import.meta.url);
+import { createUCID, usrDirMgr, makeDir, removeDir, dateTime, writePing, getRequest, FLAGS } from "./serverUtil.js";
 
 const serverTimeout = 60000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
@@ -13,23 +11,24 @@ export function reqTypeRouter() {
   return (req, res, next) => {
     if (req.is("application/json") === "application/json") {
       return express.json()(req, res, next);
-    } else if (req.get('Content-Type').includes("application/x-www-form-urlencoded")) {
+    } else if (req.get("Content-Type").includes("application/x-www-form-urlencoded")) {
       return express.urlencoded({extended: true})(req, res, next);
     }
   }
 }
 // ------------------------------------------------
-export function usrConnect(serverDir) {
+export const usrConnect = (serverDir) => {
   return (req, res, next) => {
     if (req.body.reqType === "usrConnect") {
       let ucid = createUCID(req.ip);
+      // getRequest(req.ip);
       if (ucid !== "-1") {
         var reqDest = usrDirMgr(req, serverDir, ucid);
         makeDir(reqDest.usrAbsDirPath);
       } else {
         reqDest = usrDirMgr(req, serverDir, "");
       }
-      const asyVersion = execSync('asy -c VERSION', {
+      const asyVersion = execSync("asy -c VERSION", {
         timeout: 500,
         encoding: "ascii"
       })
@@ -42,8 +41,8 @@ export function usrConnect(serverDir) {
       };
 
       const logFilePath = serverDir + "/logs/log";
-      appendFile(logFilePath, JSON.stringify(rawData, null, `\n`))
-      .then(() => console.log(`log file created successfully.`))
+      appendFile(logFilePath, JSON.stringify(rawData, null, "\n") + "\n")
+      .then(() => console.log("log file successfully created."))
       .catch((err) => console.log(`An error occurred while writing log file!\n ${err.toString()}`));
 
       const data = {
@@ -51,17 +50,18 @@ export function usrConnect(serverDir) {
         usrConnectStatus: "UDIC",
         asyVersion: asyVersion,
       }
+
       res.send(data);
     } else {
       next();
     }
   }
-}
+};
 // ------------------------------------------------
-export function reqAnalyzer(serverDir) {
+export const reqAnalyzer = (serverDir) => {
   return (req, res, next) => {
     const reqDest = usrDirMgr(req, serverDir, req.body.UCID);
-    const codeFilename = `${req.body.workspaceName}_${req.body.workspaceId}`;
+    const codeFilename = `${req.body.workspaceName}_${req.body.workspaceId}-${req.body.parentModule}`;
     const codeFile = codeFilename + ".asy";
     req.body = {
       ...req.body,
@@ -70,16 +70,18 @@ export function reqAnalyzer(serverDir) {
       codeFile: codeFile,
       codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
       htmlFile: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
+    };
+
+    if (req.body.argv !== undefined) {
+      req.body.argv = JSON.parse('{"' + decodeURI(req.body.argv).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') +'"}');
     }
-    if (typeof req.body.isUpdated === "string") {
-      req.body.isUpdated =  req.body.isUpdated.includes("true");
-    }
+
     // console.log("modified req.body:\n", req.body);
     next();
-  }
-}
+  };
+};
 // ------------------------------------------------
-export function delAnalyzer(serverDir) {
+export const delAnalyzer = (serverDir) => {
   return (req, res, next) => {
     let requestAndId = /(\w+)&(\w+)/gi.exec(req.body);
     if (requestAndId[1] === "deleteReq") {
@@ -92,27 +94,31 @@ export function delAnalyzer(serverDir) {
     } else {
       res.send(null);
     }
-  }
-}
+  };
+};
 // ------------------------------------------------
-export function writeAsyFile() {
+export const writeAsyFile = () => {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
-    const fileContent = req.body.codeContent;
-    writeFile(filePath, fileContent).then(() => {
+    const fileContent = req.body.currentCode;
+    if (req.body.reqType === "run") {
+      writeFile(filePath, fileContent).then(() => {
+        next();
+      }).catch((err) => res.send(outputMaker("FAILURE", "ASY_WRITE_FILE_ERR", FLAGS)(err, true)));
+    } else {
       next();
-    }).catch((err) => {
-      res.send(errResCreator(FLAGS.FAILURE.ASY_WRITE_FILE_ERR, err));
-    })
+    }
   }
-}
+};
 // ------------------------------------------------
-export function requestResolver() {
+export const requestResolver = () => {
   return (req, res, next) => {
     const option = {
       cwd: req.body.usrAbsDirPath,
+      serverDir: req.body.serverDir,
       codeFile: req.body.codeFile,
-      outformat: (req.body.outformat === "prev")? "html": req.body.outformat,
+      codeFilename: req.body.codeFile,
+      outFormat: (req.body.outFormat === "prev")? "html": req.body.outFormat,
     }
     switch (req.body.reqType) {
       case "ping":
@@ -120,49 +126,57 @@ export function requestResolver() {
         next();
         break;
       case "run":
+      case "compile":
         asyRunManager(req, res, next, option);
         break;
       case "download":
-        if (req.body.outformat === "asy") {
-          res.send({
-            responseType: FLAGS.SUCCESS.ASY_FILE_CREATED,
-            isUpdated: !req.body.isUpdated
-          })
+        if (req.body.outFormat === "asy") {
+          const outputFilePath = `${req.body.usrAbsDirPath}/${req.body.codeFilename}.${req.body.outFormat}`;
+          res.send(outputMaker("SUCCESS", "ASY_FILE_CREATED", FLAGS)(outputFilePath, true));
           break;
         } else {
-          asyRunManager(req, res, next, option);
+          asyRunManager(req, res, next, option, "download");
           break;
         }
       default:
         break;
     }
   }
-}
+};
 // ------------------------------------------------
-export function downloadReq(dirname) {
+export const downloadReq = dirname => {
   return function (req, res, next) {
-    if (req.body.outformat === "asy") {
+    if (req.body.outFormat === "asy") {
       if (existsSync(req.body.codeFilePath)) {
         res.download(req.body.codeFilePath);
       }
     } else {
-      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.outformat;
+      const outputFilePath = `${req.body.usrAbsDirPath}/${req.body.codeFilename}.${req.body.outFormat}`;
       if (existsSync(outputFilePath)) {
         res.download(outputFilePath);
       }
     }
   }
-}
+};
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Resolver core function
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function asyRunManager(req, res, next, option) {
-  const asyArgs = ['-noV', '-outpipe', '2', '-noglobalread', '-f', option.outformat, option.codeFile];
+const asyRunManager = (req, res, next, option) => {
+  let asyArgs = "";
+  const commonArgs = ["-noV", "-outpipe", "2", "-noglobalread", "-f"];
+
+  if (req.body.reqType === "compile") {
+    const SORFile = `${option.serverDir}/thirdPartyCode/SOR.asy`;
+    const compileArgs = argvMaker(req.body.argv);
+    asyArgs = [...commonArgs, "html", ...compileArgs, SORFile, "-o", option.codeFilename];
+  } else {
+    asyArgs = [...commonArgs, option.outFormat, option.codeFile];
+  }
   const chProcOption = {
     cwd: option.cwd,
-  }
+  };
   // const htmlFileExists = existsSync(req.body.htmlFile);
-  // if (req.body.reqType === "download" && option.outformat === "html" && htmlFileExists) {
+  // if (req.body.reqType === "download" && option.outFormat === "html" && htmlFileExists) {
   // if (req.body.reqType === "download") {
   //   res.send({
   //     responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
@@ -175,14 +189,11 @@ function asyRunManager(req, res, next, option) {
   // }
   let stderrData = "", stdoutData = "";
   const chProcHandler = spawn('asy', asyArgs, chProcOption);
-  setTimeout(() => {
-    chProcHandler.kill("SIGTERM");
-  }, serverTimeout)
+  setTimeout(() => chProcHandler.kill("SIGTERM"), serverTimeout);
   // ------------------------------- onError
   chProcHandler.on('error', (err) => {
-    const errResObject = errResCreator(FLAGS.FAILURE.PROCESS_SPAWN_ERR, err);
     chProcHandler.kill();
-    res.send(errResObject);
+    res.send(outputMaker("FAILURE", "PROCESS_SPAWN_ERR", FLAGS)(err, null, true));
   });
   // ------------------------------- onData
   chProcHandler.stderr.on('data', (chunk) => {stderrData += chunk.toString()});
@@ -192,54 +203,99 @@ function asyRunManager(req, res, next, option) {
   // ------------------------------- onExit
   chProcHandler.on('exit', (code, signal) => {
     if (code === null) {
-      (signal === "SIGTERM") ? res.send(errResCreator(FLAGS.FAILURE.PROCESS_TIMEDOUT_ERR)) :
-          res.send(errResCreator(FLAGS.FAILURE.PROCESS_TERMINATED_ERR));
-    } else if (code !== 0) {
-      res.send({
-        ...errResCreator(FLAGS.FAILURE.ASY_CODE_COMPILE_ERR),
-        stderr: stderrData,
-        stdout: stdoutData,
-        isUpdated: false
-      });
+      (signal === "SIGTERM")?
+        res.send(outputMaker("FAILURE", "PROCESS_TIMEOUT_ERR", FLAGS)(null, true, stderrData, stdoutData)):
+        res.send(outputMaker("FAILURE", "PROCESS_TERMINATED_ERR", FLAGS)(null, true, stderrData, stdoutData));
+      } else if (code !== 0) {
+      res.send(outputMaker("FAILURE", "ASY_CODE_COMPILE_ERR", FLAGS)({errCode: code, errContent: ""}, true, stderrData, stdoutData));
     } else {
       process.nextTick(() => {
-        const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + option.outformat;
+        const outputFilePath = `${req.body.usrAbsDirPath}/${req.body.codeFilename}.${option.outFormat}`;
         if (existsSync(outputFilePath)) {
-          res.send({
-            responseType: FLAGS.SUCCESS.ASY_OUTPUT_CREATED,
-            stderr: stderrData,
-            stdout: stdoutData,
-            isUpdated: !req.body.isUpdated,
-            path: (option.outformat === "html")? req.body.usrRelDirPath
-                + "/" + req.body.codeFilename + "." + option.outformat: ""
-          });
+          const resUrl = (option.outFormat === "html")? `${req.body.usrRelDirPath}/${req.body.codeFilename}.${option.outFormat}`: "";
+          // console.log("inside processTick", outputMaker("SUCCESS", "ASY_OUTPUT_CREATED", FLAGS)(resUrl, true, stderrData, stdoutData));
+          res.send(outputMaker("SUCCESS", "ASY_OUTPUT_CREATED", FLAGS)(resUrl, true, stderrData, stdoutData));
         } else {
-          res.send({
-            responseType: FLAGS.SUCCESS.ASY_RUN_NO_OUTPUT,
-            stderr: stderrData,
-            stdout: stdoutData,
-            isUpdated: false
-          });
+          res.send(outputMaker("SUCCESS", "ASY_RUN_NO_OUTPUT", FLAGS)(null, true, stderrData, stdoutData));
         }
       });
     }
     // console.log(`Code: ${code}\nSignal: ${signal}`);
   });
-}
+};
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Core internal functions
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export function errResCreator(flag, errObject = null, errorCode = null) {
-  const errResponse = {
-    responseType: "ERROR",
-    errorType: flag[0],
-    errorText: flag[1]
+const outputMaker = (resStatus="", flagCategory, FLAGS) => {
+  const serverRes = {
+    resStatus: resStatus,
+    resType: FLAGS[resStatus][flagCategory][0],
+    resText: FLAGS[resStatus][flagCategory][1],
+    errCode: null,
+    errContent: null,
+    resUrl: null,
+  };
+  if (resStatus === "SUCCESS") {
+    return (resUrl=null, shouldUpdate=true, stderr=null, stdout=null) => {
+      return {
+        serverRes: {
+          ...serverRes,
+          resUrl: resUrl,
+        },
+        stdout: stderr,
+        stderr: stdout,
+        shouldUpdate: shouldUpdate,
+      }
+    }
+  } else if (resStatus === "FAILURE") {
+    const tempErrObj = {
+      code: null,
+      content: "null",
+    };
+    return (errObj=tempErrObj, shouldUpdate=true, stderr=null, stdout=null) => {
+      return {
+        serverRes: {
+          ...serverRes,
+          errCode: errObj.code,
+          errContent: errObj.content,
+        },
+        stdout: stderr,
+        stderr: stdout,
+        shouldUpdate: shouldUpdate,
+      }
+    }
   }
-  if (errObject === Object(errObject)) {
-    errResponse.errorCode = errObject.code;
-    errResponse.errorContent = errObject.toString();
-  } else {
-    errResponse.errorCode = errorCode;
+}
+
+const argvMaker = (obj={}) => {
+  const argvArr = [];
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      argvArr.push("-u");
+      switch (key) {
+        case "fFormula":
+          argvArr.push(`f="${obj[key]}"`);
+          break;
+        case "gFormula":
+          argvArr.push(`g="${obj[key]}"`);
+          break;
+        case "xMin":
+          argvArr.push(`xmin=${obj[key]}`);
+          break;
+        case "xMax":
+          argvArr.push(`xmax=${obj[key]}`);
+          break;
+        case "revAxisType":
+          argvArr.push(`vertical=${(obj[key] === "Vertical")? true: false}`);
+          break;
+        case "revAxisPos":
+          argvArr.push(`about=${obj[key]}`);
+          break;
+        default:
+          break;
+      }
+    }
   }
-  return errResponse;
+  return argvArr;
 }
 
