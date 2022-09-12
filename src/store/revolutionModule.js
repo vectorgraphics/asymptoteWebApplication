@@ -7,78 +7,31 @@ import { glActions } from "./globals";
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  RevolutionModule Global Action Creators
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const rmActions = {
-  setFFormula: "setFFormula",
-  setGFormula: "setGFormula",
-  setXMin: "setXMin",
-  setXMax: "setXMax",
-  setRotAxisType: "setRotAxisType",
-  setRotAxisPos: "setRotAxisPos",
-  updateOutput: "updateOutput",
+  setInputs: "setInputs",
+  resetFormula: "resetFormula",
+  rmUpdateOutput: "rmUpdateOutput",
 }
 export const rmActionCreator = {
-  setFFormula: (id, value) => {
-    return {
-      type: rmActions.setFFormula,
-      payload: {
-        id: id,
-        fFormula: value,
-      },
-    };
-  },
-  setGFormula: (id, value) => {
-    return {
-      type: rmActions.setGFormula,
-      payload: {
-        id: id,
-        gFormula: value,
-      },
-    };
-  },
-  setXMin: (id, value) => {
-    return {
-      type: rmActions.setXMin,
-      payload: {
-        id: id,
-        xMin: value,
-      },
-    };
-  },
-  setXMax: (id, value) => {
-    return {
-      type: rmActions.setXMax,
-      payload: {
-        id: id,
-        xMax: value,
-      },
-    };
-  },
-  setRotAxisType: (id, type) => {
-    return {
-      type: rmActions.setRotAxisType,
-      payload: {
-        id: id,
-        rotAxisType: type,
-      },
-    };
-  },
-  setRotAxisPos: (id, pos) => {
-    return {
-      type: rmActions.setRotAxisPos,
-      payload: {
-        id: id,
-        rotAxisPos: pos,
-      },
-    };
-  },
-  updateOutput: (id, outputData) => {
-    return {
-      type: rmActions.updateOutput,
-      payload: {
-        id: id,
-        output: outputData,
-      },
-    };
-  }
+  setInputs: (id, inputObj) => ({
+    type: rmActions.setInputs,
+    payload: {
+      id: id,
+      input: inputObj,
+    },
+  }),
+  resetFormula: (id) => ({
+    type: rmActions.resetFormula,
+    payload: {
+      id: id,
+    },
+  }),
+  updateOutput: (id, outputObj) => ({
+    type: rmActions.rmUpdateOutput,
+    payload: {
+      id: id,
+      output: outputObj,
+    },
+  }),
 };
 
 export const revolutionModule = (state = {}, action) => {
@@ -92,33 +45,16 @@ export const revolutionModule = (state = {}, action) => {
       return newCopy;
     case glActions.resetApplication:
       return slices.revolution;
-    case rmActions.setFFormula:
-      newCopy[action.payload.id].fFormula = action.payload.fFormula;
+    case rmActions.setInputs:
+      newCopy[action.payload.id].input = action.payload.input;
       return newCopy;
-    case rmActions.setGFormula:
-      newCopy[action.payload.id].gFormula = action.payload.gFormula;
-      return newCopy;
-    case rmActions.setXMin:
-      newCopy[action.payload.id].xMin = action.payload.xMin;
-      return newCopy;
-    case rmActions.setXMax:
-      newCopy[action.payload.id].xMax = action.payload.xMax;
-      return newCopy;
-    case rmActions.setRotAxisType:
-      newCopy[action.payload.id].rotAxisType = action.payload.rotAxisType;
-      return newCopy;
-    case rmActions.setRotAxisPos:
-      newCopy[action.payload.id].rotAxisPos = action.payload.rotAxisPos;
-      return newCopy;
-    case rmActions.updateOutput:
+    case rmActions.rmUpdateOutput:
       newCopy[action.payload.id].output = action.payload.output;
+      return newCopy;
+    case rmActions.resetFormula:
+      newCopy[action.payload.id].input = slices.revolution.input;
       return newCopy;
     default:
       return state;
   }
 }
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
