@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { makeStyles, TextField } from "@material-ui/core";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
@@ -26,10 +26,9 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-export function ComboBox({label="Combo Box", className={}, dataArray=[], property="name", ...props}) {
+export const ComboBox = ({label="Combo Box", className={}, dataArray=[], property="name", ...props}) => {
   const locClasses = useStyle(props);
   const inputRef = useRef(null);
-  // useEffect(() => inputRef.current.style.maxWidth = "65%");
 
   return (
     <div className={className}>
@@ -44,4 +43,4 @@ export function ComboBox({label="Combo Box", className={}, dataArray=[], propert
       />
     </div>
   );
-}
+};
