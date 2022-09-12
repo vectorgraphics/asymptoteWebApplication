@@ -6,16 +6,14 @@ const previewOutput = {
   serverRes: {
     resType: "",
     resText: "",
-    resUrl: ""
-  },
-  error: {
-    errType: null,
     errText: null,
     errCode: null,
     errContent: null,
+    resUrl: "",
   },
   stdout: "",
   stderr: "",
+  shouldUpdate: null,
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              initialState
@@ -26,7 +24,6 @@ export const initialState = {
     editorLineNumbers: true,
     editorFontsize: "default",     // Must be in lowercase for compatibility with Codemirror
     editorKeyBinding: "default",   // Must be in lowercase for compatibility with Codemirror
-    splitBtnReRender: 0,
     appReset: true,
     asyVersion: "",
   },
@@ -46,14 +43,10 @@ export const initialState = {
     },
     codeModule: {
       "ws-1": {
-        code: {
-          lastSuccessful: "",
-          lastFailed: "",
-          currentContent: "",
-        },
+        parentModule: "codeModule",
+        currentCode: "",
         outFormat: "prev",
         output: previewOutput,
-        shouldUpdate: false,
       },
     },
     graphModule: {
@@ -67,20 +60,19 @@ export const initialState = {
     },
     revolutionModule: {
       "ws-1": {
-        fFormula: "",
-        gFormula: "",
-        xMin: "0",
-        xMax: "0",
-        rotAxisType: "Vertical",
-        rotAxisPos: "0",
-        output: {
-          ...previewOutput,
-          parentModule: "revolutionModule",
+        parentModule: "revolutionModule",
+        input: {
+          fFormula: "x",
+          gFormula: "x^2",
+          xMin: "0",
+          xMax: "1",
+          revAxisType: "Vertical",
+          revAxisPos: "0",
         },
+        output: previewOutput,
       }
     }
   },
-  ui: {},
   themes: {
     appTheme: "darkTheme",
   },
