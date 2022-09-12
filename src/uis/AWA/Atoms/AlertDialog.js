@@ -10,6 +10,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const basicStyle = (theme) => ({
   wrapper: {},
   dialog: {
+    minWidth: "30rem",
     boxShadow: theme.shadows[5],
     backgroundColor: theme.palette.background.dialog,
   },
@@ -17,10 +18,10 @@ const basicStyle = (theme) => ({
     color: theme.palette.text.active,
   },
   dialogContentText: {
-    color: theme.palette.text.primaryContrast,
+    color: theme.palette.text.awaPrimaryContrast,
   },
   btn: {
-    color: theme.palette.text.primaryContrast,
+    color: theme.palette.text.awaPrimaryContrast,
   },
 })
 
@@ -32,7 +33,9 @@ const useStyle = makeStyles((theme) => ({
   btn:                (finalStyle) => merge(basicStyle(theme), finalStyle).btn,
 }))
 
-export function AlertDialog({finalStyle={}, isOpen, onClose=() => {}, onAccept=() => {}, dialogText="", ...props}) {
+export const AlertDialog = ({
+  finalStyle={}, isOpen, onClose=() => {}, onAccept=() => {}, dialogText="", ...props
+}) => {
   const locClasses = useStyle(finalStyle);
   return (
     <div className={locClasses.wrapper}>
@@ -53,4 +56,4 @@ export function AlertDialog({finalStyle={}, isOpen, onClose=() => {}, onAccept=(
       </Dialog>
     </div>
   );
-}
+};
