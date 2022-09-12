@@ -36,7 +36,9 @@ function getStyles(name, selectedName, theme) {
   };
 }
 
-export function MultipleSelect({className="", label="no label", listOfItems=[], selectedList=[], setSelectedList=() => {}, disabled=false, ...props}) {
+export const MultipleSelect = ({
+  className="", label="no label", listOfItems=[], selectedList=[], setSelectedList=() => {}, disabled=false, ...props
+}) => {
   const locClasses = useStyles(props);
   const theme = useTheme();
 
@@ -63,4 +65,4 @@ export function MultipleSelect({className="", label="no label", listOfItems=[], 
       </FormControl>
     </div>
   );
-}
+};
