@@ -8,60 +8,41 @@ import { glActions } from "./globals";
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   // codeModule particular actions
 const cmActions = {
-  setCode:         "setCode",
+  setCurrentCode:  "setCurrentCode",
   setOutFormat:    "setOutFormat",
-  // setStdin:       "setStdin",
-  updateOutput:    "updateOutput",
+  cmUpdateOutput:  "cmUpdateOutput",
   setShouldUpdate: "setShouldUpdate",
 };
 
 export const cmActionCreator = {
-  setCode: (id, content, subCode = "currentContent") => {
-    return {
-      type: cmActions.setCode,
-      payload: {
-        id: id,
-        subCode: subCode,
-        content: content
-      }
-    };
-  },
-  setOutFormat: (id, outFormat) => {
-    return {
-      type: cmActions.setOutFormat,
-      payload: {
-        id: id,
-        outFormat: outFormat,
-      },
-    };
-  },
-  // setStdin: (id, stdin) => {
-  //   return {
-  //     type: cmActions.setStdin,
-  //     payload: {
-  //       id: id,
-  //       stdin: stdin
-  //     },
-  //   };
-  // },
-  updateOutput: (id, output) => {
-    return {
-      type: cmActions.updateOutput,
-      payload: {
-        id: id,
-        output: output
-      },
-    };
-  },
-  setShouldUpdate: (id, shouldUpdate) => {
-    return {
-      type: cmActions.updateOutput,
-      payload: {
-        id: id,
-        shouldUpdate: shouldUpdate
-      },
-    };
-  },
+  setCurrentCode: (id, currentCode) => ({
+    type: cmActions.setCurrentCode,
+    payload: {
+      id: id,
+      currentCode: currentCode,
+    }
+  }),
+  setOutFormat: (id, outFormat) => ({
+    type: cmActions.setOutFormat,
+    payload: {
+      id: id,
+      outFormat: outFormat,
+    },
+  }),
+  updateOutput: (id, output) => ({
+    type: cmActions.cmUpdateOutput,
+    payload: {
+      id: id,
+      output: output
+    },
+  }),
+  setShouldUpdate: (id, shouldUpdate) => ({
+    type: cmActions.setShouldUpdate,
+    payload: {
+      id: id,
+      shouldUpdate: shouldUpdate
+    },
+  }),
 };
 
 export const codeModule = (state = {}, action) => {
@@ -75,20 +56,17 @@ export const codeModule = (state = {}, action) => {
       return newCopy;
     case glActions.resetApplication:
       return slices.workspaces.codeModule;
-    case cmActions.setCode:
-      newCopy[action.payload.id].code[action.payload.subCode] = action.payload.content;
+    case cmActions.setCurrentCode:
+      newCopy[action.payload.id].currentCode = action.payload.currentCode;
       return newCopy;
     case cmActions.setOutFormat:
       newCopy[action.payload.id].outFormat = action.payload.outFormat;
       return newCopy;
-    // case cmActions.setStdin:
-    //   newCopy[action.payload.id].input.stdin = action.payload.stdin;
-    //   return newCopy;
-    case cmActions.updateOutput:
+    case cmActions.cmUpdateOutput:
       newCopy[action.payload.id].output = action.payload.output;
       return newCopy;
     case cmActions.setShouldUpdate:
-      newCopy[action.payload.id].shouldUpdate = action.payload.shouldUpdate;
+      newCopy[action.payload.id].output.shouldUpdate = action.payload.output.shouldUpdate;
       return newCopy;
     default:
       return state
