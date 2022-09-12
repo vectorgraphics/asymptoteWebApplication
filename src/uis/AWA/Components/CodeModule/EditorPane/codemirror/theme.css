@@ -41,7 +41,7 @@
 
 .cm-s-lightTheme.CodeMirror, .cm-s-lightTheme .CodeMirror-gutters {
   /*background-color: #21252b !important;*/
-  background-color: transparent !important;
+  background-color: whitesmoke !important;
   color: black !important;
   border: none;
 }
@@ -55,7 +55,7 @@
 .cm-s-lightTheme span.cm-atom { color: #9b2fff; }
 .cm-s-lightTheme span.cm-type { font-weight: bold; color:  #ab2525; }
 .cm-s-lightTheme span.cm-keyword { color: #FF00FF; }
-.cm-s-lightTheme span.cm-variable { color: #2B91AF; }
+.cm-s-lightTheme span.cm-variable { color: #000000; }
 .cm-s-lightTheme span.cm-variable-2 { color: #00D0D0; }
 .cm-s-lightTheme span.cm-variable-3 { color: #00D0D0; }
 .cm-s-lightTheme span.cm-comment { color: #A0A1A7; }
@@ -90,7 +90,7 @@
 .cm-s-darkTheme span.cm-atom { color: #bd93f9; }
 .cm-s-darkTheme span.cm-type { color:  #bb729a; }
 .cm-s-darkTheme span.cm-keyword { color: #d55fde; }
-.cm-s-darkTheme span.cm-variable { color: #abb2bf; }
+.cm-s-darkTheme span.cm-variable { color: #F5F5F5; }
 .cm-s-darkTheme span.cm-variable-2 { color: #e06c75; }
 .cm-s-darkTheme span.cm-variable-3 { color: #61afef; }
 .cm-s-darkTheme span.cm-comment { color: #5c6370; }
