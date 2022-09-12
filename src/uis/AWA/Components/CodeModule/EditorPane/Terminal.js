@@ -4,9 +4,6 @@ import { cmOutputSelector } from "../../../../../store/selectors";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { PanelCtrlBar } from "../../../Atoms/PanelCtrlBar.js";
 
-import IconButton from '@material-ui/core/IconButton';
-import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
-
 const useStyle = makeStyles((theme) => ({
   terminalCont: {
     display: "flex",
@@ -16,40 +13,38 @@ const useStyle = makeStyles((theme) => ({
   },
   terminalBody: {
     flex: "1 1 auto",
+    minHeight: "10rem",
     padding: "0.5rem",
-    color: "whitesmoke",
+    color: theme.palette.text.awaPrimaryContrast,
     fontSize: "0.875rem",
     fontWeight: "100",
-    backgroundColor: "#282C34",
+    backgroundColor: theme.palette.background.panel,
   }
 }));
 
-export function Terminal({errorContent="", cmOutPut={}, closeTerminal=() => {}, ...props}) {
+export const Terminal = ({content="", closeTerminal=() => {}, ...props}) => {
   const locClasses = useStyle();
-  const [bodyState, setBodyState] = useState(false);
-  const outPut = useSelector(cmOutputSelector);
-  const theme = useTheme();
+  const [minimized, setMinimized] = useState(false);
+  const [display, setDisplay] = useState(() => content !== "");
 
-  // useEffect(() => {
-  //   if (cmOutPut !== outPut) {
-  //     setBodyState(true);
-  //   }
-  // }, [outPut]);
-
-  return (
-    (bodyState && (errorContent !== ""))?
-    <div className={locClasses.terminalCont}>
-      <PanelCtrlBar
-        backgroundColor={theme.palette.background.headerType2}
-        // titleBarComponent={<div style={{marginLeft: "0.5rem"}}> Terminal </div>}
-        // onMin={}
-        // onMax={}
-        onClose={(event) => setBodyState(false)}
-      />
-      <div className={locClasses.terminalBody}> {errorContent} </div>
-    </div>:
-    null
-  );
-}
+  if (display) {
+    if (minimized) {
+      return (
+        <div className={locClasses.terminalCont}>
+          <PanelCtrlBar onMin={() => setMinimized(true)} onMax={() => setMinimized(false)} onClose={(event) => setDisplay(false)}/>
+        </div>
+      );
+    } else {
+      return (
+        <div className={locClasses.terminalCont}>
+          <PanelCtrlBar onMin={() => setMinimized(true)} onMax={() => setMinimized(false)} onClose={(event) => setDisplay(false)}/>
+          <div className={locClasses.terminalBody}> {content} </div>
+        </div>
+      );
+    }
+  } else {
+    return null;
+  }
+};
 
 
