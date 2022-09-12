@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Switch } from '@material-ui/core';
+import { makeStyles, Switch } from '@material-ui/core';
 import { merge } from "lodash";
 
 const basicStyle = (theme) => ({
@@ -65,7 +64,9 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 
-export function BinarySwitch({finalStyle={}, Labels=["left", "right"], switchInitialValue="right", onChange=()=>{}, ...props}) {
+export const BinarySwitch = ({
+  finalStyle={}, Labels=["left", "right"], switchInitialValue="right", onChange=()=>{}, ...props
+}) => {
   const locClasses = useStyle(finalStyle)
   const [state, setState] = useState(() => {
     return !!Labels.indexOf(switchInitialValue);
@@ -93,4 +94,4 @@ export function BinarySwitch({finalStyle={}, Labels=["left", "right"], switchIni
       <p className={locClasses.switchLabels}> {Labels[1]} </p>
     </div>
   );
-}
+};
