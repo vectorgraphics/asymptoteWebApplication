@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { themeSelector } from "../store/selectors.js";
 import { StylesProvider, jssPreset, ThemeProvider } from "@material-ui/core/styles";
@@ -13,12 +12,11 @@ const jssExtended = create({
 
 export const App = ({UCID=0, asyVersion="unknown", ...props}) => {
   const appliedTheme = useSelector(themeSelector);
-  useEffect(() => {}, [appliedTheme]);
 
   return (
     <StylesProvider jss={jssExtended}>
       <ThemeProvider theme={(appliedTheme === "darkTheme")? darkTheme: lightTheme}>
-          <AWAPlatform UCID={UCID} asyVersion={asyVersion}/>
+        <AWAPlatform UCID={UCID} asyVersion={asyVersion}/>
       </ThemeProvider>
     </StylesProvider>
   );
