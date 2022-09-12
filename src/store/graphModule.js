@@ -7,22 +7,18 @@ import { glActions } from "./globals";
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GraphModule Global Action Creators
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const gmActionCreator = {
-  add: (id) => {
-    return {
-      type: wsActions.add,
-      payload: {
-        id: id,
-      },
-    };
-  },
-  remove: (id) => {
-    return {
-      type: wsActions.remove,
-      payload: {
-        id: id,
-      },
-    };
-  },
+  add: (id) => ({
+    type: wsActions.add,
+    payload: {
+      id: id,
+    },
+  }),
+  remove: (id) => ({
+    type: wsActions.remove,
+    payload: {
+      id: id,
+    },
+  }),
 };
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -44,25 +40,21 @@ export const fuActionCreator = {
       },
     };
   },
-  removeFunction: (id, funcId) => {
-    return {
-      type: fuActions.removeFunction,
-      payload: {
-        id: id,
-        funcId: funcId,
-      },
-    };
-  },
-  updateFunction: (id, funcId, funcObj={}) => {
-    return {
-      type: fuActions.updateFunction,
-      payload: {
-        id: id,
-        funcId: funcId,
-        funcObj: funcObj,
-      },
-    };
-  },
+  removeFunction: (id, funcId) => ({
+    type: fuActions.removeFunction,
+    payload: {
+      id: id,
+      funcId: funcId,
+    },
+  }),
+  updateFunction: (id, funcId, funcObj={}) => ({
+    type: fuActions.updateFunction,
+    payload: {
+      id: id,
+      funcId: funcId,
+      funcObj: funcObj,
+    },
+  }),
 };
 
 export const functions = (state = {}, action) => {
@@ -99,32 +91,26 @@ const axActions = {
   updateAxis: "updateAxis",
 }
 export const axActionCreator = {
-  addAxis: (axisName, axisObj={}) => {
-    return {
-      type: axActions.addAxis,
-      payload: {
-        axisName: axisName,
-        axisObj: axisObj,
-      },
-    };
-  },
-  removeAxis: (axisName) => {
-    return {
-      type: axActions.removeAxis,
-      payload: {
-        axisName: axisName,
-      },
-    };
-  },
-  updateAxis: (axesId, axesObj={}) => {
-    return {
-      type: axActions.updateAxis,
-      payload: {
-        axisId: axesId,
-        axisObj: axesObj,
-      },
-    };
-  },
+  addAxis: (axisName, axisObj={}) => ({
+    type: axActions.addAxis,
+    payload: {
+      axisName: axisName,
+      axisObj: axisObj,
+    },
+  }),
+  removeAxis: (axisName) => ({
+    type: axActions.removeAxis,
+    payload: {
+      axisName: axisName,
+    },
+  }),
+  updateAxis: (axesId, axesObj={}) => ({
+    type: axActions.updateAxis,
+    payload: {
+      axisId: axesId,
+      axisObj: axesObj,
+    },
+  }),
 };
 
 export const axes = (state = {}, action) => {
@@ -153,33 +139,26 @@ const peActions = {
   updatePen: "updatePen",
 };
 export const peActionCreator = {
-  addPen: (penId, penObj={}) => {
-  return {
+  addPen: (penId, penObj={}) => ({
     type: peActions.addPen,
     payload: {
       penId: penId,
       penObj: penObj,
     }
-  }
-
-  },
-  removePen: (penId) => {
-    return {
-      type: peActions.removePen,
-      payload: {
-        penId: penId,
-      },
-    };
-  },
-  updatePen: (penId, penObj) => {
-    return {
-      type: peActions.updatePen,
-      payload: {
-        penId: penId,
-        penObj: penObj,
-      },
-    };
-  },
+  }),
+  removePen: (penId) => ({
+    type: peActions.removePen,
+    payload: {
+      penId: penId,
+    },
+  }),
+  updatePen: (penId, penObj) => ({
+    type: peActions.updatePen,
+    payload: {
+      penId: penId,
+      penObj: penObj,
+    },
+  }),
 };
 
 export const pens = (state = {}, action) => {
@@ -210,32 +189,26 @@ const lbActions = {
   updateLabel: "updateLabel",
 };
 export const lbActionCreator = {
-  addLabel: (labelId, labelObj={}) => {
-    return {
-      type: lbActions.addLabel,
-      payload: {
-        labelId: labelId,
-        labelObj: labelObj,
-      },
-    };
-  },
-  removeLabel: (labelId) => {
-    return {
-      type: lbActions.removeLabel,
-      payload: {
-        labelId: labelId,
-      },
-    };
-  },
-  updateLabel: (labelId, labelObj={}) => {
-    return {
-      type: lbActions.updateLabel,
-      payload: {
-        labelId: labelId,
-        labelObj: labelObj,
-      },
-    };
-  },
+  addLabel: (labelId, labelObj={}) => ({
+    type: lbActions.addLabel,
+    payload: {
+      labelId: labelId,
+      labelObj: labelObj,
+    },
+  }),
+  removeLabel: (labelId) => ({
+    type: lbActions.removeLabel,
+    payload: {
+      labelId: labelId,
+    },
+  }),
+  updateLabel: (labelId, labelObj={}) => ({
+    type: lbActions.updateLabel,
+    payload: {
+      labelId: labelId,
+      labelObj: labelObj,
+    },
+  }),
 };
 
 export const Labels = (state = {}, action) => {
@@ -266,32 +239,26 @@ const piActions = {
   updatePicture: "updatePicture",
 };
 export const piActionCreator = {
-  addPicture: (picId, picObj={}) => {
-    return {
-      type: piActions.addPicture,
-      payload: {
-        picId: picId,
-        picObj: picObj,
-      },
-    };
-  },
-  removePicture: (picId) => {
-    return {
-      type: piActions.removePicture,
-      payload: {
-        picId: picId,
-      },
-    };
-  },
-  updatePicture: (picId, picObj={}) => {
-    return {
-      type: piActions.updatePicture,
-      payload: {
-        picId: picId,
-        picObj: picObj,
-      },
-    };
-  },
+  addPicture: (picId, picObj={}) => ({
+    type: piActions.addPicture,
+    payload: {
+      picId: picId,
+      picObj: picObj,
+    },
+  }),
+  removePicture: (picId) => ({
+    type: piActions.removePicture,
+    payload: {
+      picId: picId,
+    },
+  }),
+  updatePicture: (picId, picObj={}) => ({
+    type: piActions.updatePicture,
+    payload: {
+      picId: picId,
+      picObj: picObj,
+    },
+  }),
 };
 
 export const pictures = (state = {}, action) => {
