@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  idSelector, fFormulaSelector, gFormulaSelector, xMinSelector,
-  xMaxSelector, rotAxisTypeSelector, rotAxisPosSelector,
-} from "../../../../store/selectors";
+import { idSelector } from "../../../../store/selectors";
 import { rmActionCreator } from "../../../../store/revolutionModule.js";
 import { makeStyles, Button, TextField } from "@material-ui/core";
 import { ComboBox } from "../../Atoms/ComboBox.js";
@@ -219,26 +216,17 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function RevolutionModule(props) {
+export const RevolutionModule = (props) => {
   const locClasses = useStyle();
-  const id = useSelector(idSelector);
-  const fFormula = useSelector(fFormulaSelector);
-  const gFormula = useSelector(gFormulaSelector);
-  const xMin = useSelector(xMinSelector);
-  const xMax = useSelector(xMaxSelector);
-  const rotAxisType = useSelector(rotAxisTypeSelector);
-  const rotAxisPos = useSelector(rotAxisPosSelector);
-  const dispatch = useDispatch();
 
-  const [moduleStatus, updateModuleStatus] = useState(true);
-
-  // // Component Basic States
-  // const [fFormula, setFFormula] = useState("");
-  // const [gFormula, setGFormula] = useState("");
-  // const [xMin, setXMin] = useState("");
-  // const [xMax, setXMax] = useState("");
-  // const [rAxisType, setRevAxisType] = useState("Vertical");
-  // const [revAxisPos, setRevAxisPos] = useState("");
+  // Variable States
+  const [fFormula,    setFFormula] = useState("x");
+  const [gFormula,    setGFormula] = useState("x^2");
+  const [xMin,        setXMin] = useState(0);
+  const [xMax,        setXMax] = useState(2);
+  const [revAxisType, setRevAxisType] = useState("Vertical");
+  const [revAxisPos,  setRevAxisPos] = useState(1);
+  const [previewState, setPreviewState] = useState(true);
 
   // Error & Actions Management
   const [fFormulaErr,   setFFormulaErr] = useState(false);
@@ -246,6 +234,11 @@ export function RevolutionModule(props) {
   const [xMinErr,       setXMinErr] = useState(false);
   const [xMaxErr,       setXMaxErr] = useState(false);
   const [revAxisPosErr, setRevAxisPosErr] = useState(false);
+
+  const id = useSelector(idSelector);
+  const dispatch = useDispatch();
+
+  const inputValues = {fFormula, gFormula, xMin, xMax, revAxisType, revAxisPos};
 
   return (
     <div className={locClasses.revolutionModule}>
@@ -261,8 +254,7 @@ export function RevolutionModule(props) {
                   className={locClasses.funcFFormula} size="small" variant="outlined" value={fFormula}
                   onChange={(event) => {
                     setFFormulaErr(event.target.value.trim() === "" || !isValidName(event.target.value.trim()));
-                    dispatch(rmActionCreator.setFFormula(id, event.target.value.trim()));
-                    updateModuleStatus(!moduleStatus);
+                    setFFormula(event.target.value);
                   }}
                   onBlur={(event) => setFFormulaErr(event.target.value.trim() === "")}
                   error={fFormulaErr}
@@ -273,8 +265,7 @@ export function RevolutionModule(props) {
                   className={locClasses.funcGFormula} size="small" variant="outlined" value={gFormula}
                   onChange={(event) => {
                     setGFormulaErr(event.target.value.trim() === "" || !isValidName(event.target.value.trim()));
-                    dispatch(rmActionCreator.setGFormula(id, event.target.value.trim()));
-                    updateModuleStatus(!moduleStatus);
+                    setGFormula(event.target.value);
                   }}
                   onBlur={(event) => setGFormulaErr(event.target.value.trim() === "")}
                   error={gFormulaErr}
@@ -286,8 +277,7 @@ export function RevolutionModule(props) {
                   className={locClasses.xMax} size="small" variant="outlined" value={xMax}
                   onChange={(event) => {
                     setXMaxErr(event.target.value.trim() === "" || !isValidName(event.target.value.trim()));
-                    dispatch(rmActionCreator.setXMax(id, event.target.value.trim()));
-                    updateModuleStatus(!moduleStatus);
+                    setXMax(event.target.value.trim());
                   }}
                   onBlur={(event) => setXMaxErr(event.target.value.trim() === "")}
                   error={xMaxErr}
@@ -297,29 +287,26 @@ export function RevolutionModule(props) {
                   classes={{root: locClasses.xMin}} size="small" variant="outlined" value={xMin}
                   onChange={(event) => {
                     setXMinErr(event.target.value.trim() === "" || !isValidName(event.target.value.trim()));
-                    dispatch(rmActionCreator.setXMin(id, event.target.value.trim()));
-                    updateModuleStatus(!moduleStatus);
+                    setXMin(event.target.value.trim());
                   }}
                   onBlur={(event) => setXMinErr(event.target.value.trim() === "")}
                   error={xMinErr}
                 />
                 <ComboBox
                   className={locClasses.revAxisType}
-                  label="Revolution Axis" width="8rem" property="text" value={{text: rotAxisType}} dataArray={revAxisTypes}
+                  label="Revolution Axis" width="8rem" property="text" value={{text: revAxisType}} dataArray={revAxisTypes}
                   onChange={(event, value) => {
-                    dispatch(rmActionCreator.setRotAxisType(id, value.text));
-                    updateModuleStatus(!moduleStatus);
+                    setRevAxisType(value.text);
                   }}
                 />
                 <div className={locClasses.revAxisPosLabel}>
-                  {(rotAxisType === "Vertical")? <AboutY/>: <AboutX/>}
+                  {(revAxisType === "Vertical")? <AboutX/>: <AboutY/>}
                 </div>
                 <TextField
-                  classes={{root: locClasses.revAxisPos}} size="small" variant="outlined" value={rotAxisPos}
+                  classes={{root: locClasses.revAxisPos}} size="small" variant="outlined" value={revAxisPos}
                   onChange={(event) => {
                     setRevAxisPosErr(event.target.value.trim() === "" || !isValidName(event.target.value.trim()));
-                    dispatch(rmActionCreator.setRotAxisPos(id, event.target.value.trim()));
-                    updateModuleStatus(!moduleStatus);
+                    setRevAxisPos(event.target.value.trim());
                   }}
                   onBlur={(event) => setRevAxisPosErr(event.target.value.trim() === "")}
                   error={revAxisPosErr}
@@ -331,17 +318,17 @@ export function RevolutionModule(props) {
           <fieldset className={locClasses.ctrlPanel}>
             <legend className={locClasses.legend}> Controls </legend>
             <div className={locClasses.runBtn}>
-              <RunStop/>
+              <RunStop inputValues={inputValues} setPreviewState={setPreviewState}/>
             </div>
             <div className={locClasses.resetBtn}>
-              <Button variant="contained" classes={{root: locClasses.button}}>
+              <Button variant="contained" classes={{root: locClasses.button}} onClick={() => dispatch(rmActionCreator.resetFormula(id))}>
                 <ResetIcon className={locClasses.resetIcon}/>
               </Button>
             </div>
           </fieldset>
         </div>
         <div className={locClasses.previewPaneCont}>
-          <PreviewPane/>
+          <PreviewPane previewState={previewState} setPreviewState={setPreviewState}/>
         </div>
       </div>
     </div>
