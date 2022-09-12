@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { makeStyles, Button, CircularProgress } from "@material-ui/core";
 import { PlayArrow as RunIcon, Stop as StopIcon } from "@material-ui/icons";
 import { merge } from "lodash";
@@ -47,33 +47,38 @@ const useStyle = makeStyles((theme) => ({
 
 let controller = "";
 
-export function RunStopShell({finalStyle={}, className="", variant="contained", onRun=() => {}, onStop=() => {}, ...props}) {
+export const RunStopShell = ({
+  finalStyle={}, className="", variant="contained", disabled=false, onRun=()=>{}, onStop=()=>{}, ...props
+}) => {
   const locClasses = useStyle(finalStyle);
   const [runStatus, setRunStatus] = useState(true);
-  return (
-    <Button
-      className={className}
-      classes={{root: locClasses.root}} variant={variant} {...props}
-      onClick={(event) => {
-        if (runStatus) {
-          controller = new AbortController();
-          setRunStatus(false);
-          onRun(event, setRunStatus, controller);
-        } else {
-          controller.abort();
-          setRunStatus(true);
-          onStop(event, setRunStatus, controller);
-        }
-      }}
-    >
-      {
-        (runStatus)?
-          <RunIcon className={locClasses.runIcon}/>:
-          <Fragment>
-            <StopIcon className={locClasses.stopIcon}/>
-            <CircularProgress className={locClasses.progressIcon}/>
-          </Fragment>
-      }
-    </Button>
-  );
-}
+
+  if (runStatus) {
+    return (
+      <Button
+        className={className} classes={{root: locClasses.root}} variant={variant} disabled={disabled}  {...props}
+        onClick={(event) => {
+            controller = new AbortController();
+            onRun(event, setRunStatus, controller);
+        }}
+      >
+        <RunIcon className={locClasses.runIcon} style={(disabled)? {color: "grey"}: {}}/>
+      </Button>
+    );
+  } else {
+    return (
+      <Button
+        className={className} classes={{root: locClasses.root}} variant={variant} disabled={disabled}  {...props}
+        onClick={(event) => {
+            controller.abort();
+            onStop(event, setRunStatus, controller);
+        }}
+      >
+        <>
+          <StopIcon className={locClasses.stopIcon}/>
+          <CircularProgress className={locClasses.progressIcon}/>
+        </>
+      </Button>
+    );
+  }
+};
