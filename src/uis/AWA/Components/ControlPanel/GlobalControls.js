@@ -1,10 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
-import { idSelector, splitBtnReRenderSelector, activeModuleSelector } from "../../../../store/selectors";
+import { idSelector, activeModuleSelector } from "../../../../store/selectors";
 import { enActionCreator } from "../../../../store/workspaces";
-import { makeStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
-import { Link } from "@material-ui/icons";
+import { makeStyles, Button } from "@material-ui/core";
 import { SplitBtn } from "../../Atoms/SplitBtn.js";
+import { Link } from "@material-ui/icons";
 
 const useStyle = makeStyles((theme) => ({
   controlMenuCont: {
@@ -36,11 +35,10 @@ const useStyle = makeStyles((theme) => ({
   }
 }));
 
-export function GlobalControls(props) {
+export const GlobalControls = (props) => {
   const locClasses = useStyle();
   const id = useSelector(idSelector);
   const activeModule = useSelector(activeModuleSelector);
-  const splitBtnReRender = useSelector(splitBtnReRenderSelector);
   const dispatch = useDispatch();
 
   const link =  document.createElement("a");
@@ -52,14 +50,14 @@ export function GlobalControls(props) {
       <SplitBtn
         // finalStyle={finalStyle} items={['Code Module', 'Graph Module', 'Revolution Module']} currentItem={activeModule}
         finalStyle={finalStyle} items={['Code Module', 'Solid of Revolution']} currentItem={activeModule}
-        onSelect={(value) => dispatch(enActionCreator.setActiveModule(id, value))} SplitBtnReRender={splitBtnReRender}
+        onSelect={(value) => dispatch(enActionCreator.setActiveModule(id, value))}
       />
       <Button classes={{root: locClasses.root}} variant={"contained"} onClick={() => link.click()}>
         <span className={locClasses.span}> <Link className={locClasses.linkIcon}/> Wiki </span>
       </Button>
     </div>
   );
-}
+};
 
 const finalStyle = {
   btnSize: {
