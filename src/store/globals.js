@@ -5,75 +5,61 @@ export const glActions = {
   setClientId:          "setClientId",
   setEditorLineNumbers: "setEditorLineNumbers",
   setEditorFontsize:    "setEditorFontsize",
-  setKeyBinding:        "setKeyBinding",
+  setEditorKeyBinding:  "setEditorKeyBinding",
   reRenderSplitBtn:     "reRenderSplitBtn",
   resetApplication:     "resetApplication",
   setAsyVersion:        "setAsyVersion",
 };
 
 export const glActionCreator = {
-  setClientId: (id) => {
-    return {
-      type: glActions.setClientId,
-      payload: {
-        uniqueClientId: id,
-      }
-    };
-  },
-  setEditorLineNumbers: (isLineNumbers) => {
-    return {
-      type: glActions.setEditorLineNumbers,
-      payload: {
-        editorLineNumbers: isLineNumbers
-      }
-    };
-  },
-  setEditorFontsize: (fontsize) => {
-    return {
-      type: glActions.setEditorFontsize,
-      payload: {
-        editorFontsize: fontsize
-      }
-    };
-  },
-  setKeyBinding: (keyBinding) => {
-    return {
-      type: glActions.setKeyBinding,
-      payload: {
-        editorKeyBinding: keyBinding
-      }
-    };
-  },
-  reRenderSplitBtn: function (value) {
-    return {
-      type: glActions.reRenderSplitBtn,
-      payload: {
-        splitBtnReRender: value
-      },
-    };
-  },
-  resetApplication: function (value) {
-    return {
-      type: glActions.resetApplication,
-      payload: {
-        appReset: value
-      },
-    };
-  },
-  setAsyVersion: (version) => {
-    return {
-      type: glActions.setAsyVersion,
-      payload: {
-        asyVersion: version,
-      }
-    };
-  },
+  setClientId: (id) => ({
+    type: glActions.setClientId,
+    payload: {
+      uniqueClientId: id,
+    }
+  }),
+  setEditorLineNumbers: (isLineNumbers) => ({
+    type: glActions.setEditorLineNumbers,
+    payload: {
+      editorLineNumbers: isLineNumbers
+    }
+  }),
+  setEditorFontsize: (fontsize) => ({
+    type: glActions.setEditorFontsize,
+    payload: {
+      editorFontsize: fontsize
+    }
+  }),
+  setEditorKeyBinding: (keyBinding) => ({
+    type: glActions.setEditorKeyBinding,
+    payload: {
+      editorKeyBinding: keyBinding
+    }
+  }),
+  reRenderSplitBtn: (value) => ({
+    type: glActions.reRenderSplitBtn,
+    payload: {
+      splitBtnReRender: value
+    },
+  }),
+  resetApplication: (value) => ({
+    type: glActions.resetApplication,
+    payload: {
+      appReset: value
+    },
+  }),
+  setAsyVersion: (version) => ({
+    type: glActions.setAsyVersion,
+    payload: {
+      asyVersion: version,
+    }
+  }),
 }
 
-export function globals(state = {}, action) {
+export const globals = (state = {}, action) => {
   if (Object.keys(glActions).includes(action.type)) {
     return {...state, ...action.payload};
   }
   return state;
-}
+};
 
