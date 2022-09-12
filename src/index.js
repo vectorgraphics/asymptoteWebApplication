@@ -1,7 +1,10 @@
-import './index.css';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import "./index.css";
+import React from "react";
+import ReactDOM from "react-dom";
+import { useSelector } from "react-redux";
+import { UCIDSelector}  from "./store/selectors";
 import { AppContainer } from "./core/AppContainer.js";
+import { fetchOptionObj } from "./utils/appTools";
 
 
 let pingMilliseconds = 600000;
@@ -12,24 +15,25 @@ const pingData = {
   reqType: "ping"
 };
 
-// window.addEventListener("load", (event) => {
-//   fetch('/', {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
-//     ReactDOM.render(
-//       // <React.StrictMode>
-//       <App UCID={responseContent.uniqueClientID} asyVersion={responseContent.asyVersion}/>,
-//       // </React.StrictMode>,
-//       document.getElementById('root')
-//     );
-//     if (responseContent.usrConnectStatus === "UDIC") {
-//       setInterval(() => {
-//         fetch('/',{...fetchOptionObj.postJson, body: JSON.stringify(pingData)}).then((resObj) => {console.log("here")})}, pingMilliseconds);
-//     }
-//   });
-// })
-// window.addEventListener("unload", (event) => {
-//   const UCID = useSelector(UCIDSelector);
-//   navigator.sendBeacon('/delete', `deleteReq&${UCID}`);
-// });
+window.addEventListener("load", (event) => {
+  fetch("/", {...fetchOptionObj.postJson, body: JSON.stringify(data)}).then((resObj) => resObj.json()).then((responseContent) => {
+    ReactDOM.render(
+      // <React.StrictMode>
+      <AppContainer UCID={responseContent.uniqueClientID} asyVersion={responseContent.asyVersion}/>,
+      // </React.StrictMode>,
+      document.getElementById("root")
+    );
+    if (responseContent.usrConnectStatus === "UDIC") {
+      setInterval(() => {
+        fetch("/",{...fetchOptionObj.postJson, body: JSON.stringify(pingData)}).then((resObj) => {console.log("here")})}, pingMilliseconds);
+    }
+  });
+});
+
+window.addEventListener("unload", (event) => {
+  const UCID = useSelector(UCIDSelector);
+  navigator.sendBeacon("/delete", "deleteReq&${UCID}");
+});
 
 
 // If you want to start measuring performance in your app, pass a function
