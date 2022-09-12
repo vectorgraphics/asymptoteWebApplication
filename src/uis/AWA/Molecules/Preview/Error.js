@@ -7,7 +7,6 @@ const basicStyle = (theme) => ({
     gridTemplateRows: "4rem 1fr",
     fontSize: "1rem",
     padding: "1rem",
-    color: "whitesmoke",
   },
   errorHeader:{
     gridRow: "1/2",
@@ -20,7 +19,7 @@ const basicStyle = (theme) => ({
     gridRow: "2/3",
     padding: "1rem",
     fontSize: "1rem",
-    color: theme.palette.text.primaryContrast,
+    color: theme.palette.text.awaPrimaryContrast,
   },
 });
 
@@ -30,16 +29,15 @@ const useStyle = makeStyles((theme) => ({
   errorContent: (finalStyle) => merge(basicStyle(theme), finalStyle).errorContent,
 }))
 
-export function Error({finalStyle={}, errorObj={}, ...props}) {
+export const Error = ({finalStyle={}, errObj={}, ...props}) => {
   const locClasses = useStyle(finalStyle);
 
-  const errorText = errorObj.errorText || "No response is received!";
-  const stdErr = errorObj.stdErr || "No response is received!";
+  const errText = errObj.resText || "No response is received!";
+  const stderr = errObj.stderr || "No response is received!";
   return (
     <div className={locClasses.errorCont}>
-      <h4 className={locClasses.errorHeader}> {"Error:"} </h4>
-      <p className={locClasses.errorContent}> {errorText} </p>
-      <p className={locClasses.errorContent}> {stdErr} </p>
+      <h4 className={locClasses.errorHeader}> {"Error: " + errText} </h4>
+      <p className={locClasses.errorContent}> {stderr} </p>
     </div>
   );
-}
+};
