@@ -4,7 +4,6 @@ export const UCIDSelector = store => store.globals.uniqueClientId;
 export const editorLineNumbersSelector = store => store.globals.editorLineNumbers;
 export const editorFontsizeSelector = store => store.globals.editorFontsize;
 export const editorKeyBindingSelector = store => store.globals.editorKeyBinding;
-export const splitBtnReRenderSelector = store => store.globals.splitBtnReRender;
 export const appResetSelector = store => store.globals.appReset;
 export const asyVersionSelector = store => store.globals.asyVersion;
 
@@ -33,9 +32,16 @@ export const previewPaneViewSelector = store => {
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  CODEMODULE SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const cmCodeSelector = store => {
+export const cmCurrentInputSelector = store => {
   const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.codeModule[id].code;
+  return {
+    outFormat: store.workspaces.codeModule[id].outFormat,
+    currentCode: store.workspaces.codeModule[id].currentCode,
+  }
+}
+export const cmCurrentCodeSelector = store => {
+  const id = store.workspaces.checkedOutWorkspaceId;
+  return store.workspaces.codeModule[id].currentCode;
 }
 export const cmOutFormatSelector = store => {
   const id = store.workspaces.checkedOutWorkspaceId;
@@ -47,7 +53,7 @@ export const cmOutputSelector = store => {
 }
 export const cmShouldUpdateSelector = store => {
   const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.codeModule[id].shouldUpdate;
+  return store.workspaces.codeModule[id].output.shouldUpdate;
 }
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  GRAPHMODULE SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,31 +66,11 @@ export const picturesSelector = store => store.workspaces.graphModule.pictures;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  REVOLUTIONMODULE SELECTORS
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-export const fFormulaSelector = store => {
+export const rmInputSelector = store => {
   const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.revolutionModule[id].fFormula;
+  return store.workspaces.revolutionModule[id].input;
 }
-export const gFormulaSelector = store => {
-  const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.revolutionModule[id].gFormula;
-}
-export const xMinSelector = store => {
-  const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.revolutionModule[id].xMin;
-}
-export const xMaxSelector = store => {
-  const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.revolutionModule[id].xMax;
-}
-export const rotAxisTypeSelector = store => {
-  const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.revolutionModule[id].rotAxisType;
-}
-export const rotAxisPosSelector = store => {
-  const id = store.workspaces.checkedOutWorkspaceId;
-  return store.workspaces.revolutionModule[id].rotAxisPos;
-}
-export const outputSelector = store => {
+export const rmOutputSelector = store => {
   const id = store.workspaces.checkedOutWorkspaceId;
   return store.workspaces.revolutionModule[id].output;
 }
