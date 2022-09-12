@@ -17,7 +17,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function ArrowControllers({pane="editor", status=true, onClick=() => {}, ...props}) {
+export const ArrowControllers = ({pane="editor", status=true, onClick=() => {}, ...props}) => {
   const locClasses = useStyle();
 
   switch (pane) {
@@ -41,8 +41,7 @@ export function ArrowControllers({pane="editor", status=true, onClick=() => {}, 
           }
         </div>
       );
-
-
+    default:
+      break;
   }
-
-}
+};

@@ -21,7 +21,9 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function AWAPlatform({UCID=0, asyVersion="unknown", ...props}) {
+console.log("awaPlatform is rendered");
+
+export const AWAPlatform = ({UCID=0, asyVersion="unknown", ...props}) => {
   const locClasses = useStyle(props);
   const [isCPExpanded, setCPExpandState] = useState(true);
   const dispatch = useDispatch();
@@ -35,4 +37,4 @@ export function AWAPlatform({UCID=0, asyVersion="unknown", ...props}) {
       <ModulePanel/>
     </div>
   );
-}
+};

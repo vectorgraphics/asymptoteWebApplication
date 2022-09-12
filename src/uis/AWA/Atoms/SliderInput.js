@@ -10,7 +10,7 @@ const useStyles = makeStyles({
     color: "dimgrey",
   },
   input: {
-    width: (styleObj) => styleObj.inputWwidth || "3rem",
+    width: (styleObj) => styleObj.inputWidth || "3rem",
   },
   underline: {
     "&::before": {
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   }
 });
 
-export function SliderInput({defaultValue=1, styleObj={}, onSliderChange=() => {}, ...props}) {
+export const SliderInput = ({defaultValue=1, styleObj={}, onSliderChange=() => {}, ...props}) => {
   const locClasses = useStyles(styleObj);
   const [value, setValue] = useState(defaultValue);
 
@@ -69,4 +69,4 @@ export function SliderInput({defaultValue=1, styleObj={}, onSliderChange=() => {
       </div>
     </div>
   );
-}
+};

@@ -1,9 +1,8 @@
 import { useRef, useState} from 'react';
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Button, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList } from "@material-ui/core";
+import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 import { merge } from "lodash";
 import classNames  from "classnames";
-import { Button, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList } from '@material-ui/core';
-import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
 const basicStyle = (theme) => ({
   wrapper: {},
@@ -85,12 +84,12 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 
-export function SplitBtn(
+export const SplitBtn = (
   {
     finalStyle={}, splitType="splitView", variant="contained", items=["test1", "test2"],
-    currentItem="Code Module", onSelect=()=>{}, SplitBtnReRender=0,
+    currentItem="Code Module", onSelect=()=>{},
     disableElevation=false, children={}, ...props
-  }) {
+  }) => {
   const locClasses = useStyle(finalStyle);
   const btnRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -144,7 +143,7 @@ export function SplitBtn(
       </Popper>
     </div>
   );
-}
+};
 
 const Btn = (
   {

@@ -14,13 +14,13 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-export function SelectField({label = "label", stateVar, updator, elements=[], ...props}) {
+export const SelectField = ({label = "label", stateVar, onUpdate=()=>{}, elements=[], ...props}) => {
   if (props.cssStyle === undefined) {
     props.cssStyle = {};
   }
   const locClasses = useStyle(props);
   const handleChange = (event) => {
-    updator(event.target.value);
+    onUpdate(event.target.value);
   };
 
   return (
@@ -31,7 +31,7 @@ export function SelectField({label = "label", stateVar, updator, elements=[], ..
       </Select>
     </FormControl>
   );
-}
+};
 
 
 
