@@ -1,20 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { enActionCreator } from "../../../../store/workspaces";
-import { glActionCreator } from "../../../../store/globals";
-import {
-  UCIDSelector,
-  idSelector,
-  wsNameSelector,
-  splitBtnReRenderSelector,
-  cmOutputSelector,
-  codeContentSelector,
-} from "../../../../store/selectors";
-import { useTheme, makeStyles } from "@material-ui/core";
-import { GetApp as GetAppIcon } from "@material-ui/icons";
+import { idSelector, wsNameSelector } from "../../../../store/selectors";
+import { makeStyles, useTheme } from "@material-ui/core";
 import { isValidName } from "../../../../utils/validators";
-import { codeFormatter, fetchOptionObj, toUrlEncoded } from "../../../../utils/appTools";
-import { DeleteSVG } from "../../../../assets/svgs/appwideSvgs.js";
+import { DeleteSVG } from "../../../../assets/svgs/appWideSvgs.js";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -42,7 +32,7 @@ const useStyle = makeStyles((theme) => ({
     maxHeight: "1.95rem",
     fontFamily: "Roboto",
     fontSize: "1rem",
-    color: "white",
+    color: theme.palette.text.awaPrimaryContrast,
     outline: "none",
     border: "none",
     backgroundColor: "transparent",
@@ -50,7 +40,7 @@ const useStyle = makeStyles((theme) => ({
       backgroundColor: "transparent",
     },
     "&::placeholder": {
-      color: (props) => (props.checkedOutId)? theme.palette.text.active: theme.palette.text.primaryContrast,
+      color: (props) => (props.checkedOutId)? theme.palette.text.active: theme.palette.text.awaPrimaryContrast,
     },
   },
   deleteBtn: {
@@ -61,7 +51,6 @@ const useStyle = makeStyles((theme) => ({
     "&:hover": {
       color: theme.palette.icon.deleteHover,
     },
-
   },
   deleteIcon: {
     minWidth: "1.25rem",
@@ -72,14 +61,13 @@ const useStyle = makeStyles((theme) => ({
   }
 }));
 
-export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...props}) {
+export const WorkspaceItem = ({item="", wsId="", onClick=()=>{}, appReset=0, ...props}) => {
   const locClasses = useStyle(props);
 
   const inputRef = useRef(null);
   const inputContRef = useRef(null);
   const id = useSelector(idSelector);
   const lastAssignedName = useSelector(wsNameSelector);
-  const splitBtnReRender = useSelector(splitBtnReRenderSelector);
   const dispatch = useDispatch();
   const theme = useTheme();
 
@@ -99,7 +87,7 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
     inputRef.current.value = lastAssignedName;
   }, [appReset]);
 
-  function putCursorAtEnd(inputElement) {
+  const putCursorAtEnd = (inputElement) => {
     const length = inputElement.value.length;
     if (inputElement.setSelectionRange) {
       inputElement.focus();
@@ -113,10 +101,8 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
     }
   }
 
-  function registerName(newName) {
-    dispatch(enActionCreator.rename(id, newName));
-  }
-  function deselectItem() {
+  const registerName = (newName) => dispatch(enActionCreator.rename(id, newName));
+  const deselectItem = () => {
     (regFlag)? inputRef.current.value = itemName: inputRef.current.value = lastAssignedName;
     inputContRef.current.style.border = "none";
     inputRef.current.disabled = true;
@@ -125,12 +111,7 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
   return (
     <div ref={inputContRef}
       className={locClasses.itemCont}
-      onClick={(event) => {
-        if (item !== wsId) {
-          onClick();
-          dispatch(glActionCreator.reRenderSplitBtn(splitBtnReRender + 1));
-        }
-      }}
+      onClick={(event) => (item !== wsId)? onClick(): null}
       onDoubleClick={(event) => {
         regFlag = false;
         inputRef.current.disabled = false;
@@ -145,7 +126,7 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
         ref={inputRef}
         disabled={true}
         className={locClasses.input}
-        style={(props.checkedOutId)? {color: theme.palette.text.active}: {color: theme.palette.text.secondaryContrast}}
+        style={(props.checkedOutId)? {color: theme.palette.text.active}: {color: theme.palette.text.awaSecondaryContrast}}
         type="text"
         name="workspaceItem"
         maxLength="28"
@@ -179,4 +160,4 @@ export function WorkspaceItem({item="", wsId="", onClick=()=>{}, appReset=0, ...
       </div>
     </div>
   );
-}
+};
