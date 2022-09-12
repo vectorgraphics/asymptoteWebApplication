@@ -2,6 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { EditorPane } from "./EditorPane/EditorPane";
 import { PreviewPane } from "./PreviewPane/PreviewPane";
 import { scrollbarStyler } from "../../../../utils/appTools";
+import { useState } from "react";
 
 const useStyle = makeStyles((theme) => ({
   codeModule: {
@@ -16,16 +17,17 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-export function CodeModule(props) {
+export const CodeModule = (props) => {
   const locClasses = useStyle();
+  const [previewState, setPreviewState] = useState(true);
 
   return (
     <div className={locClasses.codeModule}>
-        <EditorPane finalStyle={editorFinalStyle}/>
-        <PreviewPane finalStyle={previewFinalStyle}/>
+        <EditorPane finalStyle={editorFinalStyle} setPreviewState={setPreviewState}/>
+        <PreviewPane finalStyle={previewFinalStyle} previewState={previewState} setPreviewState={setPreviewState}/>
     </div>
   )
-}
+};
 
 const editorFinalStyle = {
   editorPane: {
