@@ -1,10 +1,9 @@
 import { useSelector } from "react-redux";
+import { idSelector } from "../../../../store/selectors";
 import { makeStyles } from "@material-ui/core/styles";
 import { CodeModule } from "../CodeModule/CodeModule";
 import { GraphModule } from "../GraphModule/GraphModule";
 import { RevolutionModule } from "../RevolutionModule/RevolutionModule";
-import { idSelector } from "../../../../store/selectors";
-import {scrollbarStyler} from "../../../../utils/appTools.js";
 
 const useStyle = makeStyles((theme) => ({
   modulePanel: {
@@ -16,12 +15,12 @@ const useStyle = makeStyles((theme) => ({
     alignContent: "stretch",
     alignItems: "stretch",
     borderLeft: "1px solid black",
-    backgroundColor: theme.palette.background.module,
+    backgroundColor: theme.palette.background.panel,
     zIndex: 1000,
   },
 }));
 
-export function ModulePanel(props) {
+export const ModulePanel = (props) => {
   const locClasses = useStyle();
   const id = useSelector(idSelector);
   const activeModule = useSelector((store) => store.workspaces.entities[id].activeModule);
