@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { cmCodeSelector, idSelector, UCIDSelector, wsNameSelector } from "../../../../../store/selectors.js";
+import { idSelector, UCIDSelector, wsNameSelector, cmCurrentCodeSelector } from "../../../../../store/selectors.js";
 import { makeStyles, Button } from "@material-ui/core";
 import { GetApp as DownloadIcon } from "@material-ui/icons";
 import { codeFormatter, fetchOptionObj, toUrlEncoded } from "../../../../../utils/appTools.js";
@@ -21,12 +21,12 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-export function Download({children, className="", classes={}, ...props}) {
+export const Download = ({children, className="", classes={}, ...props}) => {
   const locClasses = useStyle();
   const UCID = useSelector(UCIDSelector);
   const id = useSelector(idSelector);
   const wsName = useSelector(wsNameSelector);
-  const code = useSelector(cmCodeSelector);
+  const currentCode = useSelector(cmCurrentCodeSelector);
 
   return (
     <Button
@@ -37,22 +37,17 @@ export function Download({children, className="", classes={}, ...props}) {
           UCID: UCID,
           workspaceId: id,
           workspaceName: wsName,
-          parentModule: "Code Module",
-          code: {
-            lastSuccessful: "",
-            lastFailed: "",
-            currentContent: codeFormatter(code.currentContent),
-          },
-          commands: [""],
+          parentModule: "CM",
+          currentCode: codeFormatter(currentCode),
           outFormat: "asy",
         };
-        fetch('/', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((responseContent) => {
-          // dispatch(cmActionCreator.updateOutput(id, {...cmOutput, ...responseContent}));
-          if (responseContent.responseType === "ASY_FILE_CREATED") {
+        fetch('/', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.json()).then((response) => {
+          console.log(response);
+          if (response.serverRes.resStatus === "SUCCESS") {
             delete (data.codeContent);
-            fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((responseContent) => {
+            fetch('/clients', {...fetchOptionObj.postUrlEncode, body: toUrlEncoded(data)}).then((resObj) => resObj.blob()).then((fileContent) => {
               const link = document.createElement("a");
-              link.href = window.URL.createObjectURL(responseContent);
+              link.href = window.URL.createObjectURL(fileContent);
               link.setAttribute("download", wsName + ".asy");
               link.click();
             }).catch((err) => {});
@@ -63,4 +58,4 @@ export function Download({children, className="", classes={}, ...props}) {
       <DownloadIcon className={locClasses.downloadIcon}/>
     </Button>
   );
-}
+};
