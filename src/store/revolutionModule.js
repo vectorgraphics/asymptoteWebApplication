@@ -8,7 +8,6 @@ import { glActions } from "./globals";
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 const rmActions = {
   setInputs: "setInputs",
-  resetFormula: "resetFormula",
   rmUpdateOutput: "rmUpdateOutput",
 }
 export const rmActionCreator = {
@@ -17,12 +16,6 @@ export const rmActionCreator = {
     payload: {
       id: id,
       input: inputObj,
-    },
-  }),
-  resetFormula: (id) => ({
-    type: rmActions.resetFormula,
-    payload: {
-      id: id,
     },
   }),
   updateOutput: (id, outputObj) => ({
@@ -50,9 +43,6 @@ export const revolutionModule = (state = {}, action) => {
       return newCopy;
     case rmActions.rmUpdateOutput:
       newCopy[action.payload.id].output = action.payload.output;
-      return newCopy;
-    case rmActions.resetFormula:
-      newCopy[action.payload.id].input = slices.revolution.input;
       return newCopy;
     default:
       return state;

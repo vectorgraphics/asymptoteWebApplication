@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { idSelector } from "../../../../store/selectors";
-import { rmActionCreator } from "../../../../store/revolutionModule.js";
 import { makeStyles, Button, TextField } from "@material-ui/core";
 import { ComboBox } from "../../Atoms/ComboBox.js";
 import { PreviewPane } from "./PreviewPane/PreviewPane.js";
@@ -220,12 +217,12 @@ export const RevolutionModule = (props) => {
   const locClasses = useStyle();
 
   // Variable States
-  const [fFormula,    setFFormula] = useState("x");
-  const [gFormula,    setGFormula] = useState("x^2");
-  const [xMin,        setXMin] = useState(0);
-  const [xMax,        setXMax] = useState(2);
-  const [revAxisType, setRevAxisType] = useState("Vertical");
-  const [revAxisPos,  setRevAxisPos] = useState(1);
+  const [fFormula,     setFFormula] = useState("x");
+  const [gFormula,     setGFormula] = useState("x^2");
+  const [xMin,         setXMin] = useState(0);
+  const [xMax,         setXMax] = useState(2);
+  const [revAxisType,  setRevAxisType] = useState("Vertical");
+  const [revAxisPos,   setRevAxisPos] = useState(1);
   const [previewState, setPreviewState] = useState(true);
 
   // Error & Actions Management
@@ -234,9 +231,6 @@ export const RevolutionModule = (props) => {
   const [xMinErr,       setXMinErr] = useState(false);
   const [xMaxErr,       setXMaxErr] = useState(false);
   const [revAxisPosErr, setRevAxisPosErr] = useState(false);
-
-  const id = useSelector(idSelector);
-  const dispatch = useDispatch();
 
   const inputValues = {fFormula, gFormula, xMin, xMax, revAxisType, revAxisPos};
 
@@ -321,7 +315,16 @@ export const RevolutionModule = (props) => {
               <RunStop inputValues={inputValues} setPreviewState={setPreviewState}/>
             </div>
             <div className={locClasses.resetBtn}>
-              <Button variant="contained" classes={{root: locClasses.button}} onClick={() => dispatch(rmActionCreator.resetFormula(id))}>
+              <Button
+                variant="contained" classes={{root: locClasses.button}}
+                onClick={() => {
+                  setFFormula("x");
+                  setGFormula("x^2");
+                  setXMin(0);
+                  setXMax(2);
+                  setRevAxisType("Vertical");
+                  setRevAxisPos(1)
+                }}>
                 <ResetIcon className={locClasses.resetIcon}/>
               </Button>
             </div>
