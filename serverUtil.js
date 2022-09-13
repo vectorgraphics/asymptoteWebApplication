@@ -93,8 +93,8 @@ export const dateTime = () => {
   const time = hour + ":" + minute + ":" + second;
 
   return {
-      date: date,
-      time: time
+    date: date,
+    time: time,
   }
 };
 
