@@ -1,0 +1,10 @@
+* {
+  box-sizing: content-box;
+}
+:root {
+  font-family: Roboto, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+#root {
+  display: flex;
+  height: 100vh;
+}
