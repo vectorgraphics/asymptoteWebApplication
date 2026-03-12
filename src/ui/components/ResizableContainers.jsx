@@ -10,7 +10,6 @@ export const ResizableContainers = ({children, direction = "row", ratio = [1, 1]
   const fpRef = useRef(null);
   const spRef = useRef(null);
   const resizerRef = useRef(null);
-  const iframeRef = useRef(null);
   
   let base, widthOrHeight = "";
   switch (direction) {
@@ -28,16 +27,18 @@ export const ResizableContainers = ({children, direction = "row", ratio = [1, 1]
   const Children = normalizeChildren(children);
   
   const startResizing = () => {
+    const element = document.getElementById("previewIframe");
     spRef.current.style.transition = "";
-    if (iframeRef.current) {
-      iframeRef.current.style.pointerEvents = "none"; 
+    if (element) {
+      element.style.pointerEvents = "none"; 
     }
     setIsResizing(true);
   }
 
   const stopResizing = () => {
-    if (iframeRef.current) {
-      iframeRef.current.style.pointerEvents = "auto";
+    const element = document.getElementById("previewIframe");
+    if (element) {
+      element.style.pointerEvents = "auto";
     }
     setIsResizing(false);
     if (spRef.current) {
@@ -72,9 +73,9 @@ export const ResizableContainers = ({children, direction = "row", ratio = [1, 1]
     }
   }
 
-  useEffect(() => {
-    iframeRef.current = document.getElementById("previewIframe");
-  }, [])
+  // useEffect(() => {
+  //   iframeRef.current = document.getElementById("previewIframe");
+  // }, [])
 
   useEffect(() => {
     window.addEventListener("resize", setEqualWidth);
