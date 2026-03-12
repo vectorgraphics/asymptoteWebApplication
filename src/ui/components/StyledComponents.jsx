@@ -68,7 +68,7 @@ export const Iframe = styled("iframe", {
   },
   label: "AWA-Iframe",
   name: "AWA-iframe",
-})(({theme, pointerEvents = "none", ...props}) => ({
+})(({theme, pointerEvents = "auto", ...props}) => ({
   display: "block",
   flexGrow: 1,
   margin: 0,
