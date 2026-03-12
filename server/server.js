@@ -12,9 +12,10 @@ import { allErrHandler } from "./middleware/allErrHandler.js";
 
 const app = express();
 const serverDirname = import.meta.dirname;
-const rootLogger = logger.setLoggerName("Root Logger").create();
+// const rootLogger = logger.setLoggerName("Root Logger").create();
 
-app.router.use("/", reqAugmenter(serverDirname), express.json(), cookieParser("AWA-Secret-Key"), rootLogger);
+// app.router.use("/", reqAugmenter(serverDirname), express.json(), cookieParser("AWA-Secret-Key"), rootLogger);
+app.router.use("/", reqAugmenter(serverDirname), express.json(), cookieParser("AWA-Secret-Key"));
 app.router.route("/")
   .get(createUser(), express.static("dist"), allErrHandler())
   .post(registerUser(), allErrHandler());
