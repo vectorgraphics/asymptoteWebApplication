@@ -12,12 +12,23 @@ const Output = ContainerConstructor((props) => {
 
   if (currentWorkspace.id !== null) {
     if (currentWorkspace.output.responseType === "ERROR") {
-      const errorText = (currentWorkspace.output.stderr !== "") ? currentWorkspace.output.stderr : currentWorkspace.output.errorText;
+      const output = currentWorkspace.output;
+      // Build the full error message with all available diagnostic info
+      let errorDetails = output.errorText || "";
+      if (output.errorContent) {
+        errorDetails += "\n" + output.errorContent;
+      }
+      if (output.stderr && output.stderr !== "") {
+        errorDetails += (errorDetails ? "\n" : "") + output.stderr;
+      }
+      if (output.stdout && output.stdout !== "") {
+        errorDetails += (errorDetails ? "\n" : "") + output.stdout;
+      }
       return (
         <div className={cssStyle.outputElse}>
           <div>
             <h4> Error: </h4>
-            <p> {errorText} </p>
+            <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", margin: 0 }}> {errorDetails} </pre>
           </div>
         </div>
       )

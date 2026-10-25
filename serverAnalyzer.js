@@ -1,6 +1,7 @@
 import { createRequire } from 'module'
-import { writeFile, appendFile } from "fs/promises";
+import { writeFile, appendFile, mkdir } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
+import { dirname } from "path";
 import { spawn, execSync } from "child_process";
 import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
 import express from "express";
@@ -108,7 +109,11 @@ export function writeAsyFile(serverDir) {
   return (req, res, next) => {
     const filePath = req.body.codeFilePath;
     const fileContent = req.body.codeText;
-    writeFile(filePath, fileContent).then(() => {
+    const fileDir = dirname(filePath);
+    // Ensure the client directory exists (it may have been pruned or the server restarted)
+    mkdir(fileDir, { recursive: true }).then(() => {
+      return writeFile(filePath, fileContent);
+    }).then(() => {
       next();
     }).catch((err) => {
       res.send(errResCreator(FLAGS.FAILURE.ASY_WRITE_FILE_ERR, err));
