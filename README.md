@@ -7,7 +7,19 @@ installation.
 
 ## Installation
 ### Pre-Application Install
-First install [npm] and [Node.js](www.nodejs.org).
+First install [npm] and [Node.js](https://nodejs.org). The application
+requires Node.js **>= 22.23.4**; we recommend the latest **24.x LTS**
+release (see `.nvmrc` and the `engines` field in `package.json`).
+
+> **Security:** Node.js 14 is end-of-life and is vulnerable to
+> **CVE-2026-111497** ("Node2Shell"), an out-of-bounds write in the
+> bundled Google Brotli decoder that permits remote code execution.
+> The Node.js project fixed this only in its 22.x, 24.x and 26.x
+> security releases (2026-10-21), so hosts running Node.js 14 must
+> upgrade the runtime rather than patch it in place.
+
+The `build` and `start` scripts set `NODE_OPTIONS=--openssl-legacy-provider`,
+which `react-scripts` 3 (webpack 4) requires on Node.js 17+ (OpenSSL 3).
 
 ### Application Installation
 1. We recommend running this application as a non-privileged user
