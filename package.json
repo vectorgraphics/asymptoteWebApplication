@@ -6,6 +6,9 @@
   "engines": {
     "node": ">=22.23.4 <23.0.0 || >=24.22.1"
   },
+  "overrides": {
+    "es-abstract": "1.24.2"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
