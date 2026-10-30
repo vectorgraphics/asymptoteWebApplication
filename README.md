@@ -7,7 +7,7 @@ installation.
 
 ## Installation
 ### Pre-Application Install
-First install [npm] and [Node.js](https://nodejs.org). The application
+First install [npm](https://www.npmjs.com/) and [Node.js](https://nodejs.org). The application
 requires Node.js **>= 22.23.4**; we recommend the latest **24.x LTS**
 release (see `.nvmrc` and the `engines` field in `package.json`).
 
@@ -34,18 +34,14 @@ passwd -d asymptote
 3. Install the latest version of [Asymptote](https://asymptote.sourceforge.io/)
 on the system.
 
-4. Starting as a user belonging to the asymptote group, install the node
-modules and application dependencies:
+4. As the `asymptote` user, check out the application and install its
+dependencies:
 
 ```
 cd ~asymptote
-git clone https://github.com/vectorgraphics/asymptote-server
-cd asymptote-server
-su
-su asymptote
+git clone https://github.com/vectorgraphics/asymptoteWebApplication
+cd asymptoteWebApplication
 make
-exit
-exit
 ```
 
 5. We recommend running the bash script
@@ -59,23 +55,37 @@ the client is considered disconnected and its workspace is deleted.
 By default, pings are sent from active clients to the server every 600
 seconds.
 
-# Running the Application
+## Running the Application
 There are two modes for running this application:
 
-1. **Running the full application:** To run the full application run the
-    following commands
+1. **Running the full application:**
 
-```
-cd ~asymptote/asymptote-server
-sudo make run
-```
+   **As a systemd service (recommended for production):**
 
-Root privileges are dropped once the application is listening
-on port 80. The application can then be accessed on
+   ```
+   cd ~asymptote/asymptoteWebApplication
+   sudo cp systemd/asymptote.service /etc/systemd/system/
+   sudo systemctl daemon-reload
+   sudo systemctl enable --now asymptote
+   ```
 
-```
-http://localhost:80
-```
+   (Adjust `WorkingDirectory` in the unit if your checkout lives
+   elsewhere.) The service starts as root, the application listens on
+   port 1080, and `server.js` drops privileges to the `asymptote`
+   user once the port is listening. In production, a front-end proxy
+   maps the public URL onto port 1080.
+
+   **Manually:**
+
+   ```
+   cd ~asymptote/asymptoteWebApplication
+   sudo make run
+   ```
+
+   `make run` listens on port 80 by default (override with
+   `ASYMPTOTE_PORT=<port>`); root privileges are dropped once the
+   application is listening, and it can then be accessed on
+   `http://localhost:80`.
 
 2. **Running only the front-end part of the application:**
    This mode is mainly used for development of the GUI to test
@@ -84,7 +94,7 @@ http://localhost:80
    mode on a localhost service:
 
 ```
-cd ~asymptote/asymptote-server
+cd ~asymptote/asymptoteWebApplication
 make frontend
 ```
 

@@ -1,0 +1,23 @@
+
+[Unit]
+Description=Asymptote Web Application
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'export XDG_RUNTIME_DIR=/tmp/xdg-$(id -u asymptote); mkdir -p $XDG_RUNTIME_DIR; chown asymptote:asymptote $XDG_RUNTIME_DIR; chmod 700 $XDG_RUNTIME_DIR; exec /usr/bin/make run ASYMPTOTE_PORT=1080'
+# ASYMPTOTE_PORT=1080: the application listens on 1080; a front-end
+# proxy (e.g. nginx) maps the public port 80/443 onto it. Adjust to
+# taste; ASYMPTOTE_PORT is a make variable override consumed by
+# server.js via the environment.
+User=root
+WorkingDirectory=/home/asymptote/asymptoteWebApplication
+# The service starts as root so that server.js can bind low ports and
+# drop privileges to the asymptote user (see serverUtil.js).
+RestartSec=1
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
