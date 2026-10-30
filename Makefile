@@ -47,7 +47,7 @@ tidy:
 clean:  tidy
 	-cd src/assets && rm -f $(notdir $(ASY_ICONS:.asy=.svg)) show.svg homeHover.svg
 	-cd public && rm -f $(ASY_LOGO)
-	-rm -rf node_modules build package-lock.json clients/* logs/*
+	-rm -rf node_modules build clients/* logs/*
 
 .SUFFIXES: .asy .svg .html .gz .html.gz
 

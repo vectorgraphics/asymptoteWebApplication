@@ -1,4 +1,4 @@
-![AWA Logo](https://www.dropbox.com/s/h9klqqz8f4j6eua/AWA.png?raw=1)
+![AWA Logo](logo/logo.svg)
 
 # Asymptote Web Application
 This application is designed to provide a convenient way for Asymptote
