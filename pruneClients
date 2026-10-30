@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ ! $# = 1 ]; then echo Usage: "$0 seconds"; exit 1; fi
 
-cd ~asymptote/asymptote-server/clients
+cd "$(dirname "$0")/clients" || exit 1
 now=`date +%s`
 shopt -s nullglob
 for client in * ; do
