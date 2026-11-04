@@ -3,8 +3,8 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import expressStaticGzip from "express-static-gzip";
-import { dateTime, dropRootPermission } from "./serverUtil.js";
-import { reqTypeRouter, reqAnalyzer, delAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.js";
+import { dateTime, dropRootPermission } from "./serverUtil.mjs";
+import { reqTypeRouter, reqAnalyzer, delAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

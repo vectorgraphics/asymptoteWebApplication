@@ -18,9 +18,6 @@ release (see `.nvmrc` and the `engines` field in `package.json`).
 > security releases (2026-10-21), so hosts running Node.js 14 must
 > upgrade the runtime rather than patch it in place.
 
-The `build` and `start` scripts set `NODE_OPTIONS=--openssl-legacy-provider`,
-which `react-scripts` 3 (webpack 4) requires on Node.js 17+ (OpenSSL 3).
-
 ### Application Installation
 1. We recommend running this application as a non-privileged user
 "asymptote" on a virtual machine.
@@ -71,7 +68,7 @@ There are two modes for running this application:
 
    (Adjust `WorkingDirectory` in the unit if your checkout lives
    elsewhere.) The service starts as root, the application listens on
-   port 1080, and `server.js` drops privileges to the `asymptote`
+   port 1080, and `server.mjs` drops privileges to the `asymptote`
    user once the port is listening. In production, a front-end proxy
    maps the public URL onto port 1080.
 

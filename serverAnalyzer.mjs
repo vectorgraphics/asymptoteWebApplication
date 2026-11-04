@@ -3,7 +3,7 @@ import { writeFile, appendFile, mkdir } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
 import { dirname } from "path";
 import { spawn, execSync } from "child_process";
-import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.js";
+import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.mjs";
 import express from "express";
 const require = createRequire(import.meta.url);
 const multer = require("multer");

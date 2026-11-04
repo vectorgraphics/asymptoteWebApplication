@@ -1,13 +1,20 @@
 {
   "name": "asy-react-app",
   "version": "0.2.2",
-  "type": "module",
   "private": true,
   "engines": {
     "node": ">=22.23.4 <23.0.0 || >=24.22.1"
   },
   "overrides": {
-    "es-abstract": "1.24.2"
+    "@tootallnate/once": "2.0.1",
+    "deepmerge": "4.1.2",
+    "es-abstract": "1.24.2",
+    "postcss": "^8.5.23",
+    "resolve-url-loader": "5.0.0",
+    "serialize-javascript": "^7.1.4",
+    "svgo": "2.8.4",
+    "underscore": "1.13.8",
+    "uuid": "^11.1.1"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^7.0.1",
@@ -28,8 +35,8 @@
     "redux": "^4.0.5"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -47,9 +54,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "stylelint": "^13.13.1",
-    "stylelint-config-standard": "^22.0.0"
   }
 }

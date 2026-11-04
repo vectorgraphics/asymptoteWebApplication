@@ -109,5 +109,6 @@ dist
 .asy_history
 
 public/logo3d.html
+public/logo3d.html.gz
 src/assets/*.svg
 

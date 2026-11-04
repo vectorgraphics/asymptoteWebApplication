@@ -30,12 +30,12 @@ all:	$(notdir $(ASY_ICONS:.asy=.svg)) $(ASY_LOGO) node_modules
 	npm run build
 	-cd build && rm static/js/*.LICENSE.txt
 
-node_modules: package.json
+node_modules: package.json package-lock.json
 	npm install
 
 run:
 	rm -rf clients/*
-	node server.js
+	node server.mjs
 
 # Run front end only (for testing)
 frontend:
