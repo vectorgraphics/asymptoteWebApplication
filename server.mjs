@@ -1,9 +1,9 @@
-import { existsSync, createReadStream, appendFile } from "fs";
-import { dirname } from "path";
+import { createReadStream, appendFile, statSync } from "fs";
+import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import expressStaticGzip from "express-static-gzip";
-import { dateTime, dropRootPermission } from "./serverUtil.mjs";
+import { dateTime, dropRootPermission, containedRealPath } from "./serverUtil.mjs";
 import { reqTypeRouter, reqAnalyzer, delAnalyzer, usrConnect, requestResolver, writeAsyFile, downloadReq } from "./serverAnalyzer.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,22 +36,31 @@ app.route("/logo3d.html")
 
 // Serving Other Static Files
 // ----------------------------------------
+const buildDir = __dirname + "/build";
 app.use("/static/", function(req, res, next) {
   if (/\/(?:css|js|media)\//.test(req.originalUrl)) {
     let urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg)$)/g.exec(req.originalUrl);
     if (urlMatched !== null && urlMatched[1] !== undefined) {
-      res.sendFile(__dirname + "/build" + urlMatched[0]);
+      const realFile = containedRealPath(resolve(buildDir + urlMatched[0]), buildDir);
+      if (realFile !== null) {
+        res.sendFile(realFile);
+      } else {
+        res.status(404).end();
+      }
     }
   }
 })
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+const clientsRoot = resolve(__dirname, "clients");
 app.use("/clients", (req, res, next) => {
   if (req.method === "GET") {
-    const fileToServe = __dirname + req.originalUrl;
-    if (existsSync(fileToServe)) {
-      createReadStream(fileToServe).pipe(res);
+    const realFile = containedRealPath(resolve(clientsRoot, "." + req.path), clientsRoot);
+    if (realFile !== null && statSync(realFile, { throwIfNoEntry: false })?.isFile()) {
+      createReadStream(realFile).pipe(res);
+    } else {
+      res.status(404).end();
     }
   } else {
     next();
