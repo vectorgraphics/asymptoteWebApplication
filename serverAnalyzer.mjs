@@ -1,9 +1,9 @@
 import { createRequire } from 'module'
 import { writeFile, appendFile, mkdir } from "fs/promises";
 import { existsSync, unlinkSync } from "fs";
-import { dirname } from "path";
+import { dirname, resolve } from "path";
 import { spawn, execSync } from "child_process";
-import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS } from "./serverUtil.mjs";
+import { usrID, usrDirMgr, makeDir, removeDir, dateTime, writePing, FLAGS, isWithinRoot, containedRealPath } from "./serverUtil.mjs";
 import express from "express";
 const require = createRequire(import.meta.url);
 const multer = require("multer");
@@ -67,13 +67,21 @@ export function reqAnalyzer(serverDir) {
     const reqDest = usrDirMgr(req, serverDir, req.body.id);
     const codeFilename = req.body.workspaceName + "_" + req.body.workspaceId;
     const codeFile = codeFilename + ".asy";
+    const clientsRoot = resolve(serverDir, "clients");
+    const usrAbsDirPath = resolve(reqDest.usrAbsDirPath);
+    const codeFilePath = resolve(usrAbsDirPath, codeFile);
+    if (!isWithinRoot(usrAbsDirPath, clientsRoot) || !isWithinRoot(codeFilePath, clientsRoot)) {
+      res.status(400).send(errResCreator(FLAGS.FAILURE.INVALID_PATH_ERR));
+      return;
+    }
     req.body = {
       ...req.body,
       ...reqDest,
       codeFilename: codeFilename,
       codeFile: codeFile,
-      codeFilePath: reqDest.usrAbsDirPath + "/" + codeFile,
-      htmlFile: reqDest.usrAbsDirPath + "/" + codeFilename + ".html",
+      codeFilePath: codeFilePath,
+      htmlFile: resolve(usrAbsDirPath, codeFilename + ".html"),
+      usrAbsDirPath: usrAbsDirPath,
     }
     if (typeof req.body.isUpdated === "string") {
       req.body.isUpdated =  req.body.isUpdated.includes("true");
@@ -91,11 +99,16 @@ export function reqAnalyzer(serverDir) {
 // ------------------------------------------------
 export function delAnalyzer(serverDir) {
   return (req, res, next) => {
+    const clientsRoot = resolve(serverDir, "clients");
     let requestAndId = /(\w+)&(\w+)/gi.exec(req.body);
     if (requestAndId[1] === "deleteReq") {
       const reqDest = usrDirMgr(req, serverDir, requestAndId[2]);
-      if (existsSync(reqDest.usrAbsDirPath)) {
-        removeDir(reqDest.usrAbsDirPath);
+      const usrAbsDirPath = resolve(reqDest.usrAbsDirPath);
+      if (!isWithinRoot(usrAbsDirPath, clientsRoot)) {
+        res.status(400).send(errResCreator(FLAGS.FAILURE.INVALID_PATH_ERR));
+      } else if (existsSync(usrAbsDirPath)) {
+        removeDir(usrAbsDirPath);
+        res.send(null);
       } else {
         res.send(null);
       }
@@ -157,19 +170,31 @@ export function requestResolver() {
   }
 }
 // ------------------------------------------------
-export function downloadReq(dirname) {
+export function downloadReq(serverDir) {
   return function (req, res, next) {
+    const clientsRoot = resolve(serverDir, "clients");
     if (req.body.codeOption) {
-      if (existsSync(req.body.codeFilePath)) {
-        res.download(req.body.codeFilePath);
+      if (!isWithinRoot(req.body.codeFilePath, clientsRoot)) {
+        return res.status(400).end();
       }
+      const realFile = containedRealPath(req.body.codeFilePath, clientsRoot);
+      if (realFile === null) {
+        return res.status(404).end();
+      }
+      return res.download(realFile);
     }
     if (req.body.outputOption) {
-      const outputFilePath = req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.requestedOutformat;
-      if (existsSync(outputFilePath)) {
-        res.download(outputFilePath);
+      const outputFilePath = resolve(req.body.usrAbsDirPath + "/" + req.body.codeFilename + "." + req.body.requestedOutformat);
+      if (!isWithinRoot(outputFilePath, clientsRoot)) {
+        return res.status(400).end();
       }
+      const realFile = containedRealPath(outputFilePath, clientsRoot);
+      if (realFile === null) {
+        return res.status(404).end();
+      }
+      return res.download(realFile);
     }
+    return res.status(400).end();
   }
 }
 
