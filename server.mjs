@@ -38,18 +38,16 @@ app.route("/logo3d.html")
 // ----------------------------------------
 const buildDir = __dirname + "/build";
 app.use("/static/", function(req, res, next) {
-  if (/\/(?:css|js|media)\//.test(req.originalUrl)) {
-    let urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg)$)/g.exec(req.originalUrl);
-    if (urlMatched !== null && urlMatched[1] !== undefined) {
-      const realFile = containedRealPath(resolve(buildDir + urlMatched[0]), buildDir);
-      if (realFile !== null) {
-        res.sendFile(realFile);
-      } else {
-        res.status(404).end();
-      }
-    }
+  const urlMatched = /^\/static\/(?:css|js|media)\/(.+\.(?:css|js|map|svg)$)/.exec(req.originalUrl);
+  if (urlMatched === null) {
+    return next();
   }
-})
+  const realFile = containedRealPath(resolve(buildDir + urlMatched[0]), buildDir);
+  if (realFile === null) {
+    return res.status(404).end();
+  }
+  res.sendFile(realFile);
+});
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    Iframe Request
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

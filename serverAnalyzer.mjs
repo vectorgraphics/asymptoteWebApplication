@@ -100,8 +100,8 @@ export function reqAnalyzer(serverDir) {
 export function delAnalyzer(serverDir) {
   return (req, res, next) => {
     const clientsRoot = resolve(serverDir, "clients");
-    let requestAndId = /(\w+)&(\w+)/gi.exec(req.body);
-    if (requestAndId[1] === "deleteReq") {
+    const requestAndId = /(\w+)&(\w+)/gi.exec(req.body);
+    if (requestAndId !== null && requestAndId[1] === "deleteReq") {
       const reqDest = usrDirMgr(req, serverDir, requestAndId[2]);
       const usrAbsDirPath = resolve(reqDest.usrAbsDirPath);
       if (!isWithinRoot(usrAbsDirPath, clientsRoot)) {
