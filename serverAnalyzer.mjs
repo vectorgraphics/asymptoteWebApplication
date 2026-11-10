@@ -8,7 +8,7 @@ import express from "express";
 const require = createRequire(import.meta.url);
 const multer = require("multer");
 
-const serverTimeout = 60000;
+const serverTimeout = 120000;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          Set of Middleware
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export function reqTypeRouter() {
